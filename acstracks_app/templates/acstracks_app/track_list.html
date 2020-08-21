@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <title>AcsTracks</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+              }
+            th {
+                text-align: left;
+              }
+          </style>
+    </head>
+    <body>
+
+        <h1>AcsTracks</h1>
+        <h3>Add your GPS file(s):</h3>
+        <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+          <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
+          <input type="submit">
+        </form>
+        <br><br>
+        {% if statistics.total_length > 0 %}
+            <table>
+                <tr>
+                    <td><b>Total length</b></td><td>{{ statistics.total_length }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total average speed</b></td><td>{{ statistics.total_avgspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Highest maximum speed</b></td><td>{{ statistics.highest_maxspeed }}</td>
+                    <td>{{ statistics.datetime_highest_maxspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Highest average speed</b></td><td>{{ statistics.highest_avgspeed }}</td>
+                    <td>{{ statistics.datetime_highest_avgspeed }}</td>
+                    </tr>
+            </table><br><br>
+        {% endif %}        
+        <table style="width:100%">
+            <th>Filename<br><br></th>
+            <th>Created date<br><br></th>
+            <th>Name<br><br></th>
+            <th>
+                <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <script>
+                    function profileFunction() {
+                      var x = document.getElementById("profile").value;
+                      this.form.submit()
+                    }
+                </script>
+                <label for="Profile">Profile:</label>
+                <select name="Profile" id="profile" onclick=this.form.submit()>
+                {% if profiles %}
+                   {% for profile in profiles %}
+                       <option value={{ profile }}>{{ profile }}</option>
+                   {% endfor %}
+                {% endif %}
+                </select>
+                </form>
+            </th>
+            <th>Length<br><br></th>
+            <th>Average<br>speed</th>
+            <th>Maximum<br>speed</th>
+            <th>Average<br>cadence</th>
+            <th>Maximum<br>cadence</th>
+            <th>Average<br>heartrate</th>
+            <th>Mininimum<br> heartrate</th>
+            <th>Maximum<br>heartrate</th>
+    {% for track in tracks %}
+            <tr>
+                <td>{{ track.filename }}</td>
+                <td>{{ track.created_date }}</td>
+                <td>{{ track.name }}</td>
+                <td>{{ track.profile }}</td>
+                <td>{{ track.length }}</td>
+                <td>{{ track.avgspeed }}</td>
+                <td>{{ track.maxspeed }}</td>
+                {% if track.avgcadence %}
+                    <td>{{ track.avgcadence }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if track.maxcadence%}
+                    <td>{{ track.maxcadence }}</td>
+                    {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if track.avgheartrate %}
+                <td>{{ track.avgheartrate }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if track.minheartrate %}
+                <td>{{ track.minheartrate }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if track.maxheartrate %}
+                <td>{{ track.maxheartrate }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                </tr>
+        {% endfor %}
+        </table>
+    </body>
+</html>
