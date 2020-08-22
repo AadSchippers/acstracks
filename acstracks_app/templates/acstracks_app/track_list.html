@@ -30,20 +30,24 @@
                     <td><b>Total average speed</b></td><td>{{ statistics.total_avgspeed }}</td>
                 </tr>
                 <tr>
+                    <td><b>Longest track</b></td><td>{{ statistics.longest_length }}</td>
+                    <td>{{ statistics.datetime_longest_length }}</td>
+                </tr>
+                <tr>
                     <td><b>Highest maximum speed</b></td><td>{{ statistics.highest_maxspeed }}</td>
                     <td>{{ statistics.datetime_highest_maxspeed }}</td>
                 </tr>
                 <tr>
                     <td><b>Highest average speed</b></td><td>{{ statistics.highest_avgspeed }}</td>
                     <td>{{ statistics.datetime_highest_avgspeed }}</td>
-                    </tr>
+                </tr>
             </table><br><br>
         {% endif %}        
         <table style="width:100%">
-            <th>Filename<br><br></th>
-            <th>Created date<br><br></th>
-            <th>Name<br><br></th>
-            <th>
+            <th valign="Top">Filename</th>
+            <th valign="Top">Created date</th>
+            <th valign="Top">Name</th>
+            <th valign="Top">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <script>
@@ -56,20 +60,26 @@
                 <select name="Profile" id="profile" onclick=this.form.submit()>
                 {% if profiles %}
                    {% for profile in profiles %}
-                       <option value={{ profile }}>{{ profile }}</option>
+                        <h3>profile</h3>
+                        <h3>profile_filter</h3>
+                       {% if profile ==     profile_filter %}
+                           <option value={{ profile }} selected="selected">{{ profile }}</option>
+                       {% else %}
+                           <option value={{ profile }}>{{ profile }}</option>
+                       {% endif %}
                    {% endfor %}
                 {% endif %}
                 </select>
                 </form>
             </th>
-            <th>Length<br><br></th>
-            <th>Average<br>speed</th>
-            <th>Maximum<br>speed</th>
-            <th>Average<br>cadence</th>
-            <th>Maximum<br>cadence</th>
-            <th>Average<br>heartrate</th>
-            <th>Mininimum<br> heartrate</th>
-            <th>Maximum<br>heartrate</th>
+             <th valign="Top">Length</th>
+             <th valign="Top">Average<br>speed</th>
+             <th valign="Top">Maximum<br>speed</th>
+             <th valign="Top">Average<br>cadence</th>
+             <th valign="Top">Maximum<br>cadence</th>
+             <th valign="Top">Average<br>heartrate</th>
+             <th valign="Top">Mininimum<br> heartrate</th>
+             <th valign="Top">Maximum<br>heartrate</th>
     {% for track in tracks %}
             <tr>
                 <td>{{ track.filename }}</td>
@@ -84,7 +94,7 @@
                 {% else %}
                     <td>-</td>
                 {% endif %}
-                {% if track.maxcadence%}
+                {% if track.maxcadence %}
                     <td>{{ track.maxcadence }}</td>
                     {% else %}
                     <td>-</td>

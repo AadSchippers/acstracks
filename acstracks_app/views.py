@@ -26,18 +26,20 @@ def track_list(request):
     if profile_filter:
         if profile_filter != "All":
             tracks = Track.objects.filter(
-                profile=profile_filter).order_by('created_date'
-            )
+                profile=profile_filter
+                ).order_by('created_date')
         else:
             tracks = Track.objects.all().order_by('created_date')
     else:
+        profile_filter = "All"
         tracks = Track.objects.all().order_by('created_date')
 
     statistics = compute_statistics(tracks)
     
     return render(request, 'acstracks_app/track_list.html', {
-        'tracks': tracks, 
-        'profiles': profiles, 
+        'tracks': tracks,
+        'profiles': profiles,
+        'profile_filter': profile_filter,
         'statistics': statistics
         }
     )
@@ -141,12 +143,17 @@ def compute_statistics(tracks):
     total_avgspeed = float(0)
     highest_avgspeed = 0
     highest_maxspeed = 0
+    longest_length = float(0)
     datetime_highest_avgspeed = datetime.now()
     datetime_highest_maxspeed = datetime.now()
+    datetime_longest_length = datetime.now()
 
     for t in tracks:
         total_length = total_length + float(t.length)
         total_avgspeed = total_avgspeed + float(t.avgspeed * t.length)
+        if longest_length < t.length:
+            longest_length = t.length
+            datetime_longest_length = t.created_date
         if highest_avgspeed < t.avgspeed:
             highest_avgspeed = t.avgspeed
             datetime_highest_avgspeed = t.created_date
@@ -164,8 +171,10 @@ def compute_statistics(tracks):
         'total_avgspeed': total_avgspeed,
         'highest_avgspeed': highest_avgspeed,
         'highest_maxspeed': highest_maxspeed,
+        'longest_length': longest_length,
         'datetime_highest_avgspeed': datetime_highest_avgspeed,
         'datetime_highest_maxspeed': datetime_highest_maxspeed,
+        'datetime_longest_length': datetime_longest_length,
     }
 
     return statistics
