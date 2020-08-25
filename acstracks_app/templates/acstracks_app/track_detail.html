@@ -65,7 +65,7 @@
                 <td>{{ trkpt.lat }}</td>
                 <td>{{ trkpt.lon }}</td>
                 <td>{{ trkpt.ele }}</td>
-                <td style="text-align:right">{{ trkpt.time }}</td>
+                <td style="text-align:right">{{ trkpt.time|time:"H:i:s" }}</td>
                 <td style="text-align:right">{{ trkpt.distance }}</td>
                 <td style="text-align:right">{{ trkpt.speed }}</td>
                 <td style="text-align:right">{{ trkpt.cadence }}</td>

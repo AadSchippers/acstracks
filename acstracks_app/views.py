@@ -157,6 +157,9 @@ def get_trkpts(trk, gpxfile):
             cadence = extensions.find('ns:cadence', namespace)
             heartrate = extensions.find('ns:heartrate', namespace)
         
+            trkDistance = float(distance) / 1000
+            trkSpeed = float(speed) * 3.6
+
             try:
                 trkCadence = int(cadence.text)
             except:
@@ -173,8 +176,8 @@ def get_trkpts(trk, gpxfile):
                     lon=Decimal(lon),
                     ele=Decimal(ele),
                     time=parse(time),
-                    distance=Decimal(distance),
-                    speed=Decimal(speed),
+                    distance=Decimal(trkDistance),
+                    speed=Decimal(trkSpeed),
                     cadence=cadence,
                     heartrate=heartrate,
                 )

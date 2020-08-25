@@ -21,6 +21,13 @@ body {
     background-size: cover;
 }
 
+div.detail {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
 table, th, td {
     padding-left: 10px;
     padding-right: 10px;
