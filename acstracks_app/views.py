@@ -67,6 +67,7 @@ def parse_file(storagefilename=None, filename=None):
         gpxfile = ET.parse(path)
     except Exception:
         print("Problem with " + storagefilename)
+        return
 
     namespace = settings.NAMESPACE
     gpxroot = gpxfile.getroot()
@@ -134,7 +135,10 @@ def parse_file(storagefilename=None, filename=None):
             maxheartrate=trkMaxheartrate,
         )
         trk.save()
+        '''
+        Too time consuming
         get_trkpts(trk, gpxfile)
+        '''
     except:
         pass
 
@@ -169,21 +173,21 @@ def get_trkpts(trk, gpxfile):
             except:
                 trkHeartrate = None
 
-            try:
-                atrkpt = Trkpt.objects.create(
-                    trackid=trk,
-                    lat=Decimal(lat),
-                    lon=Decimal(lon),
-                    ele=Decimal(ele),
-                    time=parse(time),
-                    distance=Decimal(trkDistance),
-                    speed=Decimal(trkSpeed),
-                    cadence=cadence,
-                    heartrate=heartrate,
-                )
-                atrkpt.save()
-            except:
-                pass
+            #try:
+            atrkpt = Trkpt.objects.create(
+                trackid=trk,
+                lat=Decimal(lat),
+                lon=Decimal(lon),
+                ele=Decimal(ele),
+                time=parse(time),
+                distance=Decimal(trkDistance),
+                speed=Decimal(trkSpeed),
+                cadence=trkCadence,
+                heartrate=trkHeartrate,
+            )
+            atrkpt.save()
+            #except:
+            #    pass
 
     return
 
