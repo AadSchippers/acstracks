@@ -31,7 +31,7 @@ class Track(models.Model):
 
 class Trkpt(models.Model):
     trackid = models.ForeignKey(Track, on_delete=models.CASCADE)
-    lan = models.DecimalField(max_digits=9, decimal_places=6)
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
     lon = models.DecimalField(max_digits=9, decimal_places=6)
     ele = models.DecimalField(max_digits=6, decimal_places=2)
     time = models.DateTimeField()

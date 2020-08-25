@@ -163,9 +163,10 @@ def get_trkpts(trkid, gpxfile):
         except:
             trkHeartrate = None
 
+        atrack = Track.objects.get(id=trkid)
         #try:
         atrkpt = Trkpt.objects.create(
-            trackid=trkid,
+            trackid=atrack,
             lat=Decimal(lat),
             lon=Decimal(lon),
             ele=Decimal(ele),
