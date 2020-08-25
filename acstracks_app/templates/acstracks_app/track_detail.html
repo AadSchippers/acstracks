@@ -50,5 +50,28 @@
                 <td  style="text-align:right">-</td>
             {% endif %}
             </tr>
+    </table><br><br>
+    <table>
+        <th valign="Top" width=400>Latitude</th>
+        <th valign="Top" width=200>Longitude</th>
+        <th valign="Top" width=200>Elevation</th>
+        <th valign="Top" style="text-align:right">Time</th>
+        <th valign="Top" style="text-align:right">Distance</th>
+        <th valign="Top" style="text-align:right">Speed</th>
+        <th valign="Top" style="text-align:right">Cadence</th>
+        <th valign="Top" style="text-align:right">Heartrate</th>
+        {% for trkpt in trkpts %}
+            <tr>
+                <td>{{ trkpt.lat }}</td>
+                <td>{{ trkpt.lon }}</td>
+                <td>{{ trkpt.ele }}</td>
+                <td style="text-align:right">{{ trkpt.time }}</td>
+                <td style="text-align:right">{{ trkpt.distance }}</td>
+                <td style="text-align:right">{{ trkpt.speed }}</td>
+                <td style="text-align:right">{{ trkpt.cadence }}</td>
+                <td style="text-align:right">{{ trkpt.heartrate }}</td>
+            </tr>
+        {% endfor %}
     </table>
+
 {% endblock %}

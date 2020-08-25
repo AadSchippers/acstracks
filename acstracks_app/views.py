@@ -48,9 +48,12 @@ def track_list(request):
 
 def track_detail(request, pk):
     atrack = Track.objects.get(id=pk)
+
+    trkpts = Trkpt.objects.filter(trackid=atrack)
     
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
+        'trkpts': trkpts,
         }
     )
 
@@ -131,55 +134,53 @@ def parse_file(storagefilename=None, filename=None):
             maxheartrate=trkMaxheartrate,
         )
         trk.save()
-        get_trkpts(trk.id, gpxfile)
+        get_trkpts(trk, gpxfile)
     except:
         pass
 
     return
 
 
-def get_trkpts(trkid, gpxfile):
+def get_trkpts(trk, gpxfile):
     namespace = settings.NAMESPACE
     gpxroot = gpxfile.getroot()
     gpxtrk = gpxroot.find('ns:trk', namespace)
-    gpxtrkseg = gpxtrk.find('ns:trkseg', namespace)
-    for trkpt in gpxtrkseg.findall('ns:trkpt', namespace):
-        lat = trkpt.get('lat')
-        lon = trkpt.get('lon')
-        ele = trkpt.find('ns:ele', namespace).text
-        time = trkpt.find('ns:time', namespace).text
-        extensions = trkpt.find('ns:extensions', namespace)
-        distance = extensions.find('ns:distance', namespace).text
-        speed = extensions.find('ns:speed', namespace).text
-        cadence = extensions.find('ns:cadence', namespace)
-        heartrate = extensions.find('ns:heartrate', namespace)
-    
-        try:
-            trkCadence = int(cadence.text)
-        except:
-            trkCadence = None
-        try:
-            trkHeartrate = int(heartrate.text)
-        except:
-            trkHeartrate = None
+    for gpxtrkseg in gpxtrk.findall('ns:trkseg', namespace):
+        for trkpt in gpxtrkseg.findall('ns:trkpt', namespace):
+            lat = trkpt.get('lat')
+            lon = trkpt.get('lon')
+            ele = trkpt.find('ns:ele', namespace).text
+            time = trkpt.find('ns:time', namespace).text
+            extensions = trkpt.find('ns:extensions', namespace)
+            distance = extensions.find('ns:distance', namespace).text
+            speed = extensions.find('ns:speed', namespace).text
+            cadence = extensions.find('ns:cadence', namespace)
+            heartrate = extensions.find('ns:heartrate', namespace)
+        
+            try:
+                trkCadence = int(cadence.text)
+            except:
+                trkCadence = None
+            try:
+                trkHeartrate = int(heartrate.text)
+            except:
+                trkHeartrate = None
 
-        atrack = Track.objects.get(id=trkid)
-        #try:
-        atrkpt = Trkpt.objects.create(
-            trackid=atrack,
-            lat=Decimal(lat),
-            lon=Decimal(lon),
-            ele=Decimal(ele),
-            time=parse(time),
-            distance=Decimal(distance),
-            speed=Decimal(speed),
-            cadence=cadence,
-            heartrate=heartrate,
-        )
-        atrkpt.save()
-        #except:
-        #    pass
-
+            try:
+                atrkpt = Trkpt.objects.create(
+                    trackid=trk,
+                    lat=Decimal(lat),
+                    lon=Decimal(lon),
+                    ele=Decimal(ele),
+                    time=parse(time),
+                    distance=Decimal(distance),
+                    speed=Decimal(speed),
+                    cadence=cadence,
+                    heartrate=heartrate,
+                )
+                atrkpt.save()
+            except:
+                pass
 
     return
 
