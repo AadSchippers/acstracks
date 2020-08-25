@@ -1,0 +1,54 @@
+{% extends 'acstracks_app/base.html' %}
+
+{% block content %}
+    <table style="width:100%">
+        <th valign="Top" width=400>Filename</th>
+        <th valign="Top" width=200>Created date</th>
+        <th valign="Top" width=200>Name</th>
+        <th valign="Top" >Profile</th>
+        <th valign="Top" style="text-align:right">Length</th>
+        <th valign="Top" style="text-align:right">Duration</th>
+        <th valign="Top" style="text-align:right">Average<br>speed</th>
+        <th valign="Top" style="text-align:right">Maximum<br>speed</th>
+        <th valign="Top" style="text-align:right">Average<br>cadence</th>
+        <th valign="Top" style="text-align:right">Maximum<br>cadence</th>
+        <th valign="Top" style="text-align:right">Average<br>heartrate</th>
+        <th valign="Top" style="text-align:right">Mininimum<br> heartrate</th>
+        <th valign="Top" style="text-align:right">Maximum<br>heartrate</th>
+        <tr>
+            <td>{{ atrack.filename }}</td>
+            <td>{{ atrack.created_date|date:"d b Y" }}</td>
+            <td>{{ atrack.name }}</td>
+            <td>{{ atrack.profile }}</td>
+            <td  style="text-align:right">{{ atrack.length }}</td>
+            <td  style="text-align:right">{{ atrack.timelength|time:"H:i:s" }}</td>
+            <td style="text-align:right">{{ atrack.avgspeed }}</td>
+            <td style="text-align:right">{{ atrack.maxspeed }}</td>
+            {% if atrack.avgcadence %}
+                <td style="text-align:right">{{ atrack.avgcadence }}</td>
+            {% else %}
+                <td  style="text-align:right">-</td>
+            {% endif %}
+            {% if atrack.maxcadence %}
+                <td  style="text-align:right">{{ atrack.maxcadence }}</td>
+                {% else %}
+                <td  style="text-align:right">-</td>
+            {% endif %}
+            {% if atrack.avgheartrate %}
+                <td  style="text-align:right">{{ atrack.avgheartrate }}</td>
+            {% else %}
+                <td  style="text-align:right">-</td>
+            {% endif %}
+            {% if atrack.minheartrate %}
+                <td  style="text-align:right">{{ atrack.minheartrate }}</td>
+            {% else %}
+                <td  style="text-align:right">-</td>
+            {% endif %}
+            {% if atrack.maxheartrate %}
+                <td  style="text-align:right">{{ atrack.maxheartrate }}</td>
+            {% else %}
+                <td  style="text-align:right">-</td>
+            {% endif %}
+            </tr>
+    </table>
+{% endblock %}

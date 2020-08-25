@@ -3,11 +3,12 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import xml.etree.ElementTree as ET
-from .models import Track
+from .models import Track, Trkpt
 import os
 from dateutil.parser import parse
 from decimal import *
 from datetime import datetime
+import time
 
 
 def track_list(request):
@@ -45,6 +46,15 @@ def track_list(request):
     )
 
 
+def track_detail(request, pk):
+    atrack = Track.objects.get(id=pk)
+    
+    return render(request, 'acstracks_app/track_detail.html', {
+        'atrack': atrack,
+        }
+    )
+
+
 def parse_file(storagefilename=None, filename=None):
     try:
         path = os.path.join(
@@ -67,6 +77,7 @@ def parse_file(storagefilename=None, filename=None):
     if profile == "Vakantiefiet":
         profile = "Toerfiets"
     length = extensions.find('ns:length', namespace).text
+    timelength = extensions.find('ns:timelength', namespace).text
     avgspeed = extensions.find('ns:avgspeed', namespace).text
     maxspeed = extensions.find('ns:maxspeed', namespace).text
     avgcadence = extensions.find('ns:avgcadence', namespace)
@@ -76,6 +87,7 @@ def parse_file(storagefilename=None, filename=None):
     maxheartrate = extensions.find('ns:maxheartrate', namespace)
 
     trkLength = float(length) / 1000
+    trkTimelength = time.strftime('%H:%M:%S', time.gmtime(int(timelength)))
     trkAvgspeed = float(avgspeed) * 3.6
     trkMaxspeed = float(maxspeed) * 3.6
     try:
@@ -109,6 +121,7 @@ def parse_file(storagefilename=None, filename=None):
             name=name,
             profile=profile,
             length=Decimal(trkLength),
+            timelength=trkTimelength,
             avgspeed=Decimal(trkAvgspeed),
             maxspeed=Decimal(trkMaxspeed),
             avgcadence=trkAvgcadence,
@@ -118,8 +131,54 @@ def parse_file(storagefilename=None, filename=None):
             maxheartrate=trkMaxheartrate,
         )
         trk.save()
+        get_trkpts(trk.id, gpxfile)
     except:
         pass
+
+    return
+
+
+def get_trkpts(trkid, gpxfile):
+    namespace = settings.NAMESPACE
+    gpxroot = gpxfile.getroot()
+    gpxtrk = gpxroot.find('ns:trk', namespace)
+    gpxtrkseg = gpxtrk.find('ns:trkseg', namespace)
+    for trkpt in gpxtrkseg.findall('ns:trkpt', namespace):
+        lat = trkpt.get('lat')
+        lon = trkpt.get('lon')
+        ele = trkpt.find('ns:ele', namespace).text
+        time = trkpt.find('ns:time', namespace).text
+        extensions = trkpt.find('ns:extensions', namespace)
+        distance = extensions.find('ns:distance', namespace).text
+        speed = extensions.find('ns:speed', namespace).text
+        cadence = extensions.find('ns:cadence', namespace)
+        heartrate = extensions.find('ns:heartrate', namespace)
+    
+        try:
+            trkCadence = int(cadence.text)
+        except:
+            trkCadence = None
+        try:
+            trkHeartrate = int(heartrate.text)
+        except:
+            trkHeartrate = None
+
+        #try:
+        atrkpt = Trkpt.objects.create(
+            trackid=trkid,
+            lat=Decimal(lat),
+            lon=Decimal(lon),
+            ele=Decimal(ele),
+            time=parse(time),
+            distance=Decimal(distance),
+            speed=Decimal(speed),
+            cadence=cadence,
+            heartrate=heartrate,
+        )
+        atrkpt.save()
+        #except:
+        #    pass
+
 
     return
 
@@ -144,9 +203,11 @@ def compute_statistics(tracks):
     highest_avgspeed = 0
     highest_maxspeed = 0
     longest_length = float(0)
+    longest_duration = '00:00:00'
     datetime_highest_avgspeed = datetime.now()
     datetime_highest_maxspeed = datetime.now()
     datetime_longest_length = datetime.now()
+    datetime_longest_duration = datetime.now()
 
     for t in tracks:
         total_length = total_length + float(t.length)
@@ -154,6 +215,9 @@ def compute_statistics(tracks):
         if longest_length < t.length:
             longest_length = t.length
             datetime_longest_length = t.created_date
+        if longest_duration < str(t.timelength):
+            longest_duration = str(t.timelength)
+            datetime_longest_duration = t.created_date
         if highest_avgspeed < t.avgspeed:
             highest_avgspeed = t.avgspeed
             datetime_highest_avgspeed = t.created_date
@@ -172,9 +236,11 @@ def compute_statistics(tracks):
         'highest_avgspeed': highest_avgspeed,
         'highest_maxspeed': highest_maxspeed,
         'longest_length': longest_length,
+        'longest_duration': longest_duration,
         'datetime_highest_avgspeed': datetime_highest_avgspeed,
         'datetime_highest_maxspeed': datetime_highest_maxspeed,
         'datetime_longest_length': datetime_longest_length,
+        'datetime_longest_duration': datetime_longest_duration,
     }
 
     return statistics

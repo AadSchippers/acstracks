@@ -1,7 +1,6 @@
 {% extends 'acstracks_app/base.html' %}
 
 {% block content %}
-    <h1>AcsTracks</h1>
     <h3>Add your GPS file(s):</h3>
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -18,21 +17,25 @@
         </tr>
         <tr>
             <td><b>Longest track</b></td><td style="text-align:right">{{ statistics.longest_length }}</td>
-            <td>{{ statistics.datetime_longest_length }}</td>
+            <td>{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
+        </tr>
+        <tr>
+            <td><b>Longest duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
+            <td>{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
         </tr>
         <tr>
             <td><b>Highest maximum speed</b></td><td style="text-align:right">{{ statistics.highest_maxspeed }}</td>
-            <td>{{ statistics.datetime_highest_maxspeed }}</td>
+            <td>{{ statistics.datetime_highest_maxspeed|date:"d b Y" }}</td>
         </tr>
         <tr>
             <td><b>Highest average speed</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
-            <td>{{ statistics.datetime_highest_avgspeed }}</td>
+            <td>{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
         </tr>
     </table><br><br>
     {% endif %}        
     <table style="width:100%">
         <th valign="Top" width=400>Filename</th>
-        <th valign="Top" width=300>Created date</th>
+        <th valign="Top" width=200>Created date</th>
         <th valign="Top" width=200>Name</th>
         <th valign="Top">
             <form method="post" enctype="multipart/form-data">
@@ -47,7 +50,7 @@
             <select name="Profile" id="profile" onclick=this.form.submit()>
             {% if profiles %}
                 {% for profile in profiles %}
-                    {% if profile ==     profile_filter %}
+                    {% if profile == profile_filter %}
                         <option value={{ profile }} selected="selected">{{ profile }}</option>
                     {% else %}
                         <option value={{ profile }}>{{ profile }}</option>
@@ -58,6 +61,7 @@
             </form>
         </th>
         <th valign="Top" style="text-align:right">Length</th>
+        <th valign="Top" style="text-align:right">Duration</th>
         <th valign="Top" style="text-align:right">Average<br>speed</th>
         <th valign="Top" style="text-align:right">Maximum<br>speed</th>
         <th valign="Top" style="text-align:right">Average<br>cadence</th>
@@ -67,11 +71,12 @@
         <th valign="Top" style="text-align:right">Maximum<br>heartrate</th>
         {% for track in tracks %}
             <tr>
-                <td>{{ track.filename }}</td>
-                <td>{{ track.created_date }}</td>
+                <td><a href="{% url 'track_detail' pk=track.pk %}">{{ track.filename }}</a></td>
+                <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 <td>{{ track.profile }}</td>
                 <td  style="text-align:right">{{ track.length }}</td>
+                <td  style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
                 <td style="text-align:right">{{ track.avgspeed }}</td>
                 <td style="text-align:right">{{ track.maxspeed }}</td>
                 {% if track.avgcadence %}
