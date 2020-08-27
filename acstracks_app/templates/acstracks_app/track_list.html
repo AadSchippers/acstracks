@@ -7,32 +7,106 @@
         <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
         <input type="submit">
     </form>
-    {% if statistics.total_length > 0 %}
-    <table>
+    <table style="width:100%">
         <tr>
-            <td><b>Total length</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
+            <td>
+            {% if statistics.total_length > 0 %}
+            <table>
+                <tr>
+                    <td><b>Number of tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
+                </tr>
+                <tr>
+                    <tr>
+                        <td><b>Total length (km)</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total average speed (km/h)</b></td><td style="text-align:right">{{ statistics.total_avgspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Longest track (km)</b></td><td style="text-align:right">{{ statistics.longest_length }}</td>
+                    <td>{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Longest duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
+                    <td>{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Highest maximum speed (km/h)</b></td><td style="text-align:right">{{ statistics.highest_maxspeed }}</td>
+                    <td>{{ statistics.datetime_highest_maxspeed|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Highest average speed (km/h)</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
+                    <td>{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
+                </tr>
+            </table>
+            {% endif %}
+            </td>
+            <td valign="Bottom" style="text-align:right">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <script>
+                        function orderFunction() {
+                            var x = document.getElementById("order").value;
+                            this.form.submit()
+                        }
+                    </script>
+                    <label for="Order">Order:</label>
+                    <select name="Order" id="order" onclick=this.form.submit()>
+                        {% if order_selected == "created_date_ascending" %}
+                            <option value="created_date_ascending" selected="selected">Created date ascending</option>
+                        {% else %}
+                            <option value="created_date_ascending">Created date ascending</option>
+                        {% endif %}
+                        {% if order_selected == "created_date_descending" %}
+                            <option value="created_date_descending" selected="selected">Created date descending</option>
+                        {% else %}
+                            <option value="created_date_descending">Created date descending</option>
+                        {% endif %}
+                        {% if order_selected == "length_ascending" %}
+                            <option value="length_ascending" selected="selected">Length ascending</option>
+                        {% else %}
+                            <option value="Length_ascending">Length ascending</option>
+                        {% endif %}
+                        {% if order_selected == "length_descending" %}
+                            <option value="length_descending" selected="selected">Length descending</option>
+                        {% else %}
+                            <option value="length_descending">Length descending</option>
+                        {% endif %}
+                        {% if order_selected == "duration_ascending" %}
+                            <option value="duration_ascending" selected="selected">Duration_ascending</option>
+                        {% else %}
+                            <option value="duration_ascending">Duration_ascending</option>
+                        {% endif %}
+                        {% if order_selected == "duration_descending" %}
+                            <option value="duration_descending" selected="selected">Duration descending</option>
+                        {% else %}
+                            <option value="duration_descending">Duration descending</option>
+                        {% endif %}
+                        {% if order_selected == "avgspeed_ascending" %}
+                            <option value="avgspeed_ascending" selected="selected">Average speed ascending</option>
+                        {% else %}
+                            <option value="avgspeed_ascending">Average speed ascending</option>
+                        {% endif %}
+                        {% if order_selected == "avgspeed_descending" %}
+                            <option value="avgspeed_descending" selected="selected">Average speed descending</option>
+                        {% else %}
+                            <option value="avgspeed_descending">Average speed descending</option>
+                        {% endif %}
+                        {% if order_selected == "maxspeed_ascending" %}
+                            <option value="maxspeed_ascending" selected="selected">Maximum speed_ascending</option>
+                        {% else %}
+                            <option value="maxspeed_ascending">Maximum speed_ascending</option>
+                        {% endif %}
+                        {% if order_selected == "maxspeed_descending" %}
+                            <option value="maxspeed_descending" selected="selected">Maximum speed_descending</option>
+                        {% else %}
+                            <option value="maxspeed_descending">Maximum speed_descending</option>
+                        {% endif %}
+                        </select>
+                </form>   
+            </td>
         </tr>
-        <tr>
-            <td><b>Total average speed</b></td><td style="text-align:right">{{ statistics.total_avgspeed }}</td>
-        </tr>
-        <tr>
-            <td><b>Longest track</b></td><td style="text-align:right">{{ statistics.longest_length }}</td>
-            <td>{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
-        </tr>
-        <tr>
-            <td><b>Longest duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
-            <td>{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
-        </tr>
-        <tr>
-            <td><b>Highest maximum speed</b></td><td style="text-align:right">{{ statistics.highest_maxspeed }}</td>
-            <td>{{ statistics.datetime_highest_maxspeed|date:"d b Y" }}</td>
-        </tr>
-        <tr>
-            <td><b>Highest average speed</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
-            <td>{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
-        </tr>
-    </table><br><br>
-    {% endif %}        
+    </table><br><br>        
     <table style="width:100%">
         <th valign="Top" width=400>Filename</th>
         <th valign="Top" width=200>Created date</th>
@@ -58,7 +132,6 @@
                 {% endfor %}
             {% endif %}
             </select>
-            </form>
         </th>
         <th valign="Top" style="text-align:right">Length</th>
         <th valign="Top" style="text-align:right">Duration</th>
@@ -107,4 +180,5 @@
                 </tr>
         {% endfor %}
     </table>
+    
 {% endblock %}

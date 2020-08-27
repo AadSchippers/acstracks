@@ -13,27 +13,26 @@ import time
 
 def track_list(request):
     profile_filter = None
+    order_selected = None
     if request.method == 'POST':
         files = request.FILES.getlist('myfile')
         for file in files:
             fs = FileSystemStorage()
             storagefilename = fs.save(file.name, file)
             parse_file(storagefilename, file.name)
+    
+        order_selected = request.POST.get('Order')
         
         profile_filter = request.POST.get('Profile')
 
-    profiles = get_profiles()
-
-    if profile_filter:
-        if profile_filter != "All":
-            tracks = Track.objects.filter(
-                profile=profile_filter
-                ).order_by('created_date')
-        else:
-            tracks = Track.objects.all().order_by('created_date')
-    else:
+    if not order_selected:
+        order_selected = "created_date_ascending"
+    if not profile_filter:
         profile_filter = "All"
-        tracks = Track.objects.all().order_by('created_date')
+
+    profiles = get_profiles()
+    
+    tracks = get_tracks(order_selected, profile_filter)
 
     statistics = compute_statistics(tracks)
     
@@ -44,6 +43,47 @@ def track_list(request):
         'statistics': statistics
         }
     )
+
+
+def get_tracks(order_selected, profile_filter):
+    if order_selected == "created_date_ascending":
+        order_by = "created_date"
+    
+    if order_selected == "created_date_descending":
+        order_by = "-created_date"
+    
+    if order_selected == "length_ascending":
+        order_by = "length"
+    
+    if order_selected == "length_descending":
+        order_by = "-length"
+    
+    if order_selected == "duration_ascending":
+        order_by = "duration"
+    
+    if order_selected == "duration_descending":
+        order_by = "-duration"
+    
+    if order_selected == "avgspeed_ascending":
+        order_by = "-avgspeed"
+    
+    if order_selected == "avgspeed_descending":
+        order_by = "-avgspeed"
+    
+    if order_selected == "maxspeed_ascending":
+        order_by = "maxspeed"
+    
+    if order_selected == "maxspeed_descending":
+        order_by = "-maxspeed"
+    
+    if profile_filter != "All":
+        tracks = Track.objects.filter(
+            profile=profile_filter
+            ).order_by(order_by)
+    else:
+        tracks = Track.objects.all().order_by(order_by)
+
+    return tracks
 
 
 def track_detail(request, pk):
