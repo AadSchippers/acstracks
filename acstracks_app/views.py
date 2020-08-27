@@ -40,6 +40,7 @@ def track_list(request):
         'tracks': tracks,
         'profiles': profiles,
         'profile_filter': profile_filter,
+        'order_selected': order_selected,
         'statistics': statistics
         }
     )
@@ -59,10 +60,10 @@ def get_tracks(order_selected, profile_filter):
         order_by = "-length"
     
     if order_selected == "duration_ascending":
-        order_by = "duration"
+        order_by = "timelength"
     
     if order_selected == "duration_descending":
-        order_by = "-duration"
+        order_by = "-timelength"
     
     if order_selected == "avgspeed_ascending":
         order_by = "-avgspeed"
