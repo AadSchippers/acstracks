@@ -29,8 +29,54 @@ def process_gpx_file(filename):
     # add a markers
     # for each in points:  
     #     folium.Marker(each).add_to(my_map)
+    # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
 
-    #fadd lines
+    # nice green circle
+    folium.vector_layers.CircleMarker(
+            location=[points[0][0], points[0][1]],
+            radius=9,
+            color="white",
+            weight=1,
+            fill_color="green",
+            fill_opacity=1
+        ).add_to(my_map) 
+
+    # OVERLAY triangle
+    folium.RegularPolygonMarker(
+            location=[points[0][0], points[0][1]],
+            fill_color="white",
+            fill_opacity=1,
+            color="white",
+            number_of_sides=3,
+            radius=3,
+            rotation=0,
+        ).add_to(my_map)
+
+    # nice red circle
+    folium.vector_layers.CircleMarker(
+            location=[points[-1][0], points[-1][1]],
+            radius=9,
+            color="white",
+            weight=1,
+            fill_color="red",
+            fill_opacity=1
+        ).add_to(my_map) 
+
+     # OVERLAY square
+    folium.RegularPolygonMarker(
+            location=[points[-1][0], points[-1][1]],
+            fill_color="white",
+            fill_opacity=1,
+            color="white",
+            number_of_sides=4,
+            radius=3,
+            rotation=45,
+            popup="popup"
+        ).add_to(my_map)
+ 
+    # folium.LayerControl(collapsed=True).add_to(my_map)
+
+    # add lines
     folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(my_map)
 
     # Save map
