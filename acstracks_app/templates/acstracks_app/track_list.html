@@ -4,8 +4,10 @@
     <h3>Add your GPS file(s):</h3>
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-        <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
-        <input type="submit">
+    <input type="hidden" name="Order" value="{{ order_selected }}">
+    <input type="hidden" name="Profile" value="{{ profile_filter }}">
+    <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
+    <input type="submit">
     </form>
     <table style="width:100%">
         <tr>
@@ -44,6 +46,7 @@
             <td valign="Bottom" style="text-align:right">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <input type="hidden" name="Profile" value="{{ profile_filter }}">
                     <script>
                         function orderFunction() {
                             var x = document.getElementById("order").value;
@@ -114,6 +117,7 @@
         <th valign="Top">
             <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            <input type="hidden" name="Order" value="{{ order_selected }}">
             <script>
                 function profileFunction() {
                     var x = document.getElementById("profile").value;
