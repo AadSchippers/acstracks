@@ -1,4 +1,5 @@
 {% extends 'acstracks_app/base.html' %}
+{% load static %}
 
 {% block content %}
     <table>
@@ -22,7 +23,7 @@
                     <td style="text-align:right">{{ atrack.profile }}</td>
                 </tr>
                 <tr>
-                    <td><b>Length</b></td>
+                    <td><b>Length (km)</b></td>
                     <td  style="text-align:right">{{ atrack.length }}</td>
                 </tr>
                 <tr>
@@ -30,11 +31,11 @@
                     <td  style="text-align:right">{{ atrack.timelength|time:"H:i:s" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Average speed</b></td>
+                    <td><b>Average speed (km/h)</b></td>
                     <td style="text-align:right">{{ atrack.avgspeed }}</td>
                 </tr>
                 <tr>
-                    <td><b>Maximum speed</b></td>
+                    <td><b>Maximum speed (km/h)</b></td>
                     <td style="text-align:right">{{ atrack.maxspeed }}</td>
                 </tr>
                 {% if atrack.avgcadence %}
@@ -70,7 +71,8 @@
             </table>
         </td>
         <td>
-            <iframe src="/static/maps/demo-map.html"  style="border:none;height:700px;width:900px;" title="Track map"></iframe>
+            {% static "./maps/map.html" %}
+            <iframe src={% static "./maps/map.html" %}  style="border:none;height:700px;width:900px;" title="Track map"></iframe>
         </td>
     </tr>
 </table><br><br>

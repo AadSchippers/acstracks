@@ -125,6 +125,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+MAPS_URL = '/acstracks_app/static/maps/'
+MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
+
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 
 from .mysettings import *   # noqa

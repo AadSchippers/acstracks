@@ -9,6 +9,7 @@ from dateutil.parser import parse
 from decimal import *
 from datetime import datetime
 import time
+from .mapviews import *
 
 
 def track_list(request):
@@ -90,11 +91,10 @@ def get_tracks(order_selected, profile_filter):
 def track_detail(request, pk):
     atrack = Track.objects.get(id=pk)
 
-    trkpts = Trkpt.objects.filter(trackid=atrack)
+    process_gpx_file(atrack.filename)
     
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
-        'trkpts': trkpts,
         }
     )
 
@@ -176,59 +176,8 @@ def parse_file(storagefilename=None, filename=None):
             maxheartrate=trkMaxheartrate,
         )
         trk.save()
-        '''
-        Too time consuming
-        get_trkpts(trk, gpxfile)
-        '''
     except:
         pass
-
-    return
-
-
-def get_trkpts(trk, gpxfile):
-    namespace = settings.NAMESPACE
-    gpxroot = gpxfile.getroot()
-    gpxtrk = gpxroot.find('ns:trk', namespace)
-    for gpxtrkseg in gpxtrk.findall('ns:trkseg', namespace):
-        for trkpt in gpxtrkseg.findall('ns:trkpt', namespace):
-            lat = trkpt.get('lat')
-            lon = trkpt.get('lon')
-            ele = trkpt.find('ns:ele', namespace).text
-            time = trkpt.find('ns:time', namespace).text
-            extensions = trkpt.find('ns:extensions', namespace)
-            distance = extensions.find('ns:distance', namespace).text
-            speed = extensions.find('ns:speed', namespace).text
-            cadence = extensions.find('ns:cadence', namespace)
-            heartrate = extensions.find('ns:heartrate', namespace)
-        
-            trkDistance = float(distance) / 1000
-            trkSpeed = float(speed) * 3.6
-
-            try:
-                trkCadence = int(cadence.text)
-            except:
-                trkCadence = None
-            try:
-                trkHeartrate = int(heartrate.text)
-            except:
-                trkHeartrate = None
-
-            #try:
-            atrkpt = Trkpt.objects.create(
-                trackid=trk,
-                lat=Decimal(lat),
-                lon=Decimal(lon),
-                ele=Decimal(ele),
-                time=parse(time),
-                distance=Decimal(trkDistance),
-                speed=Decimal(trkSpeed),
-                cadence=trkCadence,
-                heartrate=trkHeartrate,
-            )
-            atrkpt.save()
-            #except:
-            #    pass
 
     return
 
@@ -245,8 +194,6 @@ def get_profiles():
 
 def compute_statistics(tracks):
     statistics = {}
-
-    #getcontext().prec = 2
 
     total_length = float(0)
     total_avgspeed = float(0)
