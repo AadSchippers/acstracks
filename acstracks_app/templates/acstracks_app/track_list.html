@@ -47,57 +47,57 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                    <label for="Order">Order:</label>
+                    <label for="Order">Sort order:</label>
                     <select name="Order" id="order" onclick=this.form.submit()>
                         {% if order_selected == "created_date_ascending" %}
-                            <option value="created_date_ascending" selected="selected">Created date ascending</option>
+                            <option value="created_date_ascending" selected="selected">Created date (ascending)</option>
                         {% else %}
-                            <option value="created_date_ascending">Created date ascending</option>
+                            <option value="created_date_ascending">Created date (ascending)</option>
                         {% endif %}
                         {% if order_selected == "created_date_descending" %}
-                            <option value="created_date_descending" selected="selected">Created date descending</option>
+                            <option value="created_date_descending" selected="selected">Created date (descending)</option>
                         {% else %}
-                            <option value="created_date_descending">Created date descending</option>
+                            <option value="created_date_descending">Created date (descending)</option>
                         {% endif %}
                         {% if order_selected == "length_ascending" %}
-                            <option value="length_ascending" selected="selected">Length ascending</option>
+                            <option value="length_ascending" selected="selected">Length (ascending)</option>
                         {% else %}
-                            <option value="Length_ascending">Length ascending</option>
+                            <option value="Length_ascending">Length (ascending)</option>
                         {% endif %}
                         {% if order_selected == "length_descending" %}
-                            <option value="length_descending" selected="selected">Length descending</option>
+                            <option value="length_descending" selected="selected">Length (descending)</option>
                         {% else %}
-                            <option value="length_descending">Length descending</option>
+                            <option value="length_descending">Length (descending)</option>
                         {% endif %}
                         {% if order_selected == "duration_ascending" %}
-                            <option value="duration_ascending" selected="selected">Duration_ascending</option>
+                            <option value="duration_ascending" selected="selected">Duration (ascending)</option>
                         {% else %}
-                            <option value="duration_ascending">Duration_ascending</option>
+                            <option value="duration_ascending">Duration (ascending)</option>
                         {% endif %}
                         {% if order_selected == "duration_descending" %}
-                            <option value="duration_descending" selected="selected">Duration descending</option>
+                            <option value="duration_descending" selected="selected">Duration (descending)</option>
                         {% else %}
-                            <option value="duration_descending">Duration descending</option>
+                            <option value="duration_descending">Duration (descending)</option>
                         {% endif %}
                         {% if order_selected == "avgspeed_ascending" %}
-                            <option value="avgspeed_ascending" selected="selected">Average speed ascending</option>
+                            <option value="avgspeed_ascending" selected="selected">Average speed (ascending)</option>
                         {% else %}
-                            <option value="avgspeed_ascending">Average speed ascending</option>
+                            <option value="avgspeed_ascending">Average speed (ascending)</option>
                         {% endif %}
                         {% if order_selected == "avgspeed_descending" %}
-                            <option value="avgspeed_descending" selected="selected">Average speed descending</option>
+                            <option value="avgspeed_descending" selected="selected">Average speed (descending)</option>
                         {% else %}
-                            <option value="avgspeed_descending">Average speed descending</option>
+                            <option value="avgspeed_descending">Average speed (descending)</option>
                         {% endif %}
                         {% if order_selected == "maxspeed_ascending" %}
                             <option value="maxspeed_ascending" selected="selected">Maximum speed_ascending</option>
                         {% else %}
-                            <option value="maxspeed_ascending">Maximum speed_ascending</option>
+                            <option value="maxspeed_ascending">Maximum speed (ascending)</option>
                         {% endif %}
                         {% if order_selected == "maxspeed_descending" %}
-                            <option value="maxspeed_descending" selected="selected">Maximum speed_descending</option>
+                            <option value="maxspeed_descending" selected="selected">Maximum speed (descending)</option>
                         {% else %}
-                            <option value="maxspeed_descending">Maximum speed_descending</option>
+                            <option value="maxspeed_descending">Maximum speed (descending)</option>
                         {% endif %}
                         </select>
                 </form>   
