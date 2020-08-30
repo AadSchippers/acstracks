@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import xml.etree.ElementTree as ET
-from .models import Track, Trkpt
+from .models import Track
 import os
 from dateutil.parser import parse
 from decimal import *
@@ -125,6 +125,8 @@ def parse_file(storagefilename=None, filename=None):
     timelength = extensions.find('ns:timelength', namespace).text
     avgspeed = extensions.find('ns:avgspeed', namespace).text
     maxspeed = extensions.find('ns:maxspeed', namespace).text
+    totalascent = extensions.find('ns:totalascent', namespace).text
+    totaldescent = extensions.find('ns:totaldescent', namespace).text
     avgcadence = extensions.find('ns:avgcadence', namespace)
     maxcadence = extensions.find('ns:maxcadence', namespace)
     avgheartrate = extensions.find('ns:avgheartrate', namespace)
@@ -169,6 +171,8 @@ def parse_file(storagefilename=None, filename=None):
             timelength=trkTimelength,
             avgspeed=Decimal(trkAvgspeed),
             maxspeed=Decimal(trkMaxspeed),
+            totalascent=Decimal(totalascent),
+            totaldescent=Decimal(totaldescent),
             avgcadence=trkAvgcadence,
             maxcadence=trkMaxcadence,
             avgheartrate=trkAvgheartrate,
@@ -201,10 +205,14 @@ def compute_statistics(tracks):
     highest_maxspeed = 0
     longest_length = float(0)
     longest_duration = '00:00:00'
+    max_ascent = float(0)
+    max_descent = float(0)
     datetime_highest_avgspeed = datetime.now()
     datetime_highest_maxspeed = datetime.now()
     datetime_longest_length = datetime.now()
     datetime_longest_duration = datetime.now()
+    datetime_max_ascent = datetime.now()
+    datetime_max_descent = datetime.now()
 
     for t in tracks:
         total_length = total_length + float(t.length)
@@ -221,6 +229,12 @@ def compute_statistics(tracks):
         if highest_maxspeed < t.maxspeed:
             highest_maxspeed = t.maxspeed
             datetime_highest_maxspeed = t.created_date
+        if max_descent < t.totaldescent:
+            max_descent = t.totaldescent
+            datetime_max_descent = t.created_date
+        if max_ascent < t.totalascent:
+            max_ascent = t.totalascent
+            datetime_max_ascent = t.created_date
 
     if total_length > 0:
         total_avgspeed = round((total_avgspeed / total_length), 2)
@@ -234,10 +248,14 @@ def compute_statistics(tracks):
         'highest_maxspeed': highest_maxspeed,
         'longest_length': longest_length,
         'longest_duration': longest_duration,
+        'max_ascent': max_ascent,
+        'max_descent': max_descent,
         'datetime_highest_avgspeed': datetime_highest_avgspeed,
         'datetime_highest_maxspeed': datetime_highest_maxspeed,
         'datetime_longest_length': datetime_longest_length,
         'datetime_longest_duration': datetime_longest_duration,
+        'datetime_max_ascent': datetime_max_ascent,
+        'datetime_max_descent': datetime_max_descent,
     }
 
     return statistics

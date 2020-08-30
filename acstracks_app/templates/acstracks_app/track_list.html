@@ -40,6 +40,14 @@
                     <td><b>Highest average speed (km/h)</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
                     <td>{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
                 </tr>
+                <tr>
+                    <td><b>Maximum ascent (m)</b></td><td style="text-align:right">{{ statistics.max_ascent }}</td>
+                    <td>{{ statistics.datetime_max_ascent|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Maximum descent (m)</b></td><td style="text-align:right">{{ statistics.max_descent }}</td>
+                    <td>{{ statistics.datetime_max_descent|date:"d b Y" }}</td>
+                </tr>
             </table>
             {% endif %}
             </td>
@@ -129,11 +137,10 @@
         <th valign="Top" style="text-align:right">Duration</th>
         <th valign="Top" style="text-align:right">Average<br>speed</th>
         <th valign="Top" style="text-align:right">Maximum<br>speed</th>
+        <th valign="Top" style="text-align:right">Total<br>ascent</th>
+        <th valign="Top" style="text-align:right">Total<br>descent</th>
         <th valign="Top" style="text-align:right">Average<br>cadence</th>
-        <th valign="Top" style="text-align:right">Maximum<br>cadence</th>
         <th valign="Top" style="text-align:right">Average<br>heartrate</th>
-        <th valign="Top" style="text-align:right">Mininimum<br> heartrate</th>
-        <th valign="Top" style="text-align:right">Maximum<br>heartrate</th>
         {% for track in tracks %}
             <tr>
                 <td><a href="{% url 'track_detail' pk=track.pk %}"><b>{{ track.filename }}</b></a></td>
@@ -144,28 +151,15 @@
                 <td  style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
                 <td style="text-align:right">{{ track.avgspeed }}</td>
                 <td style="text-align:right">{{ track.maxspeed }}</td>
+                <td style="text-align:right">{{ track.totalascent }}</td>
+                <td style="text-align:right">{{ track.totaldescent }}</td>
                 {% if track.avgcadence %}
                     <td style="text-align:right">{{ track.avgcadence }}</td>
                 {% else %}
                     <td  style="text-align:right">-</td>
                 {% endif %}
-                {% if track.maxcadence %}
-                    <td  style="text-align:right">{{ track.maxcadence }}</td>
-                    {% else %}
-                    <td  style="text-align:right">-</td>
-                {% endif %}
                 {% if track.avgheartrate %}
                     <td  style="text-align:right">{{ track.avgheartrate }}</td>
-                {% else %}
-                    <td  style="text-align:right">-</td>
-                {% endif %}
-                {% if track.minheartrate %}
-                    <td  style="text-align:right">{{ track.minheartrate }}</td>
-                {% else %}
-                    <td  style="text-align:right">-</td>
-                {% endif %}
-                {% if track.maxheartrate %}
-                    <td  style="text-align:right">{{ track.maxheartrate }}</td>
                 {% else %}
                     <td  style="text-align:right">-</td>
                 {% endif %}

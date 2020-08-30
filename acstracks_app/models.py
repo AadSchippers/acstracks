@@ -13,6 +13,8 @@ class Track(models.Model):
     timelength = models.TimeField()    
     avgspeed = models.DecimalField(max_digits=6, decimal_places=2)
     maxspeed = models.DecimalField(max_digits=6, decimal_places=2)
+    totalascent = models.DecimalField(max_digits=6, decimal_places=2)
+    totaldescent = models.DecimalField(max_digits=6, decimal_places=2)
     avgcadence = models.IntegerField(null=True, blank=True, default=None)
     maxcadence = models.IntegerField(null=True, blank=True, default=None)
     avgheartrate = models.IntegerField(null=True, blank=True, default=None)
@@ -28,14 +30,3 @@ class Track(models.Model):
             self.length,
             )
 
-
-class Trkpt(models.Model):
-    trackid = models.ForeignKey(Track, on_delete=models.CASCADE)
-    lat = models.DecimalField(max_digits=9, decimal_places=6)
-    lon = models.DecimalField(max_digits=9, decimal_places=6)
-    ele = models.DecimalField(max_digits=6, decimal_places=2)
-    time = models.DateTimeField()
-    distance = models.DecimalField(max_digits=6, decimal_places=2)
-    speed = models.DecimalField(max_digits=6, decimal_places=2)
-    cadence = models.IntegerField(null=True, blank=True, default=None)
-    heartrate = models.IntegerField(null=True, blank=True, default=None)
