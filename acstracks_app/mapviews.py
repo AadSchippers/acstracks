@@ -5,6 +5,8 @@ import gpxpy.gpx
 import folium
 from folium.features import DivIcon
 from decimal import *
+from datetime import datetime
+from pytz import timezone
 
 
 def process_gpx_file(filename):
@@ -29,7 +31,8 @@ def process_gpx_file(filename):
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                      ]))
-                points_info.append(tuple([point.time.strftime("%H:%M:%S"),
+                timezone_info = timezone(settings.TIME_ZONE)   
+                points_info.append(tuple([point.time.astimezone(timezone_info).strftime("%H:%M:%S"),
                                     round(distance, 2),
                                     round(speed, 2),
                                      ]))
