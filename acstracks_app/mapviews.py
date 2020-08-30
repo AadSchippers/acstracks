@@ -65,10 +65,10 @@ def process_gpx_file(filename):
     #     folium.Marker(each).add_to(my_map)
     # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
 
-    for x in range(int(len(points)/10), len(points), int(len(points)/10)):
+    for x in range(int(len(points)/10), len(points), int(len(points)/11)):
         html = "<table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
         "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(points_info[x][1])+ "</td></tr>"\
-        "<tr><td><b>Speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"
+        "<tr><td><b>Speed</b></td><td>"+str(points_info[x][2])+"</td></tr>"
         popup = folium.Popup(html, max_width=300)
         folium.Marker(points[x], popup=popup).add_to(my_map)
 
