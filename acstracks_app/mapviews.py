@@ -3,6 +3,8 @@ import os
 import gpxpy
 import gpxpy.gpx
 import folium
+from folium.features import DivIcon
+from decimal import *
 
 
 def process_gpx_file(filename):
@@ -15,10 +17,22 @@ def process_gpx_file(filename):
 
     gpx = gpxpy.parse(gpx_file)
     points = []
+    points_info = []
     for track in gpx.tracks:
         for segment in track.segments:        
             for point in segment.points:
-                points.append(tuple([point.latitude, point.longitude]))
+                for extension in point.extensions:
+                    if extension.tag == 'distance':
+                        distance = float(extension.text) / 1000
+                    if extension.tag == 'speed':
+                        speed = float(extension.text) * 3.6
+                points.append(tuple([point.latitude,
+                                    point.longitude,
+                                     ]))
+                points_info.append(tuple([point.time.strftime("%H:%M:%S"),
+                                    round(distance, 2),
+                                    round(speed, 2),
+                                     ]))
     # print(points)
     ave_lat = sum(p[0] for p in points)/len(points)
     ave_lon = sum(p[1] for p in points)/len(points)
@@ -50,6 +64,13 @@ def process_gpx_file(filename):
     # for each in points:  
     #     folium.Marker(each).add_to(my_map)
     # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
+
+    for x in range(int(len(points)/10), len(points), int(len(points)/10)):
+        html = "<table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
+        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(points_info[x][1])+ "</td></tr>"\
+        "<tr><td><b>Speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"
+        popup = folium.Popup(html, max_width=300)
+        folium.Marker(points[x], popup=popup).add_to(my_map)
 
     # nice green circle
     folium.vector_layers.CircleMarker(
