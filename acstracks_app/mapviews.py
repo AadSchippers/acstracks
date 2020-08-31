@@ -20,20 +20,20 @@ def process_gpx_file(filename):
     gpx = gpxpy.parse(gpx_file)
     points = []
     points_info = []
+    timezone_info = timezone(settings.TIME_ZONE)   
     for track in gpx.tracks:
         for segment in track.segments:        
             for point in segment.points:
                 for extension in point.extensions:
                     if extension.tag == 'distance':
-                        distance = float(extension.text) / 1000
+                        distance = float(extension.text)
                     if extension.tag == 'speed':
                         speed = float(extension.text) * 3.6
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                      ]))
-                timezone_info = timezone(settings.TIME_ZONE)   
                 points_info.append(tuple([point.time.astimezone(timezone_info).strftime("%H:%M:%S"),
-                                    round(distance, 2),
+                                    distance,
                                     round(speed, 2),
                                      ]))
     # print(points)
@@ -68,57 +68,48 @@ def process_gpx_file(filename):
     #     folium.Marker(each).add_to(my_map)
     # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
 
+    i = 0
+    t0 = datetime.strptime(points_info[0][0], "%H:%M:%S")
+
     for x in range(int(len(points)/10), len(points), int(len(points)/11)):
-        html = "<table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
-        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(points_info[x][1])+ "</td></tr>"\
-        "<tr><td><b>Speed</b></td><td>"+str(points_info[x][2])+"</td></tr>"
+        i = i + 1
+        tx = datetime.strptime(points_info[x][0], "%H:%M:%S")
+        duration = tx - t0
+        distance = float(points_info[x][1]) / 1000
+        avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
+        tooltip = 'Intermediate point '+ str(i)+ ', click for details'
+        html = "<h3>Intermediate point "+ str(i)+"</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
+        "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
+        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
+        "<tr><td><b>Current speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"\
+        "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>"\
+        "</table>"
         popup = folium.Popup(html, max_width=300)
-        folium.Marker(points[x], popup=popup).add_to(my_map)
+        folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
 
-    # nice green circle
-    folium.vector_layers.CircleMarker(
-            location=[points[0][0], points[0][1]],
-            radius=12,
-            color="white",
-            weight=1,
-            fill_color="green",
-            fill_opacity=1
-        ).add_to(my_map) 
+    # start marker
+    tooltip = 'Start, click for details'
+    html = "<h3>Start</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[0][0]+"</td></tr>"\
+    "</table>"
+    popup = folium.Popup(html, max_width=300)
+    folium.Marker(points[0], icon=folium.Icon(color='green'), tooltip=tooltip, popup=popup).add_to(my_map)
 
-    # OVERLAY triangle
-    folium.RegularPolygonMarker(
-            location=[points[0][0], points[0][1]],
-            fill_color="white",
-            fill_opacity=1,
-            color="white",
-            number_of_sides=3,
-            radius=4,
-            rotation=0,
-        ).add_to(my_map)
+    # finish marker
+    tooltip = 'Finish, click for details'
+    tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
+    duration = tx - t0
+    avgspeed = float((points_info[-1][1] / duration.seconds) * 3.6)
+    distance = float(points_info[-1][1]) / 1000
 
-    # nice red circle
-    folium.vector_layers.CircleMarker(
-            location=[points[-1][0], points[-1][1]],
-            radius=12,
-            color="white",
-            weight=1,
-            fill_color="red",
-            fill_opacity=1
-        ).add_to(my_map) 
-
-     # OVERLAY square
-    folium.RegularPolygonMarker(
-            location=[points[-1][0], points[-1][1]],
-            fill_color="white",
-            fill_opacity=1,
-            color="white",
-            number_of_sides=4,
-            radius=4,
-            rotation=45,
-            popup="popup"
-        ).add_to(my_map)
+    html = "<h3>Finish</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>"\
+    "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
+    "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
+    "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>"\
+    "</table>"
+    popup = folium.Popup(html, max_width=300)
+    folium.Marker(points[-1], icon=folium.Icon(color='red'), tooltip=tooltip, popup=popup).add_to(my_map)
  
-    # folium.LayerControl(collapsed=True).add_to(my_map)
+    folium.LayerControl(collapsed=True).add_to(my_map)
 
     # add lines
     folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(my_map)
