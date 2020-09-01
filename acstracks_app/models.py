@@ -1,10 +1,13 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Track(models.Model):
-    filename = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=150)
+    displayfilename = models.CharField(max_length=255)
+    storagefilename = models.CharField(max_length=255)
     creator = models.CharField(max_length=255)
     created_date = models.DateTimeField()
     name = models.CharField(max_length=255)
@@ -21,12 +24,14 @@ class Track(models.Model):
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
 
+    class Meta:
+        unique_together = ('username', 'displayfilename')
+
     def __str__(self):
         return "%s, %s, %s, %s, %s" % (
-            self.filename,
+            self.displayfilename,
             self.created_date,
             self.name,
-            self.creator,
             self.length,
             )
 

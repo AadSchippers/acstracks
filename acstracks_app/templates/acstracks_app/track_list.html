@@ -12,7 +12,6 @@
                     <input type="submit">
                 </form>
             </td>
-            <td style="text-align:right"><a href="/logout/"><b>Logout</b></a></td>
         </tr>
     </table>
     <table style="width:100%">
@@ -149,7 +148,7 @@
         <th valign="Top" style="text-align:right">Average<br>heartrate</th>
         {% for track in tracks %}
             <tr>
-                <td><a href="{% url 'track_detail' pk=track.pk %}"><b>{{ track.filename }}</b></a></td>
+                <td><a href="{% url 'track_detail' pk=track.pk %}"><b>{{ track.displayfilename }}</b></a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 <td>{{ track.profile }}</td>

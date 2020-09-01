@@ -24,7 +24,7 @@ def track_list(request):
         for file in files:
             fs = FileSystemStorage()
             storagefilename = fs.save(file.name, file)
-            parse_file(storagefilename, file.name)
+            parse_file(request, storagefilename, file.name)
     
         order_selected = request.POST.get('Order')
         
@@ -37,7 +37,7 @@ def track_list(request):
 
     bike_profiles = get_bike_profiles()
     
-    tracks = get_tracks(order_selected, profile_filter)
+    tracks = get_tracks(request, order_selected, profile_filter)
 
     statistics = compute_statistics(tracks)
     
@@ -51,7 +51,7 @@ def track_list(request):
     )
 
 
-def get_tracks(order_selected, profile_filter):
+def get_tracks(request, order_selected, profile_filter):
     if order_selected == "created_date_ascending":
         order_by = "created_date"
     
@@ -84,10 +84,11 @@ def get_tracks(order_selected, profile_filter):
     
     if profile_filter != "All":
         tracks = Track.objects.filter(
+            username=request.user.username,
             profile=profile_filter
             ).order_by(order_by)
     else:
-        tracks = Track.objects.all().order_by(order_by)
+        tracks = Track.objects.filter(username=request.user.username).order_by(order_by)
 
     return tracks
 
@@ -96,7 +97,7 @@ def get_tracks(order_selected, profile_filter):
 def track_detail(request, pk):
     atrack = Track.objects.get(id=pk)
 
-    process_gpx_file(atrack.filename)
+    process_gpx_file(atrack.storagefilename)
     
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
@@ -104,7 +105,7 @@ def track_detail(request, pk):
     )
 
 
-def parse_file(storagefilename=None, filename=None):
+def parse_file(request, storagefilename=None, displayfilename=None):
     try:
         path = os.path.join(
             settings.MEDIA_ROOT,
@@ -167,7 +168,9 @@ def parse_file(storagefilename=None, filename=None):
 
     try:
         trk = Track.objects.create(
-            filename=filename,
+            username=request.user.username,
+            displayfilename=displayfilename,
+            storagefilename=storagefilename,
             creator=creator,
             created_date=parse(created_date),
             name=name,
