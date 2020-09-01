@@ -20,6 +20,8 @@ def process_gpx_file(filename):
     gpx = gpxpy.parse(gpx_file)
     points = []
     points_info = []
+    previous_distance = -1
+    previous_speed = -1
     timezone_info = timezone(settings.TIME_ZONE)   
     for track in gpx.tracks:
         for segment in track.segments:        
@@ -29,6 +31,9 @@ def process_gpx_file(filename):
                         distance = float(extension.text)
                     if extension.tag == 'speed':
                         speed = float(extension.text) * 3.6
+                if distance < previous_distance:
+                    distance = previous_distance
+                    speed = previous_speed
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                      ]))
@@ -36,6 +41,9 @@ def process_gpx_file(filename):
                                     distance,
                                     round(speed, 2),
                                      ]))
+                previous_distance = distance
+                previous_speed = speed
+
     # print(points)
     ave_lat = sum(p[0] for p in points)/len(points)
     ave_lon = sum(p[1] for p in points)/len(points)
@@ -70,8 +78,14 @@ def process_gpx_file(filename):
 
     i = 0
     t0 = datetime.strptime(points_info[0][0], "%H:%M:%S")
+    previous_marker_distance = 0
 
-    for x in range(int(len(points)/10), len(points), int(len(points)/11)):
+    # for x in range(int(len(points)/10), len(points), int(len(points)/11)):
+    for x in range(len(points)):
+        distance = float(points_info[x][1]) / 1000
+        if distance < previous_marker_distance + 5:
+            continue
+        previous_marker_distance = distance
         i = i + 1
         tx = datetime.strptime(points_info[x][0], "%H:%M:%S")
         duration = tx - t0
@@ -109,7 +123,7 @@ def process_gpx_file(filename):
     popup = folium.Popup(html, max_width=300)
     folium.Marker(points[-1], icon=folium.Icon(color='red'), tooltip=tooltip, popup=popup).add_to(my_map)
  
-    folium.LayerControl(collapsed=True).add_to(my_map)
+    # folium.LayerControl(collapsed=True).add_to(my_map)
 
     # add lines
     folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(my_map)
