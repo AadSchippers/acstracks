@@ -1,14 +1,20 @@
-{% extends 'acstracks_app/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-    <h3>Add your GPS file(s):</h3>
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="hidden" name="Order" value="{{ order_selected }}">
-    <input type="hidden" name="Profile" value="{{ profile_filter }}">
-    <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
-    <input type="submit">
-    </form>
+    <table style="width:100%">
+        <tr>
+            <td>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="Order" value="{{ order_selected }}">
+                    <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                    <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
+                    <input type="submit">
+                </form>
+            </td>
+            <td style="text-align:right"><a href="/logout/"><b>Logout</b></a></td>
+        </tr>
+    </table>
     <table style="width:100%">
         <tr>
             <td>
@@ -122,8 +128,8 @@
             <input type="hidden" name="Order" value="{{ order_selected }}">
             <label for="Profile">Profile:</label>
             <select name="Profile" id="profile" onclick=this.form.submit()>
-            {% if profiles %}
-                {% for profile in profiles %}
+            {% if bike_profiles %}
+                {% for profile in bike_profiles %}
                     {% if profile == profile_filter %}
                         <option value={{ profile }} selected="selected">{{ profile }}</option>
                     {% else %}

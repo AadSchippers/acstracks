@@ -86,13 +86,13 @@ def process_gpx_file(filename):
         if distance < previous_marker_distance + 5:
             continue
         previous_marker_distance = distance
-        i = i + 1
+        i = i + 5
         tx = datetime.strptime(points_info[x][0], "%H:%M:%S")
         duration = tx - t0
         distance = float(points_info[x][1]) / 1000
         avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
-        tooltip = 'Intermediate point '+ str(i)+ ', click for details'
-        html = "<h3>Intermediate point "+ str(i)+"</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
+        tooltip = 'Intermediate point '+ str(i)+ ' km, click for details'
+        html = "<h3>Intermediate point "+ str(i)+" km</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
         "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
         "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
         "<tr><td><b>Current speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"\

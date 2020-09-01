@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.shortcuts import HttpResponseRedirect
 import xml.etree.ElementTree as ET
 from .models import Track
 import os
@@ -12,6 +15,7 @@ import time
 from .mapviews import *
 
 
+@login_required(login_url='/login/')
 def track_list(request):
     profile_filter = None
     order_selected = None
@@ -31,7 +35,7 @@ def track_list(request):
     if not profile_filter:
         profile_filter = "All"
 
-    profiles = get_profiles()
+    bike_profiles = get_bike_profiles()
     
     tracks = get_tracks(order_selected, profile_filter)
 
@@ -39,7 +43,7 @@ def track_list(request):
     
     return render(request, 'acstracks_app/track_list.html', {
         'tracks': tracks,
-        'profiles': profiles,
+        'bike_profiles': bike_profiles,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
         'statistics': statistics
@@ -88,6 +92,7 @@ def get_tracks(order_selected, profile_filter):
     return tracks
 
 
+@login_required(login_url='/login/')
 def track_detail(request, pk):
     atrack = Track.objects.get(id=pk)
 
@@ -186,14 +191,14 @@ def parse_file(storagefilename=None, filename=None):
     return
 
 
-def get_profiles():
-    dictProfiles = Track.objects.values('profile').distinct()
+def get_bike_profiles():
+    dictbike_profiles = Track.objects.values('profile').distinct()
 
-    listProfiles = ['All']
-    for p in dictProfiles:
-        listProfiles.append(p.get('profile'))
+    listbike_profiles = ['All']
+    for p in dictbike_profiles:
+        listbike_profiles.append(p.get('profile'))
 
-    return listProfiles
+    return listbike_profiles
 
 
 def compute_statistics(tracks):
@@ -259,3 +264,9 @@ def compute_statistics(tracks):
     }
 
     return statistics
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/')
+    # Redirect to a success page.
