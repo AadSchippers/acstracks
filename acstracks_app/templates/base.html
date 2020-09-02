@@ -10,7 +10,7 @@
         <div class="detail">     
             <table style="width:100%">
                 <tr>
-                    <td><a href='/'><h1>AcsTracks</h1></a></td>
+                    <td><a href="{% url 'track_list' order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}"><h1>AcsTracks</h1></a></td>
                     {% if request.user.username %}                  
                         <td style="text-align:right">User {{ request.user.username }} logged in<br><a href="/logout/"><b>Logout</b></a></td>
                     {% endif %}    

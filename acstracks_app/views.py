@@ -16,9 +16,7 @@ from .mapviews import *
 
 
 @login_required(login_url='/login/')
-def track_list(request):
-    profile_filter = None
-    order_selected = None
+def track_list(request, order_selected=None, profile_filter=None, intermediate_points_selected=None):
     if request.method == 'POST':
         files = request.FILES.getlist('myfile')
         for file in files:
@@ -34,6 +32,8 @@ def track_list(request):
         order_selected = "created_date_ascending"
     if not profile_filter:
         profile_filter = "All"
+    if not intermediate_points_selected:
+        intermediate_points_selected = 0
 
     bike_profiles = get_bike_profiles()
     
@@ -46,7 +46,8 @@ def track_list(request):
         'bike_profiles': bike_profiles,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
-        'statistics': statistics
+        'statistics': statistics,
+        'intermediate_points_selected': intermediate_points_selected,
         }
     )
 
@@ -94,13 +95,16 @@ def get_tracks(request, order_selected, profile_filter):
 
 
 @login_required(login_url='/login/')
-def track_detail(request, pk):
-    intermediate_points_selected = None
+def track_detail(request, pk, order_selected=None, profile_filter=None, intermediate_points_selected=None):
     if request.method == 'POST':       
         intermediate_points_selected = request.POST.get('Intermediate_points')
 
+    if not order_selected:
+        order_selected = "created_date_ascending"
+    if not profile_filter:
+        profile_filter = "All"
     if not intermediate_points_selected:
-        intermediate_points_selected = "0"
+        intermediate_points_selected = 0
 
     atrack = Track.objects.get(id=pk)
 
@@ -108,7 +112,9 @@ def track_detail(request, pk):
     
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
-        'intermediate_points_selected': intermediate_points_selected,
+        'profile_filter': profile_filter,
+        'order_selected': order_selected,
+        'intermediate_points_selected': int(intermediate_points_selected),     
         }
     )
 

@@ -8,6 +8,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="Order" value="{{ order_selected }}">
                     <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                    <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                     <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
                     <input type="submit">
                 </form>
@@ -60,6 +61,7 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                    <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                     <label for="Order">Sort order:</label>
                     <select name="Order" id="order" onclick=this.form.submit()>
                         {% if order_selected == "created_date_ascending" %}
@@ -125,6 +127,7 @@
             <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="Order" value="{{ order_selected }}">
+            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
             <label for="Profile">Profile:</label>
             <select name="Profile" id="profile" onclick=this.form.submit()>
             {% if bike_profiles %}
@@ -148,7 +151,7 @@
         <th valign="Top" style="text-align:right">Average<br>heartrate</th>
         {% for track in tracks %}
             <tr>
-                <td><a href="{% url 'track_detail' pk=track.pk %}"><b>{{ track.displayfilename }}</b></a></td>
+                <td><a href="{% url 'track_detail' pk=track.pk order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}"><b>{{ track.displayfilename }}</b></a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 <td>{{ track.profile }}</td>
