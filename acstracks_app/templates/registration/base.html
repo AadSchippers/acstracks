@@ -1,0 +1,24 @@
+{% load static %}
+<html>
+    <head>
+        <title>AcsTracks</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="{% static 'css/acstracks.css' %}">
+    </head>
+    <body>
+        <div class="detail">     
+            <table style="width:100%">
+                <tr>
+                    <td><h1>AcsTracks</h1></td>
+                    {% if request.user.username %}                  
+                        <td style="text-align:right">User {{ request.user.username }} logged in<br><a href="/logout/"><b>Logout</b></a></td>
+                    {% endif %}    
+                </tr>
+            </table>
+            <br><br>
+            {% block content %}
+            {% endblock %}
+    </div>
+</body>
+</html>
