@@ -95,12 +95,20 @@ def get_tracks(request, order_selected, profile_filter):
 
 @login_required(login_url='/login/')
 def track_detail(request, pk):
+    intermediate_points_selected = None
+    if request.method == 'POST':       
+        intermediate_points_selected = request.POST.get('Intermediate_points')
+
+    if not intermediate_points_selected:
+        order_selected = "0"
+
     atrack = Track.objects.get(id=pk)
 
-    process_gpx_file(atrack.storagefilename)
+    process_gpx_file(atrack.storagefilename, intermediate_points_selected)
     
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
+        'intermediate_points_selected': intermediate_points_selected,
         }
     )
 

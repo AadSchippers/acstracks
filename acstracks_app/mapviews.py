@@ -9,7 +9,7 @@ from datetime import datetime
 from pytz import timezone
 
 
-def process_gpx_file(filename):
+def process_gpx_file(filename, intermediate_points_selected):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -81,25 +81,27 @@ def process_gpx_file(filename):
     previous_marker_distance = 0
 
     # for x in range(int(len(points)/10), len(points), int(len(points)/11)):
-    for x in range(len(points)):
-        distance = float(points_info[x][1]) / 1000
-        if distance < previous_marker_distance + 5:
-            continue
-        previous_marker_distance = distance
-        i = i + 5
-        tx = datetime.strptime(points_info[x][0], "%H:%M:%S")
-        duration = tx - t0
-        distance = float(points_info[x][1]) / 1000
-        avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
-        tooltip = 'Intermediate point '+ str(i)+ ' km, click for details'
-        html = "<h3>Intermediate point "+ str(i)+" km</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
-        "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
-        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
-        "<tr><td><b>Current speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"\
-        "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>"\
-        "</table>"
-        popup = folium.Popup(html, max_width=300)
-        folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
+    ip = int(intermediate_points_selected)
+    if ip > 0:
+        for x in range(len(points)):
+            distance = float(points_info[x][1]) / 1000
+            if distance < previous_marker_distance + ip:
+                continue
+            previous_marker_distance = distance
+            i = i + ip
+            tx = datetime.strptime(points_info[x][0], "%H:%M:%S")
+            duration = tx - t0
+            distance = float(points_info[x][1]) / 1000
+            avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
+            tooltip = 'Intermediate point '+ str(i)+ ' km, click for details'
+            html = "<h3>Intermediate point "+ str(i)+" km</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
+            "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
+            "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
+            "<tr><td><b>Current speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"\
+            "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>"\
+            "</table>"
+            popup = folium.Popup(html, max_width=300)
+            folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
     tooltip = 'Start, click for details'
