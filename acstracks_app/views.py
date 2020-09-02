@@ -100,7 +100,7 @@ def track_detail(request, pk):
         intermediate_points_selected = request.POST.get('Intermediate_points')
 
     if not intermediate_points_selected:
-        order_selected = "0"
+        intermediate_points_selected = "0"
 
     atrack = Track.objects.get(id=pk)
 
