@@ -94,13 +94,15 @@ def process_gpx_file(filename, intermediate_points_selected):
             distance = float(points_info[x][1]) / 1000
             avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
             tooltip = 'Intermediate point '+ str(i)+ ' km, click for details'
-            html = "<h3>Intermediate point "+ str(i)+" km</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[x][0]+"</td></tr>"\
-            "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
-            "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
-            "<tr><td><b>Current speed</b></td><td style='text-align:right'>"+str(points_info[x][2])+"</td></tr>"\
-            "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>"\
-            "</table>"
-            popup = folium.Popup(html, max_width=300)
+            html_popup = make_html_popup(
+                str(i),
+                points_info[x][0],
+                duration,
+                distance,
+                points_info[x][2],
+                avgspeed,
+                )
+            popup = folium.Popup(html_popup, max_width=300)
             folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
@@ -138,3 +140,39 @@ def process_gpx_file(filename, intermediate_points_selected):
     my_map.save(mapfilename)
  
     return
+
+
+def make_html_popup(intermediate_point, time, duration, distance, current_speed, avgspeed):
+    line_title = "<h3>Intermediate point "+ intermediate_point+" km</h3>"
+    line_table_start = "<table>"
+    line_table_end = "</table>"
+    line_time = ("<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
+        time+"</td></tr>"
+    )
+    line_duration = (
+        "<tr><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
+        str(duration)+"</td></tr>"
+    )
+    line_distance = (
+        "<tr><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
+        str(round(distance, 2))+ "</td></tr>"
+        )
+    line_speed = (
+        "<tr><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
+        str(current_speed)+"</td>" + 
+        "<td><b>Average speed</b></td><td style='padding: 0 10px;text-align:right'>" +
+        str(round(avgspeed, 2)) +
+        "</td></tr>"
+    )
+
+    html_popup = (
+        line_title +
+        line_table_start +
+        line_time +
+        line_duration +
+        line_distance +
+        line_speed +
+        line_table_end
+    )
+
+    return html_popup
