@@ -43,3 +43,12 @@ h2, h2 a, h2 a:visited {
     color: #CF3DFF;
     font-family: 'Oswald';
 }
+
+a, a:active, a:visited {
+    color: #700394;
+    
+}
+
+a:hover {
+    color: #17012c;
+}

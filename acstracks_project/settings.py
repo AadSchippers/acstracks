@@ -130,4 +130,7 @@ MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
 
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 
+HEARTRATETAGS = ['heartrate']
+CADENCETAGS = ['cadence']
+
 from .mysettings import *   # noqa

@@ -22,6 +22,10 @@ def process_gpx_file(filename, intermediate_points_selected):
     points_info = []
     previous_distance = -1
     previous_speed = -1
+    heartrate = 0
+    previous_avgheartrate = 0
+    cadence = 0
+    previous_avgcadence = 0
     timezone_info = timezone(settings.TIME_ZONE)   
     for track in gpx.tracks:
         for segment in track.segments:        
@@ -31,16 +35,64 @@ def process_gpx_file(filename, intermediate_points_selected):
                         distance = float(extension.text)
                     if extension.tag == 'speed':
                         speed = float(extension.text) * 3.6
+                    if extension.tag in settings.HEARTRATETAGS:
+                        heartrate = int(extension.text)
+                    if extension.tag in settings.CADENCETAGS:
+                        cadence = int(extension.text)
                 if distance < previous_distance:
                     distance = previous_distance
                     speed = previous_speed
+                x = len(points_info) - 1
+                if x > 0:    
+                    t0 = datetime.strptime(points_info[0][0], "%H:%M:%S")
+                   
+                    tx = datetime.strptime(point.time.astimezone(timezone_info).strftime("%H:%M:%S"), "%H:%M:%S")
+                    duration = tx - t0
+                    txminus1 = datetime.strptime(points_info[x][0], "%H:%M:%S")
+                    previous_duration = txminus1 - t0
+                    if heartrate:
+                        avgheartrate = (
+                            (previous_avgheartrate * previous_duration.seconds) +
+                            (
+                                heartrate * (
+                                    duration.seconds - previous_duration.seconds
+                                    )
+                            )
+                        ) / duration.seconds
+                        previous_avgheartrate = avgheartrate
+                    else:
+                        avgheartrate = None
+                    if cadence:
+                        avgcadence = (
+                            (previous_avgcadence * previous_duration.seconds) +
+                            (
+                                cadence * (
+                                    duration.seconds - previous_duration.seconds
+                                    )
+                            )
+                        ) / duration.seconds
+                        previous_avgcadence = avgcadence
+                    else:
+                        avgcadence = None
+                else:
+                    t0 = datetime.strptime("00:00:00", "%H:%M:%S")
+                    previous_duration = t0 - t0
+                    avgheartrate = heartrate
+                    previous_avgheartrate = heartrate
+                    avgcadence = cadence
+                    previous_avgcadence = cadence
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                      ]))
-                points_info.append(tuple([point.time.astimezone(timezone_info).strftime("%H:%M:%S"),
-                                    distance,
-                                    round(speed, 2),
-                                     ]))
+                points_info.append(tuple([
+                    point.time.astimezone(timezone_info).strftime("%H:%M:%S"),
+                    distance,
+                    round(speed, 2),
+                    heartrate,
+                    avgheartrate,
+                    cadence,
+                    avgcadence,
+                    ]))
                 previous_distance = distance
                 previous_speed = speed
 
@@ -93,7 +145,7 @@ def process_gpx_file(filename, intermediate_points_selected):
             duration = tx - t0
             distance = float(points_info[x][1]) / 1000
             avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
-            tooltip = 'Intermediate point '+ str(i)+ ' km, click for details'
+            tooltip = 'Intermediate point ' + str(i) + ' km, click for details'
             html_popup = make_html_popup(
                 str(i),
                 points_info[x][0],
@@ -101,8 +153,12 @@ def process_gpx_file(filename, intermediate_points_selected):
                 distance,
                 points_info[x][2],
                 avgspeed,
+                points_info[x][3],
+                points_info[x][4],
+                points_info[x][5],
+                points_info[x][6],
                 )
-            popup = folium.Popup(html_popup, max_width=300)
+            popup = folium.Popup(html_popup, max_width=400)
             folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
@@ -142,11 +198,23 @@ def process_gpx_file(filename, intermediate_points_selected):
     return
 
 
-def make_html_popup(intermediate_point, time, duration, distance, current_speed, avgspeed):
+def make_html_popup(
+        intermediate_point,
+        time,
+        duration,
+        distance,
+        speed,
+        avgspeed,
+        heartrate,
+        avgheartrate,
+        cadence,
+        avgcadence,
+    ):
     line_title = "<h3>Intermediate point "+ intermediate_point+" km</h3>"
     line_table_start = "<table>"
     line_table_end = "</table>"
-    line_time = ("<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
+    line_time = (
+        "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
         time+"</td></tr>"
     )
     line_duration = (
@@ -155,15 +223,35 @@ def make_html_popup(intermediate_point, time, duration, distance, current_speed,
     )
     line_distance = (
         "<tr><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(round(distance, 2))+ "</td></tr>"
-        )
+        str(round(distance, 2)) + "</td></tr>"
+    )
     line_speed = (
         "<tr><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(current_speed)+"</td>" + 
+        str(speed)+"</td>" +
         "<td><b>Average speed</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(round(avgspeed, 2)) +
         "</td></tr>"
     )
+    if heartrate:
+        line_heartrate = (
+            "<tr><td><b>Current heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
+            str(heartrate)+"</td>" +
+            "<td><b>Average heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
+            str(int(round(avgheartrate, 0))) +
+            "</td></tr>"
+        )
+    else:
+        line_heartrate = ""
+    if cadence:
+        line_cadence = (
+            "<tr><td><b>Current cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
+            str(round(cadence, 0)) +"</td>" +
+            "<td><b>Average cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
+            str(int(round(avgcadence, 0))) +
+            "</td></tr>"
+        )
+    else:
+        line_cadence = ""
 
     html_popup = (
         line_title +
@@ -172,6 +260,8 @@ def make_html_popup(intermediate_point, time, duration, distance, current_speed,
         line_duration +
         line_distance +
         line_speed +
+        line_heartrate +
+        line_cadence +
         line_table_end
     )
 
