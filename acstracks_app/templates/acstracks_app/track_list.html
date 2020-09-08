@@ -119,7 +119,7 @@
             </td>
         </tr>
     </table><br><br>        
-    <table style="width:100%">
+    <table id="click-table" style="width:100%" class="table-hover">
         <th valign="Top" width=400>Filename</th>
         <th valign="Top" width=200>Created date</th>
         <th valign="Top" width=200>Name</th>
@@ -150,8 +150,8 @@
         <th valign="Top" style="text-align:right">Average<br>cadence</th>
         <th valign="Top" style="text-align:right">Average<br>heartrate</th>
         {% for track in tracks %}
-            <tr>
-                <td><a href="{% url 'track_detail' pk=track.pk order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}"><b>{{ track.displayfilename }}</b></a></td>
+            <tr class="table-row">
+                <td><a href="{% url 'track_detail' pk=track.pk order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">{{ track.displayfilename }}</a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 <td>{{ track.profile }}</td>
