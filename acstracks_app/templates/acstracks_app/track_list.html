@@ -4,13 +4,21 @@
     <table style="width:100%">
         <tr>
             <td>
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="Order" value="{{ order_selected }}">
                     <input type="hidden" name="Profile" value="{{ profile_filter }}">
                     <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                    <input type="file" id="myfile" name="myfile" accept=".gpx" multiple>
-                    <input type="submit">
+                    <div class="file-field">
+                        <label for="myfile" id="myfilelabel" class="myfilelabel">Select one or more gpx files to upload:</label>
+                        <div class="btn">
+                            <input type="file" id="myfile" name="myfile" accept=".gpx" multiple style="display:none">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Your file(s) will show here">
+                        </div>
+                        <input type="submit" id="gpxload">
+                    </div>
                 </form>
             </td>
         </tr>

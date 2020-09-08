@@ -39,7 +39,11 @@ table, th, td {
     padding-right: 10px;
 }
 
-.table-row{
+.table-row {
+    cursor:pointer;
+}
+
+.myfilelabel {
     cursor:pointer;
 }
 

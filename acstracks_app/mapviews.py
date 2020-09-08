@@ -163,8 +163,12 @@ def process_gpx_file(filename, intermediate_points_selected):
 
     # start marker
     tooltip = 'Start, click for details'
-    html = "<h3>Start</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[0][0]+"</td></tr>"\
-    "</table>"
+    html = (
+        "<h3 style='color: #700394'>Start</h3>" +
+        "<table  style='color: #700394; width: 100%'><tr><td><b>Time</b></td>" +
+        "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
+        "</table>"
+    )
     popup = folium.Popup(html, max_width=300)
     folium.Marker(points[0], icon=folium.Icon(color='green'), tooltip=tooltip, popup=popup).add_to(my_map)
 
@@ -175,11 +179,15 @@ def process_gpx_file(filename, intermediate_points_selected):
     avgspeed = float((points_info[-1][1] / duration.seconds) * 3.6)
     distance = float(points_info[-1][1]) / 1000
 
-    html = "<h3>Finish</h3><table><tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>"\
-    "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>"\
-    "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>"\
-    "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>"\
-    "</table>"
+    html = (
+        "<h3 style='color: #700394'>Finish</h3>"+
+        "<table style='color: #700394; width: 100%'>" +
+        "<tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
+        "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>" +
+        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>" +
+        "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>" +
+        "</table>"
+    )
     popup = folium.Popup(html, max_width=300)
     folium.Marker(points[-1], icon=folium.Icon(color='red'), tooltip=tooltip, popup=popup).add_to(my_map)
  
@@ -211,22 +219,22 @@ def make_html_popup(
         avgcadence,
     ):
     line_title = "<h3 style='color: #700394'>Intermediate point "+ intermediate_point+" km</h3>"
-    line_table_start = "<table>"
+    line_table_start = "<table style='color: #700394'>"
     line_table_end = "</table>"
     line_time = (
-        "<tr style='color: #700394'><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
         time+"</td></tr>"
     )
     line_duration = (
-        "<tr style='color: #700394'><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(duration)+"</td></tr>"
     )
     line_distance = (
-        "<tr style='color: #700394'><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(round(distance, 2)) + "</td></tr>"
     )
     line_speed = (
-        "<tr style='color: #700394'><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(speed)+"</td>" +
         "<td><b>Average speed</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(round(avgspeed, 2)) +
@@ -234,7 +242,7 @@ def make_html_popup(
     )
     if heartrate:
         line_heartrate = (
-            "<tr style='color: #700394'><td><b>Current heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
+            "<tr><td><b>Current heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(heartrate)+"</td>" +
             "<td><b>Average heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(int(round(avgheartrate, 0))) +
@@ -244,7 +252,7 @@ def make_html_popup(
         line_heartrate = ""
     if cadence:
         line_cadence = (
-            "<tr style='color: #700394'><td><b>Current cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
+            "<tr><td><b>Current cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(round(cadence, 0)) +"</td>" +
             "<td><b>Average cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(int(round(avgcadence, 0))) +
