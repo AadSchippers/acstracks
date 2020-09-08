@@ -210,23 +210,23 @@ def make_html_popup(
         cadence,
         avgcadence,
     ):
-    line_title = "<h3>Intermediate point "+ intermediate_point+" km</h3>"
+    line_title = "<h3 style='color: #700394'>Intermediate point "+ intermediate_point+" km</h3>"
     line_table_start = "<table>"
     line_table_end = "</table>"
     line_time = (
-        "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr style='color: #700394'><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
         time+"</td></tr>"
     )
     line_duration = (
-        "<tr><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr style='color: #700394'><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(duration)+"</td></tr>"
     )
     line_distance = (
-        "<tr><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr style='color: #700394'><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(round(distance, 2)) + "</td></tr>"
     )
     line_speed = (
-        "<tr><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
+        "<tr style='color: #700394'><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(speed)+"</td>" +
         "<td><b>Average speed</b></td><td style='padding: 0 10px;text-align:right'>" +
         str(round(avgspeed, 2)) +
@@ -234,7 +234,7 @@ def make_html_popup(
     )
     if heartrate:
         line_heartrate = (
-            "<tr><td><b>Current heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
+            "<tr style='color: #700394'><td><b>Current heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(heartrate)+"</td>" +
             "<td><b>Average heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(int(round(avgheartrate, 0))) +
@@ -244,7 +244,7 @@ def make_html_popup(
         line_heartrate = ""
     if cadence:
         line_cadence = (
-            "<tr><td><b>Current cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
+            "<tr style='color: #700394'><td><b>Current cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(round(cadence, 0)) +"</td>" +
             "<td><b>Average cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
             str(int(round(avgcadence, 0))) +
