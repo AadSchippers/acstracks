@@ -184,8 +184,6 @@ def process_gpx_file(filename, intermediate_points_selected):
         "<table style='color: #700394; width: 100%'>" +
         "<tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
         "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>" +
-        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+ "</td></tr>" +
-        "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+ "</td></tr>" +
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
