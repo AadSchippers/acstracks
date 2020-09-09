@@ -197,7 +197,7 @@ def process_gpx_file(filename, intermediate_points_selected):
     # Save map
     mapfilename = os.path.join(
             settings.MAPS_ROOT,
-            "map.html"
+            os.path.splitext(filename)[0]+".html"
         )
     my_map.save(mapfilename)
  

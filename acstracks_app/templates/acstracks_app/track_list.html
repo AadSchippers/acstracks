@@ -10,14 +10,15 @@
                     <input type="hidden" name="Profile" value="{{ profile_filter }}">
                     <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                     <div class="file-field">
-                        <label for="myfile" id="myfilelabel" class="myfilelabel">Select one or more gpx files to upload:</label>
+                        <label for="myfile" id="myfilelabel" class="myfilelabel">1. Click to select one or more gpx files to upload</label>
                         <div class="btn">
                             <input type="file" id="myfile" name="myfile" accept=".gpx" multiple style="display:none">
                         </div>
                         <div class="file-path-wrapper">
                             <input class="myfilepath file-path validate" type="text">
                         </div>
-                        <input type="submit" id="gpxload">
+                        <label for="gpxload" id="gpxloadlabel" class="myfilelabel" onclick=this.form.submit()>2. Click to upload selected file(s)</label>
+                        <input type="submit" id="gpxload" style="display:none">
                     </div>
                 </form>
             </td>

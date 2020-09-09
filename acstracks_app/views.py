@@ -110,8 +110,14 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
 
     process_gpx_file(atrack.storagefilename, intermediate_points_selected)
     
+    map_filename = (
+        "/static/maps/" +
+        os.path.splitext(atrack.storagefilename)[0]+".html"
+    )
+
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
+        'map_filename': map_filename,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
         'intermediate_points_selected': int(intermediate_points_selected),     
