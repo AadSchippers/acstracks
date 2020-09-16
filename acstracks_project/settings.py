@@ -133,4 +133,6 @@ NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 HEARTRATETAGS = ['heartrate']
 CADENCETAGS = ['cadence']
 
+SPEEDTHRESHOLD = 10
+
 from .mysettings import *   # noqa

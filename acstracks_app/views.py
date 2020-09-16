@@ -35,7 +35,7 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
     if not intermediate_points_selected:
         intermediate_points_selected = 0
 
-    bike_profiles = get_bike_profiles()
+    bike_profiles = get_bike_profiles(request)
     
     tracks = get_tracks(request, order_selected, profile_filter)
 
@@ -214,8 +214,8 @@ def parse_file(request, storagefilename=None, displayfilename=None):
     return
 
 
-def get_bike_profiles():
-    dictbike_profiles = Track.objects.values('profile').distinct()
+def get_bike_profiles(request):
+    dictbike_profiles = Track.objects.values('profile').distinct().filter(username=request.user.username)
 
     listbike_profiles = ['All']
     for p in dictbike_profiles:

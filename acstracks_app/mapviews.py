@@ -43,13 +43,32 @@ def process_gpx_file(filename, intermediate_points_selected):
                     distance = previous_distance
                     speed = previous_speed
                 x = len(points_info) - 1
-                if x > 0:    
+                if x > 0:
                     t0 = datetime.strptime(points_info[0][0], "%H:%M:%S")
-                   
+
                     tx = datetime.strptime(point.time.astimezone(timezone_info).strftime("%H:%M:%S"), "%H:%M:%S")
                     duration = tx - t0
                     txminus1 = datetime.strptime(points_info[x][0], "%H:%M:%S")
                     previous_duration = txminus1 - t0
+                    if speed > settings.SPEEDTHRESHOLD:
+                        moving_duration = moving_duration + (duration - previous_duration)
+                        '''
+                        print(
+                            str(len(points_info)) + ";" +
+                            str(distance) + ";" +
+                            str(duration) + ";" +
+                            str(moving_duration) + ";" +
+                            str(round(speed, 2)) + ";"
+                        )
+                    else:
+                        print(
+                            str(len(points_info)) + ";" +
+                            str(distance) + ";" +
+                            str(duration) + ";" +
+                            str(moving_duration) + ";" +
+                            str(round(speed, 2)) + "; <===;"
+                        )
+                        '''
                     if heartrate:
                         avgheartrate = (
                             (previous_avgheartrate * previous_duration.seconds) +
@@ -76,7 +95,9 @@ def process_gpx_file(filename, intermediate_points_selected):
                         avgcadence = None
                 else:
                     t0 = datetime.strptime("00:00:00", "%H:%M:%S")
-                    previous_duration = t0 - t0
+                    duration = t0 - t0
+                    moving_duration = duration
+                    previous_duration = duration
                     avgheartrate = heartrate
                     previous_avgheartrate = heartrate
                     avgcadence = cadence
@@ -84,9 +105,12 @@ def process_gpx_file(filename, intermediate_points_selected):
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                      ]))
+
                 points_info.append(tuple([
                     point.time.astimezone(timezone_info).strftime("%H:%M:%S"),
                     distance,
+                    duration,
+                    moving_duration,
                     round(speed, 2),
                     heartrate,
                     avgheartrate,
@@ -129,7 +153,6 @@ def process_gpx_file(filename, intermediate_points_selected):
     # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
 
     i = 0
-    t0 = datetime.strptime(points_info[0][0], "%H:%M:%S")
     previous_marker_distance = 0
 
     # for x in range(int(len(points)/10), len(points), int(len(points)/11)):
@@ -141,22 +164,23 @@ def process_gpx_file(filename, intermediate_points_selected):
                 continue
             previous_marker_distance = distance
             i = i + ip
-            tx = datetime.strptime(points_info[x][0], "%H:%M:%S")
-            duration = tx - t0
+            duration = points_info[x][2]
+            moving_duration = points_info[x][3]
             distance = float(points_info[x][1]) / 1000
-            avgspeed = float((points_info[x][1] / duration.seconds) * 3.6)
+            avgspeed = float((points_info[x][1] / moving_duration.seconds) * 3.6)
             tooltip = 'Intermediate point ' + str(i) + ' km, click for details'
             html_popup = make_html_popup(
                 str(i),
                 points_info[x][0],
                 duration,
+                moving_duration, 
                 distance,
-                points_info[x][2],
-                avgspeed,
-                points_info[x][3],
                 points_info[x][4],
+                avgspeed,
                 points_info[x][5],
                 points_info[x][6],
+                points_info[x][7],
+                points_info[x][8],
                 )
             popup = folium.Popup(html_popup, max_width=400)
             folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
@@ -208,6 +232,7 @@ def make_html_popup(
         intermediate_point,
         time,
         duration,
+        moving_duration,
         distance,
         speed,
         avgspeed,
@@ -219,17 +244,16 @@ def make_html_popup(
     line_title = "<h3 style='color: #700394'>Intermediate point "+ intermediate_point+" km</h3>"
     line_table_start = "<table style='color: #700394'>"
     line_table_end = "</table>"
-    line_time = (
+    line_time_distance = (
         "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
-        time+"</td></tr>"
+        time+"</td>" +
+        "<td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
+        str(round(distance, 2)) + "</td></tr>"
     )
     line_duration = (
         "<tr><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(duration)+"</td></tr>"
-    )
-    line_distance = (
-        "<tr><td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(round(distance, 2)) + "</td></tr>"
+        str(duration)+"</td><td><b>Duration while moving</b></td><td style='padding: 0 10px;text-align:right'>"+
+        str(moving_duration)+"</td></tr>"
     )
     line_speed = (
         "<tr><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
@@ -262,9 +286,8 @@ def make_html_popup(
     html_popup = (
         line_title +
         line_table_start +
-        line_time +
+        line_time_distance +
         line_duration +
-        line_distance +
         line_speed +
         line_heartrate +
         line_cadence +
