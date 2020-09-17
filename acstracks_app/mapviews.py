@@ -164,23 +164,29 @@ def process_gpx_file(filename, intermediate_points_selected):
                 continue
             previous_marker_distance = distance
             i = i + ip
+            time = points_info[x][0]
             duration = points_info[x][2]
             moving_duration = points_info[x][3]
             distance = float(points_info[x][1]) / 1000
+            speed = points_info[x][4]
             avgspeed = float((points_info[x][1] / moving_duration.seconds) * 3.6)
+            heartrate = points_info[x][5]
+            avgheartrate = points_info[x][6]
+            cadence = points_info[x][7]
+            avgcadence = points_info[x][8]
             tooltip = 'Intermediate point ' + str(i) + ' km, click for details'
             html_popup = make_html_popup(
                 str(i),
-                points_info[x][0],
+                time,
                 duration,
                 moving_duration, 
                 distance,
-                points_info[x][4],
+                speed,
                 avgspeed,
-                points_info[x][5],
-                points_info[x][6],
-                points_info[x][7],
-                points_info[x][8],
+                heartrate,
+                avgheartrate,
+                cadence,
+                avgcadence,
                 )
             popup = folium.Popup(html_popup, max_width=400)
             folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
@@ -198,16 +204,21 @@ def process_gpx_file(filename, intermediate_points_selected):
 
     # finish marker
     tooltip = 'Finish, click for details'
-    tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
-    duration = tx - t0
-    avgspeed = float((points_info[-1][1] / duration.seconds) * 3.6)
+    # tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
+    # duration = tx - t0
+    duration = points_info[-1][2]
+    moving_duration = points_info[-1][3]
+    avgspeed = float((points_info[-1][1] / moving_duration.seconds) * 3.6)
     distance = float(points_info[-1][1]) / 1000
 
     html = (
         "<h3 style='color: #700394'>Finish</h3>"+
         "<table style='color: #700394; width: 100%'>" +
         "<tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
+        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+"</td></tr>" +
+        "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+"</td></tr>" +
         "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>" +
+        "<tr><td><b>Duration while moving</b></td><td style='text-align:right'>"+str(moving_duration)+"</td></tr>" +
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
