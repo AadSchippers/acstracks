@@ -24,44 +24,44 @@
             </td>
         </tr>
     </table>
-    <table style="width:100%">
+    <table style="width: 100%;overflow-x: auto">
         <tr>
             <td>
             {% if statistics.total_length > 0 %}
             <table>
                 <tr>
-                    <td><b>Number of tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
+                    <td><b>Number&nbsp;of&nbsp;tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
                 </tr>
                 <tr>
                     <tr>
-                        <td><b>Total length (km)</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
+                        <td><b>Total&nbsp;length&nbsp;(km)</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
                     </tr>
                     <tr>
-                        <td><b>Total average speed (km/h)</b></td><td style="text-align:right">{{ statistics.total_avgspeed }}</td>
+                        <td><b>Total&nbsp;average&nbsp;speed (km/h)</b></td><td style="text-align:right">{{ statistics.total_avgspeed }}</td>
                 </tr>
                 <tr>
-                    <td><b>Longest track (km)</b></td><td style="text-align:right">{{ statistics.longest_length }}</td>
-                    <td>{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
+                    <td><b>Longest&nbsp;track&nbsp;(km)</b></td><td style="text-align:right">{{ statistics.longest_length }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Longest duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
-                    <td>{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
+                    <td><b>Longest&nbsp;duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Highest maximum speed (km/h)</b></td><td style="text-align:right">{{ statistics.highest_maxspeed }}</td>
-                    <td>{{ statistics.datetime_highest_maxspeed|date:"d b Y" }}</td>
+                    <td><b>Highest&nbsp;maximum&nbsp;speed&nbsp;(km/h)</b></td><td style="text-align:right">{{ statistics.highest_maxspeed }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_highest_maxspeed|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Highest average speed (km/h)</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
-                    <td>{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
+                    <td><b>Highest&nbsp;average&nbsp;speed&nbsp;(km/h)</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Maximum ascent (m)</b></td><td style="text-align:right">{{ statistics.max_ascent }}</td>
-                    <td>{{ statistics.datetime_max_ascent|date:"d b Y" }}</td>
+                    <td><b>Maximum&nbsp;ascent&nbsp;(m)</b></td><td style="text-align:right">{{ statistics.max_ascent }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_max_ascent|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Maximum descent (m)</b></td><td style="text-align:right">{{ statistics.max_descent }}</td>
-                    <td>{{ statistics.datetime_max_descent|date:"d b Y" }}</td>
+                    <td><b>Maximum&nbsp;descent&nbsp;(m)</b></td><td style="text-align:right">{{ statistics.max_descent }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_max_descent|date:"d b Y" }}</td>
                 </tr>
             </table>
             {% endif %}
@@ -127,10 +127,10 @@
                 </form>   
             </td>
         </tr>
-    </table><br><br>        
-    <table id="click-table" style="width:100%" class="table-hover">
+    </table><br><br>  
+    <table id="click-table" style="width: 100%;overflow-x:auto;" class="table-hover">
         <th valign="Top" width=400>Filename</th>
-        <th valign="Top" width=200>Created date</th>
+        <th valign="Top" width=200>Created&nbsp;date</th>
         <th valign="Top" width=200>Name</th>
         <th valign="Top">
             <form method="post" enctype="multipart/form-data">

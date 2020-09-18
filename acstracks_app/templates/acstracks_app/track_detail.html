@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block content %}
+<div class="container">
     <table>
-        <tr valign="Top">
+        <tr valign="Top" style="width: 100%;">
             <td>
             <table>
                 <tr>
@@ -48,7 +49,7 @@
                     <td style="text-align:right">{{ atrack.displayfilename }}</td>
                 </tr>
                 <tr>
-                    <td><b>Created date</b></td>
+                    <td><b>Created&nbsp;date</b></td>
                     <td style="text-align:right">{{ atrack.created_date|date:"d b Y" }}</td>
                 </tr>
                 <tr>
@@ -60,7 +61,7 @@
                     <td style="text-align:right">{{ atrack.profile }}</td>
                 </tr>
                 <tr>
-                    <td><b>Length (km)</b></td>
+                    <td><b>Length&nbsp;(km)</b></td>
                     <td  style="text-align:right">{{ atrack.length }}</td>
                 </tr>
                 <tr>
@@ -68,56 +69,59 @@
                     <td  style="text-align:right">{{ atrack.timelength|time:"H:i:s" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Average speed (km/h)</b></td>
+                    <td><b>Average&nbsp;speed&nbsp;(km/h)</b></td>
                     <td style="text-align:right">{{ atrack.avgspeed }}</td>
                 </tr>
                 <tr>
-                    <td><b>Maximum speed (km/h)</b></td>
+                    <td><b>Maximum&nbsp;speed&nbsp;(km/h)</b></td>
                     <td style="text-align:right">{{ atrack.maxspeed }}</td>
                 </tr>
                 <tr>
-                    <td><b>Total descent (m)</b></td>
+                    <td><b>Total&nbsp;descent&nbsp;(m)</b></td>
                     <td style="text-align:right">{{ atrack.totaldescent }}</td>
                 </tr>
                 <tr>
-                    <td><b>Total ascent (m)</b></td>
+                    <td><b>Total&nbsp;ascent&nbsp;(m)</b></td>
                     <td style="text-align:right">{{ atrack.totalascent }}</td>
                 </tr>
                 {% if atrack.avgcadence %}
                 <tr>
-                    <td><b>Average cadence</b></td>
+                    <td><b>Average&nbsp;cadence</b></td>
                     <td style="text-align:right">{{ atrack.avgcadence }}</td>
                 </tr>
                 {% endif %}
                 {% if atrack.maxcadence %}
                     <tr>
-                        <td><b>Maximum cadence</b></td>
+                        <td><b>Maximum&nbsp;cadence</b></td>
                         <td  style="text-align:right">{{ atrack.maxcadence }}</td>
                     </tr>
                 {% endif %}
                 <tr>
                     {% if atrack.avgheartrate %}
-                    <td><b>Average heartrate</b></td>
+                    <td><b>Average&nbsp;heartrate</b></td>
                     <td  style="text-align:right">{{ atrack.avgheartrate }}</td>
                 </tr>
                 {% endif %}
                 {% if atrack.minheartrate %}
                     <tr>
-                        <td><b>Mininimum heartrate</b></td>
+                        <td><b>Mininimum&nbsp;heartrate</b></td>
                         <td  style="text-align:right">{{ atrack.minheartrate }}</td>
                     </tr>
                 {% endif %}
                 {% if atrack.maxheartrate %}
                     <tr>
-                        <td><b>Maximum heartrate</b></td>
+                        <td><b>Maximum&nbsp;heartrate</b></td>
                         <td  style="text-align:right">{{ atrack.maxheartrate }}</td>
                     </tr>
                 {% endif %}
             </table>
-        </td>
-        <td>
-            <iframe src={{ map_filename }} style="border:none;height:700px;width:1200px;" title="Track map"></iframe>
-        </td>
-    </tr>
-</table><br><br>
+            </td>
+            <td style="width: 100%;">
+                <div class="container-16-9">
+                    <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
+                </div>
+            </td>
+        </tr>
+    </table><br><br>
+</div>
 {% endblock %}
