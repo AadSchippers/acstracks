@@ -72,7 +72,7 @@ def get_tracks(request, order_selected, profile_filter):
         order_by = "-timelength"
     
     if order_selected == "avgspeed_ascending":
-        order_by = "-avgspeed"
+        order_by = "avgspeed"
     
     if order_selected == "avgspeed_descending":
         order_by = "-avgspeed"
