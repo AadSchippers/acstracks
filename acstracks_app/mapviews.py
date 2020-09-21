@@ -50,7 +50,9 @@ def process_gpx_file(filename, intermediate_points_selected):
                     duration = tx - t0
                     txminus1 = datetime.strptime(points_info[x][0], "%H:%M:%S")
                     previous_duration = txminus1 - t0
-                    if speed > settings.SPEEDTHRESHOLD:
+                    if speed <= settings.SPEEDTHRESHOLD and (not cadence or cadence == 0):
+                        pass
+                    else:
                         moving_duration = moving_duration + (duration - previous_duration)
                         '''
                         print(
