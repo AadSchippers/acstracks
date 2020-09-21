@@ -14,7 +14,7 @@
                         <input type="hidden" name="Order" value="{{ order_selected }}">
                         <input type="hidden" name="Profile" value="{{ profile_filter }}">
                         {% csrf_token %}
-                        <select name="Intermediate_points" id="intermediate_points" onclick=this.form.submit()>
+                        <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
                             {% if intermediate_points_selected == 0 %}
                                 <option value=0 selected="selected">none</option>
                             {% else %}
