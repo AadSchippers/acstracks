@@ -152,11 +152,11 @@ a, a:active, a:visited, a:hover {
     height: 85%
   }
 
-  .container-16-9 {
+  .container-iframe {
     position: relative;
     overflow: hidden;
     width: 100%;
-    padding-top: 50%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+    padding-top: 48%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
   }
   
   /* Then style the iframe to fit in the container div with full height and width */
