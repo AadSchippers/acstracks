@@ -184,8 +184,8 @@ def process_gpx_file(filename, intermediate_points_selected):
     # start marker
     tooltip = 'Start, click for details'
     html = (
-        "<h3 style='color: #700394'>Start</h3>" +
-        "<table  style='color: #700394; width: 100%'><tr><td><b>Time</b></td>" +
+        "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Start</h3>" +
+        "<table style='color: #700394; width: 100%; font-size: 0.85vw'><tr><td><b>Time</b></td>" +
         "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
         "</table>"
     )
@@ -202,8 +202,8 @@ def process_gpx_file(filename, intermediate_points_selected):
     distance = float(points_info[-1][1]) / 1000
 
     html = (
-        "<h3 style='color: #700394'>Finish</h3>"+
-        "<table style='color: #700394; width: 100%'>" +
+        "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Finish</h3>"+
+        "<table style='color: #700394; width: 100%; font-size: 0.85vw'>" +
         "<tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
         "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+"</td></tr>" +
         "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+"</td></tr>" +
@@ -242,8 +242,8 @@ def make_html_popup(
         cadence,
         avgcadence,
     ):
-    line_title = "<h3 style='color: #700394'>Intermediate point "+ intermediate_point+" km</h3>"
-    line_table_start = "<table style='color: #700394'>"
+    line_title = "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Intermediate point "+ intermediate_point+" km</h3>"
+    line_table_start = "<table style='color: #700394; font-size: 0.85vw'>"
     line_table_end = "</table>"
     line_time_distance = (
         "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
