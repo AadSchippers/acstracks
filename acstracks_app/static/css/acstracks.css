@@ -47,7 +47,7 @@
   }  
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1080px) {
 .scalefont {
     font-size: 0.85vw; 
     color: #700394;
@@ -70,7 +70,7 @@
     .col-s-12 {width: 100%;}
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1080px) {
 /* For desktop: */
     .col-1 {width: 8.33%;}
     .col-2 {width: 16.66%;}
@@ -167,7 +167,7 @@ a, a:active, a:visited, a:hover {
     position: relative;
     overflow: hidden;
     width: 100%;
-    padding-top: 48%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+    padding-top: 48%; 
   }
   
   /* Then style the iframe to fit in the container div with full height and width */
