@@ -86,6 +86,17 @@
     .col-12 {width: 100%;}
 }
 
+@media only screen and (orientation: landscape) {
+    div.portrait {
+      display: none;
+    }
+  }
+  
+  @media only screen and (orientation: portrait) {
+    div.landscape {
+      display: none;
+    }
+  }
 body {
     padding-left: 15px;
     padding-right: 15px;
