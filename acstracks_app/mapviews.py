@@ -164,7 +164,10 @@ def process_gpx_file(filename, intermediate_points_selected):
             avgheartrate = points_info[x][6]
             cadence = points_info[x][7]
             avgcadence = points_info[x][8]
-            tooltip = 'Intermediate point ' + str(i) + ' km, click for details'
+            tooltip_text = 'Intermediate point ' + str(i) + ' km, click for details'
+            tooltip_style = 'color: #700394; font-size: 0.85vw'
+            tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+
             html_popup = make_html_popup(
                 str(i),
                 time,
@@ -182,7 +185,9 @@ def process_gpx_file(filename, intermediate_points_selected):
             folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
-    tooltip = 'Start, click for details'
+    tooltip_text = 'Start, click for details'
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     html = (
         "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Start</h3>" +
         "<table style='color: #700394; width: 100%; font-size: 0.85vw'><tr><td><b>Time</b></td>" +
@@ -193,7 +198,9 @@ def process_gpx_file(filename, intermediate_points_selected):
     folium.Marker(points[0], icon=folium.Icon(color='green'), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # finish marker
-    tooltip = 'Finish, click for details'
+    tooltip_text = 'Finish, click for details'
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     # tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
     # duration = tx - t0
     duration = points_info[-1][2]
