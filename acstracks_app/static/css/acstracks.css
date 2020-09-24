@@ -155,7 +155,7 @@ a, a:active, a:visited, a:hover {
   .container-iframe {
     position: relative;
     overflow: hidden;
-    width: 100%;
+    width: 90%;
     padding-top: 48%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
   }
   
