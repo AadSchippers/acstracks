@@ -149,7 +149,7 @@ a, a:active, a:visited, a:hover {
   .responsive-iframe {
     position: relative;
     border: none;
-    padding-left: 10%;
+    padding-left: 5%;
     top: 0;
     left: 0;
     width: 100%;
