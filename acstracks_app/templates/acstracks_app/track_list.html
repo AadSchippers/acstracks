@@ -142,9 +142,9 @@
             {% if bike_profiles %}
                 {% for profile in bike_profiles %}
                     {% if profile == profile_filter %}
-                        <option value={{ profile }} selected="selected">{{ profile }}</option>
+                        <option value="{{ profile }}" selected="selected">{{ profile }}</option>
                     {% else %}
-                        <option value={{ profile }}>{{ profile }}</option>
+                        <option value="{{ profile }}">{{ profile }}</option>
                     {% endif %}
                 {% endfor %}
             {% endif %}
