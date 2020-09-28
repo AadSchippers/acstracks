@@ -120,6 +120,7 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None):
                     avgheartrate,
                     cadence,
                     avgcadence,
+                    round(point.elevation, 2),
                     ]))
                     
                 previous_distance = distance
@@ -155,6 +156,9 @@ def update_track(atrack, points_info):
     trkMinheartrate = 0
     trkMaxheartrate = 0
     trkMaxcadence = 0
+    totalascent = 0 
+    totaldescent = 0 
+    previous_elevation = points_info[0][9] 
 
     for point in points_info:
         if point[4] > trkMaxspeed: 
@@ -165,6 +169,11 @@ def update_track(atrack, points_info):
             trkMinheartrate = point[5]
         if point[7] > trkMaxcadence: 
             trkMtrkMaxcadenceaxspeed = point[7]
+        if point[9] > previous_elevation:
+            totalascent = totalascent + (point[9] - previous_elevation)
+        if point[9] < previous_elevation:
+            totaldescent = totaldescent + (previous_elevation - point[9])
+        previous_elevation = point[9]
 
     getcontext().prec = 2
 
@@ -173,6 +182,8 @@ def update_track(atrack, points_info):
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
     atrack.maxspeed = round(trkMaxspeed, 2)
+    atrack.totalascent = round(totalascent, 2)
+    atrack.totaldescent = round(totaldescent, 2)
     atrack.avgcadence = trkAvgcadence
     atrack.maxcadence = trkMaxcadence
     atrack.avgheartrate = trkAvgheartrate
