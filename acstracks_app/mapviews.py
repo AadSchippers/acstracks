@@ -7,9 +7,12 @@ from folium.features import DivIcon
 from decimal import *
 from datetime import datetime
 from pytz import timezone
+from dateutil.parser import parse
+import time
+from haversine import haversine, Unit
 
 
-def process_gpx_file(filename, intermediate_points_selected):
+def process_gpx_file(filename, intermediate_points_selected, atrack=None):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -21,16 +24,20 @@ def process_gpx_file(filename, intermediate_points_selected):
     points = []
     points_info = []
     starting_distance = 0
-    previous_distance = -1
+    previous_distance = 0
     previous_speed = -1
     heartrate = 0
     previous_avgheartrate = 0
     cadence = 0
     previous_avgcadence = 0
     timezone_info = timezone(settings.TIME_ZONE)   
+    previous_point = None
+    distance = None
     for track in gpx.tracks:
-        for segment in track.segments:        
+        for segment in track.segments:
             for point in segment.points:
+                distance = None
+                speed = None        
                 for extension in point.extensions:
                     if extension.tag == 'distance':
                         distance = float(extension.text) - starting_distance
@@ -40,16 +47,25 @@ def process_gpx_file(filename, intermediate_points_selected):
                         heartrate = int(extension.text)
                     if extension.tag in settings.CADENCETAGS:
                         cadence = int(extension.text)
+                if not distance:
+                    point_distance = calculate_using_haversine(point, previous_point)
+                    # speed = float(distance) * 3.6
+                    distance = previous_distance + point_distance
+                    previous_distance = distance
+
+                previous_point = point
                 x = len(points_info)
                 if x > 0:
                     if distance < previous_distance:
                         distance = previous_distance
                         speed = previous_speed
-                    t0 = datetime.strptime(points_info[0][0], "%H:%M:%S")
-                    tx = datetime.strptime(point.time.astimezone(timezone_info).strftime("%H:%M:%S"), "%H:%M:%S")
+                    t0 = datetime.strptime(points_info[0][0], "%Y-%m-%d %H:%M:%S")
+                    tx = datetime.strptime(point.time.astimezone(timezone_info).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
                     duration = tx - t0
-                    txminus1 = datetime.strptime(points_info[x-1][0], "%H:%M:%S")
+                    txminus1 = datetime.strptime(points_info[x-1][0], "%Y-%m-%d %H:%M:%S")
                     previous_duration = txminus1 - t0
+                    if not speed:
+                        speed = (point_distance / (duration.seconds - previous_duration.seconds)) * 3.6
                     if speed <= settings.SPEEDTHRESHOLD and (not cadence or cadence == 0):
                         pass
                     else:
@@ -81,6 +97,7 @@ def process_gpx_file(filename, intermediate_points_selected):
                 else:
                     starting_distance = distance
                     distance = 0
+                    speed = 0
                     t0 = datetime.strptime("00:00:00", "%H:%M:%S")
                     duration = t0 - t0
                     moving_duration = duration
@@ -94,7 +111,7 @@ def process_gpx_file(filename, intermediate_points_selected):
                                      ]))
 
                 points_info.append(tuple([
-                    point.time.astimezone(timezone_info).strftime("%H:%M:%S"),
+                    point.time.astimezone(timezone_info).strftime("%Y-%m-%d %H:%M:%S"),
                     distance,
                     duration,
                     moving_duration,
@@ -104,8 +121,70 @@ def process_gpx_file(filename, intermediate_points_selected):
                     cadence,
                     avgcadence,
                     ]))
+                    
                 previous_distance = distance
                 previous_speed = speed
+
+    if atrack:
+        update_track(atrack, points_info)
+
+    make_map(points, points_info, filename, intermediate_points_selected)
+
+    return
+
+
+def update_track(atrack, points_info):
+
+    last = len(points_info) - 1
+    created_date = points_info[0][0]
+    trkLength = float(points_info[last][1]) / 1000
+    trkTimelength = time.strftime('%H:%M:%S', time.gmtime(int(points_info[last][3].seconds)))
+
+    trkAvgspeed = float((points_info[last][1] / points_info[last][3].seconds) * 3.6)
+    try:
+        trkAvgcadence = int(points_info[last][8])
+    except:
+        trkAvgcadence = None
+    try:
+        trkAvgheartrate = int(points_info[last][6])
+    except:
+        trkAvgheartrate = None
+
+    trkMaxspeed = 0
+    trkMaxcadence = 0
+    trkMinheartrate = 0
+    trkMaxheartrate = 0
+    trkMaxcadence = 0
+
+    for point in points_info:
+        if point[4] > trkMaxspeed: 
+            trkMaxspeed = point[4]
+        if point[5] > trkMaxheartrate: 
+            trkMaxheartrate = point[5]
+        if point[5] < trkMinheartrate: 
+            trkMinheartrate = point[5]
+        if point[7] > trkMaxcadence: 
+            trkMtrkMaxcadenceaxspeed = point[7]
+
+    getcontext().prec = 2
+
+    atrack.created_date = parse(created_date)
+    atrack.length = round(trkLength, 2)
+    atrack.timelength = trkTimelength
+    atrack.avgspeed = round(trkAvgspeed, 2)
+    atrack.maxspeed = round(trkMaxspeed, 2)
+    atrack.avgcadence = trkAvgcadence
+    atrack.maxcadence = trkMaxcadence
+    atrack.avgheartrate = trkAvgheartrate
+    atrack.minheartrate = trkMinheartrate
+    atrack.maxheartrate = trkMaxheartrate
+
+    atrack.save()
+
+    return
+
+
+def make_map(points, points_info, filename, intermediate_points_selected):
 
     # print(points)
     ave_lat = sum(p[0] for p in points)/len(points)
@@ -234,6 +313,17 @@ def process_gpx_file(filename, intermediate_points_selected):
     my_map.save(mapfilename)
  
     return
+
+
+def calculate_using_haversine(point, previous_point):
+    if previous_point:
+        previous_location = (previous_point.latitude, previous_point.longitude)
+        current_location = (point.latitude, point.longitude)
+        distance = haversine(current_location, previous_location, unit='m')
+    else:
+        distance = 0
+
+    return distance
 
 
 def make_html_popup(

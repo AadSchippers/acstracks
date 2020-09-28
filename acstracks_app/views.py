@@ -108,7 +108,10 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
 
     atrack = Track.objects.get(id=pk)
 
-    process_gpx_file(atrack.storagefilename, intermediate_points_selected)
+    if atrack.length == 0:
+        process_gpx_file(atrack.storagefilename, intermediate_points_selected, atrack)
+    else:
+        process_gpx_file(atrack.storagefilename, intermediate_points_selected, None)
     
     map_filename = (
         "/static/maps/" +
@@ -142,22 +145,32 @@ def parse_file(request, storagefilename=None, displayfilename=None):
     gpxtrk = gpxroot.find('ns:trk', namespace)
     name = gpxtrk.find('ns:name', namespace).text
     extensions = gpxtrk.find('ns:extensions', namespace)
-    created_date = extensions.find('ns:time', namespace).text
-    profile = extensions.find('ns:profile', namespace).text
-    # ivm met naamwijziging
-    if profile == "Vakantiefiet":
-        profile = "Toerfiets"
-    length = extensions.find('ns:length', namespace).text
-    timelength = extensions.find('ns:timelength', namespace).text
-    avgspeed = extensions.find('ns:avgspeed', namespace).text
-    maxspeed = extensions.find('ns:maxspeed', namespace).text
-    totalascent = extensions.find('ns:totalascent', namespace).text
-    totaldescent = extensions.find('ns:totaldescent', namespace).text
-    avgcadence = extensions.find('ns:avgcadence', namespace)
-    maxcadence = extensions.find('ns:maxcadence', namespace)
-    avgheartrate = extensions.find('ns:avgheartrate', namespace)
-    minheartrate = extensions.find('ns:minheartrate', namespace)
-    maxheartrate = extensions.find('ns:maxheartrate', namespace)
+    if extensions:
+        created_date = extensions.find('ns:time', namespace).text
+        profile = extensions.find('ns:profile', namespace).text
+        # ivm met naamwijziging
+        if profile == "Vakantiefiet":
+            profile = "Toerfiets"
+        length = extensions.find('ns:length', namespace).text
+        timelength = extensions.find('ns:timelength', namespace).text
+        avgspeed = extensions.find('ns:avgspeed', namespace).text
+        maxspeed = extensions.find('ns:maxspeed', namespace).text
+        totalascent = extensions.find('ns:totalascent', namespace).text
+        totaldescent = extensions.find('ns:totaldescent', namespace).text
+        avgcadence = extensions.find('ns:avgcadence', namespace)
+        maxcadence = extensions.find('ns:maxcadence', namespace)
+        avgheartrate = extensions.find('ns:avgheartrate', namespace)
+        minheartrate = extensions.find('ns:minheartrate', namespace)
+        maxheartrate = extensions.find('ns:maxheartrate', namespace)
+    else:
+        created_date = "00:00:00"
+        profile = "Fiets"
+        length = 0
+        timelength = 0
+        avgspeed = 0
+        maxspeed = 0
+        totalascent = 0
+        totaldescent = 0
 
     trkLength = float(length) / 1000
     trkTimelength = time.strftime('%H:%M:%S', time.gmtime(int(timelength)))
