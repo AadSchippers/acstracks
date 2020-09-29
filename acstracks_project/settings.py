@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'aadschippers.pythonanywhere.com']
 
 
 # Application definition
@@ -129,9 +129,10 @@ MAPS_URL = '/acstracks_app/static/maps/'
 MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
 
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
+GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}
 
-HEARTRATETAGS = ['heartrate']
-CADENCETAGS = ['cadence']
+HEARTRATETAGS = ['heartrate', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr']
+CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}cad']
 
 SPEEDTHRESHOLD = 9.25
 ELEVATIONTHRESHOLD = 0.17
