@@ -12,7 +12,7 @@ import time
 from haversine import haversine, Unit
 
 
-def process_gpx_file(filename, intermediate_points_selected, atrack=None):
+def process_gpx_file(filename, intermediate_points_selected, atrack=None, makemap=False):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -129,7 +129,8 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None):
     if atrack:
         update_track(atrack, points_info)
 
-    make_map(points, points_info, filename, intermediate_points_selected)
+    if makemap:
+        make_map(points, points_info, filename, intermediate_points_selected)
 
     return
 
@@ -169,10 +170,11 @@ def update_track(atrack, points_info):
             trkMinheartrate = point[5]
         if point[7] > trkMaxcadence: 
             trkMtrkMaxcadenceaxspeed = point[7]
-        if point[9] > previous_elevation:
-            totalascent = totalascent + (point[9] - previous_elevation)
-        if point[9] < previous_elevation:
-            totaldescent = totaldescent + (previous_elevation - point[9])
+        if abs(point[9] - previous_elevation) > settings.ELEVATIONTHRESHOLD:
+            if point[9] > previous_elevation:
+                totalascent = totalascent + (point[9] - previous_elevation)
+            if point[9] < previous_elevation:
+                totaldescent = totaldescent + (previous_elevation - point[9])
         previous_elevation = point[9]
 
     getcontext().prec = 2

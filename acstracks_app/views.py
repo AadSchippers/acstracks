@@ -17,23 +17,23 @@ from .mapviews import *
 
 @login_required(login_url='/login/')
 def track_list(request, order_selected=None, profile_filter=None, intermediate_points_selected=None):
-    if request.method == 'POST':
-        files = request.FILES.getlist('myfile')
-        for file in files:
-            fs = FileSystemStorage()
-            storagefilename = fs.save(file.name, file)
-            parse_file(request, storagefilename, file.name)
-    
-        order_selected = request.POST.get('Order')
-        
-        profile_filter = request.POST.get('Profile')
-
     if not order_selected:
         order_selected = "created_date_ascending"
     if not profile_filter:
         profile_filter = "All"
     if not intermediate_points_selected:
         intermediate_points_selected = 0
+
+    if request.method == 'POST':
+        files = request.FILES.getlist('myfile')
+        for file in files:
+            fs = FileSystemStorage()
+            storagefilename = fs.save(file.name, file)
+            parse_file(request, storagefilename, file.name, intermediate_points_selected)
+    
+        order_selected = request.POST.get('Order')
+        
+        profile_filter = request.POST.get('Profile')
 
     bike_profiles = get_bike_profiles(request)
     
@@ -109,9 +109,9 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     atrack = Track.objects.get(id=pk)
 
     if atrack.length == 0:
-        process_gpx_file(atrack.storagefilename, intermediate_points_selected, atrack)
+        process_gpx_file(atrack.storagefilename, intermediate_points_selected, atrack, True)
     else:
-        process_gpx_file(atrack.storagefilename, intermediate_points_selected, None)
+        process_gpx_file(atrack.storagefilename, intermediate_points_selected, None, False)
     
     map_filename = (
         "/static/maps/" +
@@ -128,7 +128,7 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     )
 
 
-def parse_file(request, storagefilename=None, displayfilename=None):
+def parse_file(request, storagefilename=None, displayfilename=None, intermediate_points_selected=0):
     try:
         path = os.path.join(
             settings.MEDIA_ROOT,
@@ -221,8 +221,11 @@ def parse_file(request, storagefilename=None, displayfilename=None):
             maxheartrate=trkMaxheartrate,
         )
         trk.save()
+        if trkLength == 0:
+            process_gpx_file(trk.storagefilename, intermediate_points_selected, trk, True)
     except:
         pass
+
 
     return
 

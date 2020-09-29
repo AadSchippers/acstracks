@@ -1,0 +1,10 @@
+*.pyc
+*~
+/.vscode
+__pycache__
+db.sqlite3
+/acstracks_project/mysettings.py
+/static
+.DS_Store
+/media
+/acstracks_app/static/maps/

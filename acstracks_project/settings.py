@@ -134,5 +134,6 @@ HEARTRATETAGS = ['heartrate']
 CADENCETAGS = ['cadence']
 
 SPEEDTHRESHOLD = 9.25
+ELEVATIONTHRESHOLD = 0.17
 
 from .mysettings import *   # noqa
