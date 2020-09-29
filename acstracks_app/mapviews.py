@@ -26,9 +26,12 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
     starting_distance = 0
     previous_distance = 0
     previous_speed = -1
-    heartrate = 0
     previous_avgheartrate = 0
+    no_hr_detected_seconds = 0
+    no_cad_detected_seconds = 0
     cadence = 0
+    avgcadence = None
+    avgheartrate = None
     previous_avgcadence = 0
     timezone_info = timezone(settings.TIME_ZONE)   
     previous_point = None
@@ -38,6 +41,8 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
             for point in segment.points:
                 distance = None
                 speed = None        
+                heartrate = 0
+                cadence = 0
                 for extension in point.extensions:
                     if extension.tag == 'distance':
                         distance = float(extension.text) - starting_distance
@@ -47,9 +52,13 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
                         heartrate = int(extension.text)
                     if extension.tag in settings.CADENCETAGS:
                         cadence = int(extension.text)
+                    for TrackPointExtension in extension:
+                        if TrackPointExtension.tag in settings.HEARTRATETAGS:
+                            heartrate = int(TrackPointExtension.text)
+                        if TrackPointExtension.tag in settings.CADENCETAGS:
+                            cadence = int(TrackPointExtension.text)
                 if not distance:
                     point_distance = calculate_using_haversine(point, previous_point)
-                    # speed = float(distance) * 3.6
                     distance = previous_distance + point_distance
                     previous_distance = distance
 
@@ -72,28 +81,28 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
                         moving_duration = moving_duration + (duration - previous_duration)
                     if heartrate:
                         avgheartrate = (
-                            (previous_avgheartrate * previous_duration.seconds) +
+                            (previous_avgheartrate * (previous_duration.seconds - no_hr_detected_seconds)) +
                             (
                                 heartrate * (
                                     duration.seconds - previous_duration.seconds
                                     )
                             )
-                        ) / duration.seconds
+                        ) / (duration.seconds - no_hr_detected_seconds)
                         previous_avgheartrate = avgheartrate
                     else:
-                        avgheartrate = None
+                        no_hr_detected_seconds = no_hr_detected_seconds + (duration.seconds - previous_duration.seconds)
                     if cadence:
                         avgcadence = (
-                            (previous_avgcadence * previous_duration.seconds) +
+                            (previous_avgcadence * (previous_duration.seconds - no_cad_detected_seconds)) +
                             (
                                 cadence * (
                                     duration.seconds - previous_duration.seconds
                                     )
                             )
-                        ) / duration.seconds
+                        ) / (duration.seconds - no_cad_detected_seconds)
                         previous_avgcadence = avgcadence
                     else:
-                        avgcadence = None
+                        no_cad_detected_seconds = no_cad_detected_seconds + (duration.seconds - previous_duration.seconds)
                 else:
                     starting_distance = distance
                     distance = 0
@@ -154,7 +163,7 @@ def update_track(atrack, points_info):
 
     trkMaxspeed = 0
     trkMaxcadence = 0
-    trkMinheartrate = 0
+    trkMinheartrate = 999
     trkMaxheartrate = 0
     trkMaxcadence = 0
     totalascent = 0 
@@ -164,12 +173,13 @@ def update_track(atrack, points_info):
     for point in points_info:
         if point[4] > trkMaxspeed: 
             trkMaxspeed = point[4]
-        if point[5] > trkMaxheartrate: 
-            trkMaxheartrate = point[5]
-        if point[5] < trkMinheartrate: 
-            trkMinheartrate = point[5]
+        if point[5]:
+            if point[5] > trkMaxheartrate: 
+                trkMaxheartrate = point[5]
+            if point[5] < trkMinheartrate: 
+                trkMinheartrate = point[5]
         if point[7] > trkMaxcadence: 
-            trkMtrkMaxcadenceaxspeed = point[7]
+            trkMaxcadence = point[7]
         if abs(point[9] - previous_elevation) > settings.ELEVATIONTHRESHOLD:
             if point[9] > previous_elevation:
                 totalascent = totalascent + (point[9] - previous_elevation)

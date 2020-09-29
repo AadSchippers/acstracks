@@ -135,6 +135,6 @@ HEARTRATETAGS = ['heartrate', '{http://www.garmin.com/xmlschemas/TrackPointExten
 CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}cad']
 
 SPEEDTHRESHOLD = 9.25
-ELEVATIONTHRESHOLD = 0.17
+ELEVATIONTHRESHOLD = 0.25
 
 from .mysettings import *   # noqa

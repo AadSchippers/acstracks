@@ -111,7 +111,7 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     if atrack.length == 0:
         process_gpx_file(atrack.storagefilename, intermediate_points_selected, atrack, True)
     else:
-        process_gpx_file(atrack.storagefilename, intermediate_points_selected, None, False)
+        process_gpx_file(atrack.storagefilename, intermediate_points_selected, None, True)
     
     map_filename = (
         "/static/maps/" +
@@ -222,7 +222,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
         )
         trk.save()
         if trkLength == 0:
-            process_gpx_file(trk.storagefilename, intermediate_points_selected, trk, True)
+            process_gpx_file(trk.storagefilename, intermediate_points_selected, trk, False)
     except:
         pass
 
