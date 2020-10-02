@@ -13,6 +13,7 @@ from decimal import *
 from datetime import datetime
 import time
 from .mapviews import *
+import re
 
 
 @login_required(login_url='/login/')
@@ -109,7 +110,7 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         intermediate_points_selected = request.POST.get('Intermediate_points')
 
         profile = request.POST.get('profile_input')
-        if profile:
+        if is_profile_valid(profile):
             atrack.profile = profile
             atrack.save()
 
@@ -312,7 +313,15 @@ def compute_statistics(tracks):
     return statistics
 
 
+def is_profile_valid(profile=None):
+    pattern = (r"^[A-z0-9\- \ ]+$")
+    try:
+        return re.match(pattern, profile) is not None
+    except:
+        return None
+
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/')
     # Redirect to a success page.
+
