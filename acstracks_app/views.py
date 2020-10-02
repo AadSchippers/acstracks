@@ -96,9 +96,6 @@ def get_tracks(request, order_selected, profile_filter):
 
 @login_required(login_url='/login/')
 def track_detail(request, pk, order_selected=None, profile_filter=None, intermediate_points_selected=None):
-    if request.method == 'POST':       
-        intermediate_points_selected = request.POST.get('Intermediate_points')
-
     if not order_selected:
         order_selected = "created_date_ascending"
     if not profile_filter:
@@ -107,6 +104,14 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         intermediate_points_selected = 0
 
     atrack = Track.objects.get(id=pk)
+
+    if request.method == 'POST':
+        intermediate_points_selected = request.POST.get('Intermediate_points')
+
+        profile = request.POST.get('profile_input')
+        if profile:
+            atrack.profile = profile
+            atrack.save()
 
     if atrack.length == 0:
         process_gpx_file(atrack.storagefilename, intermediate_points_selected, atrack, True)
@@ -117,6 +122,7 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         "/static/maps/" +
         os.path.splitext(atrack.storagefilename)[0]+".html"
     )
+    bike_profiles = get_bike_profiles(request)
 
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
@@ -124,6 +130,7 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         'profile_filter': profile_filter,
         'order_selected': order_selected,
         'intermediate_points_selected': int(intermediate_points_selected),     
+        'bike_profiles': bike_profiles,
         }
     )
 

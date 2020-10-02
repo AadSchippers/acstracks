@@ -57,7 +57,21 @@
                 </tr>
                 <tr>
                     <td><b>Profile</b></td>
-                    <td style="text-align:right">{{ atrack.profile }}</td>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="Order" value="{{ order_selected }}">
+                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                        <label for="Profile">Profile:</label>
+                        <td style="text-align:right"><input type="text" style="text-align:right" name="profile_input" list="profile_list" value={{ atrack.profile }} onchange=this.form.submit()></td>
+                        <datalist name="Profile" id="profile_list" onchange=this.form.submit()>
+                            {% if bike_profiles %}
+                                {% for profile in bike_profiles %}
+                                    <option value="{{ profile }}">{{ profile }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </datalist>
+                    </form>
                 </tr>
                 <tr>
                     <td><b>Length&nbsp;(km)</b></td>
