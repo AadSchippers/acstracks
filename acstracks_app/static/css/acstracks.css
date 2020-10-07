@@ -76,7 +76,7 @@ body {
     padding-left: 15px;
     padding-right: 15px;
     background-color: #F0F0F0;
-    background-image: url("/static/img/acstracksbg.jpg");
+    background-image: url("/static/img/acstracksbg-blurred.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     max-width: 100%;
@@ -105,11 +105,11 @@ table, th, td {
     cursor:pointer;
 }
 
-.myfilelabel {
+.gpxfilelabel {
     cursor:pointer;
 }
 
-.myfilepath {
+.gpxfilepath {
     width: 100%;
     background-color: transparent;
     border-color: transparent;

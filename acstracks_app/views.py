@@ -26,7 +26,7 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
         intermediate_points_selected = 0
 
     if request.method == 'POST':
-        files = request.FILES.getlist('myfile')
+        files = request.FILES.getlist('gpxfile')
         for file in files:
             fs = FileSystemStorage()
             storagefilename = fs.save(file.name, file)

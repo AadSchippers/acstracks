@@ -5,7 +5,7 @@
 {% block content %}
 <h2 style="font-size: 1.6vw; font-weight: 500;">Login</h2>
 <div class="scalefont">
-    <form method="post">
+    <form method="post" autocomplete="off">
       {% csrf_token %}
       {{ form.as_p }}
       <button type="submit">Login</button>
