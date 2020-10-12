@@ -30,7 +30,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'aadschippers.pythonanywhere.com',
-    'acstracks.pythonanuwhere.com',
+    'acstracks.pythonanywhere.com',
     ]
 
 
