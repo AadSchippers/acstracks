@@ -26,7 +26,12 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'aadschippers.pythonanywhere.com']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'aadschippers.pythonanywhere.com',
+    'acstracks.pythonanuwhere.com',
+    ]
 
 
 # Application definition
