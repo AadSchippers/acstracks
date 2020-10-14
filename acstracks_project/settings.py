@@ -26,12 +26,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = 
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'aadschippers.pythonanywhere.com',
-    'acstracks.pythonanywhere.com',
-    ]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -142,4 +137,4 @@ CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension
 SPEEDTHRESHOLD = 9.25
 ELEVATIONTHRESHOLD = 0.25
 
-from .mysettings import *   # noqa
+from .config import *   # noqa

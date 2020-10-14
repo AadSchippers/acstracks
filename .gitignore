@@ -3,7 +3,7 @@
 /.vscode
 __pycache__
 db.sqlite3
-/acstracks_project/mysettings.py
+/acstracks_project/config.py
 /static
 .DS_Store
 /media
