@@ -28,7 +28,8 @@ class Track(models.Model):
         unique_together = ('username', 'displayfilename')
 
     def __str__(self):
-        return "%s, %s, %s, %s" % (
+        return "%s, %s, %s, %s, %s" % (
+            self.username,
             self.displayfilename,
             self.created_date,
             self.name,
