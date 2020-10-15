@@ -134,7 +134,7 @@ GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExten
 HEARTRATETAGS = ['heartrate', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr']
 CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}cad']
 
-SPEEDTHRESHOLD = 9.25
+SPEEDTHRESHOLD = 3.60
 ELEVATIONTHRESHOLD = 0.25
 
 from .config import *   # noqa
