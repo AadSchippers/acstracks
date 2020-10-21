@@ -159,53 +159,9 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
         # ivm met naamwijziging
         if profile == "Vakantiefiet":
             profile = "Toerfiets"
-        length = extensions.find('ns:length', namespace).text
-        timelength = extensions.find('ns:timelength', namespace).text
-        avgspeed = extensions.find('ns:avgspeed', namespace).text
-        maxspeed = extensions.find('ns:maxspeed', namespace).text
-        totalascent = extensions.find('ns:totalascent', namespace).text
-        totaldescent = extensions.find('ns:totaldescent', namespace).text
-        avgcadence = extensions.find('ns:avgcadence', namespace)
-        maxcadence = extensions.find('ns:maxcadence', namespace)
-        avgheartrate = extensions.find('ns:avgheartrate', namespace)
-        minheartrate = extensions.find('ns:minheartrate', namespace)
-        maxheartrate = extensions.find('ns:maxheartrate', namespace)
     else:
         created_date = "00:00:00"
         profile = "Fiets"
-        length = 0
-        timelength = 0
-        avgspeed = 0
-        maxspeed = 0
-        totalascent = 0
-        totaldescent = 0
-
-    trkLength = float(length) / 1000
-    trkTimelength = time.strftime('%H:%M:%S', time.gmtime(int(timelength)))
-    trkAvgspeed = float(avgspeed) * 3.6
-    trkMaxspeed = float(maxspeed) * 3.6
-    try:
-        trkAvgcadence = int(avgcadence.text)
-    except:
-        trkAvgcadence = None
-    try:
-        trkMaxcadence = int(maxcadence.text)
-    except:
-        trkMaxcadence = None
-    try:
-        trkAvgheartrate = int(avgheartrate.text)
-    except:
-        trkAvgheartrate = None
-    try:
-        trkMinheartrate = int(minheartrate.text)
-    except:
-        trkMinheartrate = None
-    try:
-        trkMaxheartrate = int(maxheartrate.text)
-    except:
-        trkMaxheartrate = None
-
-    getcontext().prec = 2
 
     try:
         trk = Track.objects.create(
@@ -216,24 +172,12 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
             created_date=parse(created_date),
             name=name,
             profile=profile,
-            length=Decimal(trkLength),
-            timelength=trkTimelength,
-            avgspeed=Decimal(trkAvgspeed),
-            maxspeed=Decimal(trkMaxspeed),
-            totalascent=Decimal(totalascent),
-            totaldescent=Decimal(totaldescent),
-            avgcadence=trkAvgcadence,
-            maxcadence=trkMaxcadence,
-            avgheartrate=trkAvgheartrate,
-            minheartrate=trkMinheartrate,
-            maxheartrate=trkMaxheartrate,
         )
         trk.save()
-        if trkLength == 0:
-            process_gpx_file(trk.storagefilename, intermediate_points_selected, trk, False)
+
+        process_gpx_file(trk.storagefilename, intermediate_points_selected, trk, False)
     except:
         pass
-
 
     return
 
