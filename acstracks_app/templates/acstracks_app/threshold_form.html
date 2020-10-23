@@ -1,0 +1,12 @@
+{% extends 'registration/base.html' %}
+
+{% block content %}
+    <div class="scalefont">
+        <h2>Thresholds</h2>
+        <form method="POST" class="threshold-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="save btn btn-default scalefont">Save</button>
+        </form>
+    </div>
+{% endblock %}

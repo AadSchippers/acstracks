@@ -10,9 +10,10 @@ from pytz import timezone
 from dateutil.parser import parse
 import time
 from haversine import haversine, Unit
+from .models import Threshold
 
 
-def process_gpx_file(filename, intermediate_points_selected, atrack=None, makemap=False):
+def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, makemap=False):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -21,6 +22,15 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
     gpx_file = open(fullfilename, 'r')
 
     gpx = gpxpy.parse(gpx_file)
+
+    try:
+        threshold = Threshold.objects.get(user=request.user)
+        speedthreshold = threshold.speedthreshold
+        elevationthreshold = threshold.elevationthreshold
+    except:
+        speedthreshold = settings.SPEEDTHRESHOLD
+        elevationthreshold = settings.ELEVATIONTHRESHOLD
+
     points = []
     points_info = []
     starting_distance = 0
@@ -73,7 +83,7 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
                     previous_duration = txminus1 - t0
                     if not speed:
                         speed = (point_distance / (duration.seconds - previous_duration.seconds)) * 3.6
-                    if speed <= settings.SPEEDTHRESHOLD and (not cadence or cadence == 0):
+                    if speed <= speedthreshold and (not cadence or cadence == 0):
                         pass
                     else:
                         moving_duration = moving_duration + (duration - previous_duration)
@@ -134,7 +144,7 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
                 previous_speed = speed
 
     if atrack:
-        update_track(atrack, points_info)
+        update_track(atrack, points_info, elevationthreshold)
 
     if makemap:
         make_map(points, points_info, filename, intermediate_points_selected)
@@ -142,7 +152,7 @@ def process_gpx_file(filename, intermediate_points_selected, atrack=None, makema
     return
 
 
-def update_track(atrack, points_info):
+def update_track(atrack, points_info, elevationthreshold):
 
     last = len(points_info) - 1
     created_date = points_info[0][0]
@@ -178,7 +188,7 @@ def update_track(atrack, points_info):
                 trkMinheartrate = point[5]
         if point[7] > trkMaxcadence: 
             trkMaxcadence = point[7]
-        if abs(point[9] - previous_elevation) > settings.ELEVATIONTHRESHOLD:
+        if abs(point[9] - previous_elevation) > elevationthreshold:
             if point[9] > previous_elevation:
                 totalascent = totalascent + (point[9] - previous_elevation)
             if point[9] < previous_elevation:

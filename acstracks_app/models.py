@@ -36,3 +36,15 @@ class Track(models.Model):
             self.length,
             )
 
+
+class Threshold(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    speedthreshold = models.DecimalField(max_digits=6, decimal_places=2, default=3.60)
+    elevationthreshold = models.DecimalField(max_digits=6, decimal_places=2, default=0.25)
+
+    def __str__(self):
+        return "%s, %s, %s" % (
+            self.user.username,
+            self.speedthreshold,
+            self.elevationthreshold,
+            )

@@ -5,8 +5,10 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import HttpResponseRedirect
+from django import forms
 import xml.etree.ElementTree as ET
-from .models import Track
+from .models import Track, Threshold
+from .forms import ThresholdForm
 import os
 from dateutil.parser import parse
 from decimal import *
@@ -115,9 +117,9 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             atrack.save()
 
     if atrack.length == 0:
-        process_gpx_file(atrack.storagefilename, intermediate_points_selected, atrack, True)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, True)
     else:
-        process_gpx_file(atrack.storagefilename, intermediate_points_selected, None, True)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, True)
     
     map_filename = (
         "/static/maps/" +
@@ -175,7 +177,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
         )
         trk.save()
 
-        process_gpx_file(trk.storagefilename, intermediate_points_selected, trk, False)
+        process_gpx_file(request, trk.storagefilename, intermediate_points_selected, trk, False)
     except:
         pass
 
@@ -264,8 +266,50 @@ def is_profile_valid(profile=None):
     except:
         return None
 
+
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/')
     # Redirect to a success page.
 
+
+@login_required(login_url='/login/')
+def threshold(request):
+    form = ThresholdForm()
+    if request.method == "POST":
+        form = ThresholdForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            try:
+                threshold = Threshold.objects.get(user=request.user)
+                threshold.speedthreshold = data['speedthreshold']
+                threshold.elevationthreshold = data['elevationthreshold']
+                threshold.save()
+            except:
+                threshold = Threshold.objects.create(
+                    user=request.user,
+                    speedthreshold=data['speedthreshold'],
+                    elevationthreshold=data['elevationthreshold']
+                )
+
+            recalculate_tracks(request)
+            return redirect('track_list')
+    else:
+        try:
+            threshold = Threshold.objects.get(user=request.user)
+            form = ThresholdForm(initial={
+                'speedthreshold': threshold.speedthreshold,
+                'elevationthreshold': threshold.elevationthreshold
+            })
+        except:
+            form = ThresholdForm()
+
+    return render(request, 'acstracks_app/threshold_form.html', {'form': form})
+
+
+def recalculate_tracks(request):
+    tracks = Track.objects.filter(username=request.user.username)
+    for track in tracks:
+        process_gpx_file(request, track.storagefilename, 0, track, False)
+
+    return
