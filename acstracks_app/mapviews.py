@@ -67,7 +67,8 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                             heartrate = int(TrackPointExtension.text)
                         if TrackPointExtension.tag in settings.CADENCETAGS:
                             cadence = int(TrackPointExtension.text)
-                if not distance or (distance < previous_distance):
+                printspeed = speed
+                if not distance:
                     point_distance = calculate_using_haversine(point, previous_point)
                     distance = previous_distance + point_distance
                     previous_distance = distance
@@ -76,6 +77,9 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                 previous_point = point
                 x = len(points_info)
                 if x > 0:
+                    if distance < previous_distance:
+                        distance = previous_distance
+                        speed = previous_speed                    
                     t0 = datetime.strptime(points_info[0][0], "%Y-%m-%d %H:%M:%S")
                     tx = datetime.strptime(point.time.astimezone(timezone_info).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
                     duration = tx - t0

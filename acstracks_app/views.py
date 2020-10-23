@@ -88,11 +88,11 @@ def get_tracks(request, order_selected, profile_filter):
     
     if profile_filter != "All":
         tracks = Track.objects.filter(
-            username=request.user.username,
+            user=request.user.user,
             profile=profile_filter
             ).order_by(order_by)
     else:
-        tracks = Track.objects.filter(username=request.user.username).order_by(order_by)
+        tracks = Track.objects.filter(user=request.user).order_by(order_by)
 
     return tracks
 
@@ -167,7 +167,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
 
     try:
         trk = Track.objects.create(
-            username=request.user.username,
+            user=request.user,
             displayfilename=displayfilename,
             storagefilename=storagefilename,
             creator=creator,
@@ -185,7 +185,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
 
 
 def get_bike_profiles(request):
-    dictbike_profiles = Track.objects.values('profile').distinct().filter(username=request.user.username)
+    dictbike_profiles = Track.objects.values('profile').distinct().filter(user=request.user)
 
     listbike_profiles = ['All']
     for p in dictbike_profiles:
@@ -308,7 +308,7 @@ def threshold(request):
 
 
 def recalculate_tracks(request):
-    tracks = Track.objects.filter(username=request.user.username)
+    tracks = Track.objects.filter(user=request.user)
     for track in tracks:
         process_gpx_file(request, track.storagefilename, 0, track, False)
 

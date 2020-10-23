@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class Track(models.Model):
-    username = models.CharField(max_length=150)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     displayfilename = models.CharField(max_length=255)
     storagefilename = models.CharField(max_length=255)
     creator = models.CharField(max_length=255)
@@ -25,11 +25,11 @@ class Track(models.Model):
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
 
     class Meta:
-        unique_together = ('username', 'displayfilename')
+        unique_together = ('user', 'displayfilename')
 
     def __str__(self):
         return "%s, %s, %s, %s, %s" % (
-            self.username,
+            self.user.username,
             self.displayfilename,
             self.created_date,
             self.name,
