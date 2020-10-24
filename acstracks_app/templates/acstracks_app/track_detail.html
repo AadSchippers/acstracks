@@ -52,8 +52,20 @@
                     <td style="text-align:right">{{ atrack.created_date|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Name</td></b></td>
-                    <td style="text-align:right">{{ atrack.name }}</td>
+                    <td><b>Name</b></td>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="Order" value="{{ order_selected }}">
+                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                        <td style="text-align:right"><input 
+                            type="text" style="text-align:right" 
+                            name="name_input" 
+                            autocomplete="off"
+                            value="{{ atrack.name }}" 
+                            onchange=this.form.submit()>
+                        </td>
+                    </form>
                 </tr>
                 <tr>
                     <td><b>Profile</b></td>
@@ -62,7 +74,6 @@
                         <input type="hidden" name="Order" value="{{ order_selected }}">
                         <input type="hidden" name="Profile" value="{{ profile_filter }}">
                         <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                        <label for="Profile">Profile:</label>
                         <td style="text-align:right"><input 
                             type="text" style="text-align:right" 
                             name="profile_input" 

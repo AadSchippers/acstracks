@@ -163,7 +163,10 @@ def update_track(atrack, points_info, elevationthreshold):
     trkLength = float(points_info[last][1]) / 1000
     trkTimelength = time.strftime('%H:%M:%S', time.gmtime(int(points_info[last][3].seconds)))
 
-    trkAvgspeed = float((points_info[last][1] / points_info[last][3].seconds) * 3.6)
+    try:
+        trkAvgspeed = float((points_info[last][1] / points_info[last][3].seconds) * 3.6)
+    except:
+        trkAvgspeed = 0
     try:
         trkAvgcadence = int(points_info[last][8])
     except:

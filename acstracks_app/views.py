@@ -88,7 +88,7 @@ def get_tracks(request, order_selected, profile_filter):
     
     if profile_filter != "All":
         tracks = Track.objects.filter(
-            user=request.user.user,
+            user=request.user,
             profile=profile_filter
             ).order_by(order_by)
     else:
@@ -111,8 +111,13 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     if request.method == 'POST':
         intermediate_points_selected = request.POST.get('Intermediate_points')
 
+        name = request.POST.get('name_input')
+        if is_input_valid(name):
+            atrack.name = name
+            atrack.save()
+
         profile = request.POST.get('profile_input')
-        if is_profile_valid(profile):
+        if is_input_valid(profile):
             atrack.profile = profile
             atrack.save()
 
@@ -259,10 +264,10 @@ def compute_statistics(tracks):
     return statistics
 
 
-def is_profile_valid(profile=None):
+def is_input_valid(input=None):
     pattern = (r"^[A-z0-9\- \ ]+$")
     try:
-        return re.match(pattern, profile) is not None
+        return re.match(pattern, input) is not None
     except:
         return None
 
@@ -280,16 +285,19 @@ def threshold(request):
         form = ThresholdForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
+            speedthreshold = data['speedthreshold']
+            elevationthreshold = data['elevationthreshold']
+
             try:
                 threshold = Threshold.objects.get(user=request.user)
-                threshold.speedthreshold = data['speedthreshold']
-                threshold.elevationthreshold = data['elevationthreshold']
+                threshold.speedthreshold = speedthreshold
+                threshold.elevationthreshold = elevationthreshold
                 threshold.save()
             except:
                 threshold = Threshold.objects.create(
                     user=request.user,
-                    speedthreshold=data['speedthreshold'],
-                    elevationthreshold=data['elevationthreshold']
+                    speedthreshold=speedthreshold,
+                    elevationthreshold=elevationthreshold
                 )
 
             recalculate_tracks(request)

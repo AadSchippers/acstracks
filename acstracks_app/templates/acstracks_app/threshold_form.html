@@ -5,7 +5,38 @@
         <h2>Thresholds</h2>
         <form method="POST" class="threshold-form">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="row">
+                    <div class="col-3">
+                        <table class="scalefont">
+                            <tr>
+                                <td valign="top" style="text-align:left"><b>Speed threshold (km/h):</b></td>
+                                <td style="text-align:right">
+                                    <input type="number" 
+                                        name="speedthreshold" 
+                                        value="{{ form.speedthreshold.value }}" 
+                                        step="0.01" 
+                                        min="0" 
+                                        max="10"
+                                        id="id_speedthreshold" 
+                                        style="text-align:right">
+                                    <br><br></td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="text-align:left"><b>Elevation threshold (m):</b></td>
+                                <td style="text-align:right">
+                                    <input type="number" 
+                                        name="elevationthreshold" 
+                                        value="{{ form.elevationthreshold.value }}" 
+                                        step="0.01" 
+                                        min="0" 
+                                        max="10"
+                                        id="id_elevationthreshold" 
+                                        style="text-align:right">
+                                    <br><br></td>
+                            </tr>
+                                    </table>
+                    </div>
+                </div>
             <button type="submit" class="save btn btn-default scalefont">Save</button>
         </form>
     </div>
