@@ -271,7 +271,6 @@ def make_map(points, points_info, filename, intermediate_points_selected):
             time = points_info[x][0]
             duration = points_info[x][2]
             moving_duration = points_info[x][3]
-            distance = float(points_info[x][1]) / 1000
             speed = points_info[x][4]
             try:
                 avgspeed = float((points_info[x][1] / moving_duration.seconds) * 3.6)
