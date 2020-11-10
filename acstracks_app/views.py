@@ -108,6 +108,8 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
 
     atrack = Track.objects.get(id=pk)
 
+    csvsave = None
+
     if request.method == 'POST':
         intermediate_points_selected = request.POST.get('Intermediate_points')
 
@@ -121,10 +123,14 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             atrack.profile = profile
             atrack.save()
 
-    if atrack.length == 0:
-        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, True)
+        csvsave = request.POST.get('csvsave')
+
+    if csvsave == 'True':
+        return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, False, True)
+    elif atrack.length == 0:
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, True, False)
     else:
-        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, True)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, True, False)
     
     map_filename = (
         "/static/maps/" +

@@ -145,6 +145,19 @@
                         <td  style="text-align:right">{{ atrack.maxheartrate }}</td>
                     </tr>
                 {% endif %}
+                <t2><td><hr></td><td><hr></td></t2>
+                <tr>
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="Order" value="{{ order_selected }}">
+                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                            <input type="hidden" name="csvsave" value="True">
+                            <input type="submit" id="csvsave" value="Save as .csv file" class="save btn btn-default scalefont">
+                        </form>
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="col-9">

@@ -11,9 +11,12 @@ from dateutil.parser import parse
 import time
 from haversine import haversine, Unit
 from .models import Threshold
+import csv
+from django.http import HttpResponse
 
 
-def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, makemap=False):
+
+def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, makemap=False, savecsv=False):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -129,7 +132,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                     previous_avgcadence = cadence
                 points.append(tuple([point.latitude,
                                     point.longitude,
-                                     ]))
+                                    ]))
 
                 points_info.append(tuple([
                     point.time.astimezone(timezone_info).strftime("%Y-%m-%d %H:%M:%S"),
@@ -142,7 +145,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                     cadence,
                     avgcadence,
                     round(point.elevation, 2),
-                    ]))
+                   ]))
                     
                 previous_distance = distance
                 previous_speed = speed
@@ -152,6 +155,9 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
 
     if makemap:
         make_map(points, points_info, filename, intermediate_points_selected)
+
+    if savecsv:
+        return save_csv(request, atrack, points, points_info)
 
     return
 
@@ -348,8 +354,76 @@ def make_map(points, points_info, filename, intermediate_points_selected):
             os.path.splitext(filename)[0]+".html"
         )
     my_map.save(mapfilename)
- 
+
     return
+
+
+def save_csv(request, atrack, points, points_info):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    csvfilename = os.path.splitext(atrack.displayfilename)[0]+".csv"
+    response['Content-Disposition'] = 'attachment; filename="'+csvfilename+'"'
+
+    writer = csv.writer(response)
+
+    # write summerary first
+    writer.writerow(['Summary'])
+
+    writer.writerow(['displayfilename', atrack.displayfilename])
+    writer.writerow(['creator', atrack.creator])
+    writer.writerow(['created_date', atrack.created_date])
+    writer.writerow(['name', atrack.name])
+    writer.writerow(['profile', atrack.profile])
+    writer.writerow(['length', atrack.length])
+    writer.writerow(['timelength', atrack.timelength])
+    writer.writerow(['avgspeed', atrack.avgspeed])
+    writer.writerow(['maxspeed', atrack.maxspeed])
+    writer.writerow(['totalascent', atrack.totalascent])
+    writer.writerow(['totaldescent', atrack.totaldescent])
+    if atrack.avgcadence:
+        writer.writerow(['avgcadence', atrack.avgcadence])
+        writer.writerow(['maxcadence', atrack.maxcadence])
+    if atrack.avgheartrate:
+        writer.writerow(['avgheartrate', atrack.avgheartrate])
+        writer.writerow(['minheartrate', atrack.minheartrate])
+        writer.writerow(['maxheartrate', atrack.maxheartrate])
+
+    writer.writerow([''])
+
+    writer.writerow([
+        'longitude',
+        'latitude',
+        'elevation',
+        'time',
+        'distance (m)',
+        'duration',
+        'moving_duration',
+        'speed (km/h)',
+        'heartrate',
+        'average heartrate',
+        'cadence',
+        'mincadence',
+        ])
+
+    row = 0
+    while row < len(points):
+        writer.writerow([
+            points[row][0],
+            points[row][1],
+            round(points_info[row][9], 2),
+            points_info[row][0],
+            round(points_info[row][1], 2),
+            points_info[row][2],
+            points_info[row][3],
+            points_info[row][4],
+            points_info[row][5],
+            int(points_info[row][6]),
+            points_info[row][7],
+            int(points_info[row][8]),
+        ])
+        row += 1
+
+    return response
 
 
 def calculate_using_haversine(point, previous_point):
