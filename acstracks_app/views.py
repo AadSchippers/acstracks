@@ -7,8 +7,8 @@ from django.contrib.auth import logout
 from django.shortcuts import HttpResponseRedirect
 from django import forms
 import xml.etree.ElementTree as ET
-from .models import Track, Threshold
-from .forms import ThresholdForm
+from .models import Track, Preference
+from .forms import PreferenceForm
 import os
 from dateutil.parser import parse
 from decimal import *
@@ -43,9 +43,12 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
     tracks = get_tracks(request, order_selected, profile_filter)
 
     statistics = compute_statistics(tracks)
-    
+
+    preference = Preference.objects.get(user=request.user)
+
     return render(request, 'acstracks_app/track_list.html', {
         'tracks': tracks,
+        'preference': preference,
         'bike_profiles': bike_profiles,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
@@ -285,22 +288,34 @@ def logout_view(request):
 
 
 @login_required(login_url='/login/')
-def threshold(request):
-    form = ThresholdForm()
+def process_preferences(request):
+    form = PreferenceForm()
     if request.method == "POST":
-        form = ThresholdForm(request.POST)
+        form = PreferenceForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             speedthreshold = data['speedthreshold']
             elevationthreshold = data['elevationthreshold']
+            show_avgspeed = data['show_avgspeed']
+            show_maxspeed = data['show_maxspeed']
+            show_totalascent = data['show_totalascent']
+            show_totaldescent = data['show_totaldescent']
+            show_avgcadence = data['show_avgcadence']
+            show_avgheartrate = data['show_avgheartrate']
 
             try:
-                threshold = Threshold.objects.get(user=request.user)
-                threshold.speedthreshold = speedthreshold
-                threshold.elevationthreshold = elevationthreshold
-                threshold.save()
+                preference = Preference.objects.get(user=request.user)
+                preference.speedthreshold = speedthreshold
+                preference.elevationthreshold = elevationthreshold
+                preference.show_avgspeed = show_avgspeed
+                preference.show_maxspeed = show_maxspeed
+                preference.show_totalascent = show_totalascent
+                preference.show_totaldescent = show_totaldescent
+                preference.show_avgcadence = show_avgcadence
+                preference.show_avgheartrate = show_avgheartrate
+                preference.save()
             except:
-                threshold = Threshold.objects.create(
+                preference = Preference.objects.create(
                     user=request.user,
                     speedthreshold=speedthreshold,
                     elevationthreshold=elevationthreshold
@@ -310,15 +325,21 @@ def threshold(request):
             return redirect('track_list')
     else:
         try:
-            threshold = Threshold.objects.get(user=request.user)
-            form = ThresholdForm(initial={
-                'speedthreshold': threshold.speedthreshold,
-                'elevationthreshold': threshold.elevationthreshold
+            preference = Preference.objects.get(user=request.user)
+            form = PreferenceForm(initial={
+                'speedthreshold': preference.speedthreshold,
+                'elevationthreshold': preference.elevationthreshold,
+                'show_avgspeed': preference.show_avgspeed,
+                'show_maxspeed': preference.show_maxspeed,
+                'show_totalascent': preference.show_totalascent,
+                'show_totaldescent': preference.show_totaldescent,
+                'show_avgcadence': preference.show_avgcadence,
+                'show_avgheartrate': preference.show_avgheartrate,
             })
         except:
-            form = ThresholdForm()
+            form = PreferenceForm()
 
-    return render(request, 'acstracks_app/threshold_form.html', {'form': form})
+    return render(request, 'acstracks_app/preference_form.html', {'form': form})
 
 
 def recalculate_tracks(request):

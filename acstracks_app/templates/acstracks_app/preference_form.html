@@ -1,0 +1,130 @@
+{% extends 'registration/base.html' %}
+
+{% block content %}
+    <div class="scalefont">
+        <form method="POST" class="preference-form">
+            {% csrf_token %}
+            <h2>Thresholds</h2>
+            <div class="row">
+                <div class="col-3">
+                    <table class="scalefont">
+                        <tr>
+                            <td valign="top" style="text-align:left"><b>Speed threshold (km/h):</b></td>
+                            <td style="text-align:right">
+                                <input type="number" 
+                                    name="speedthreshold" 
+                                    value="{{ form.speedthreshold.value }}" 
+                                    step="0.01" 
+                                    min="0" 
+                                    max="10"
+                                    id="id_speedthreshold" 
+                                    style="text-align:right">
+                                <br><br></td>
+                        </tr>
+                        <tr>
+                            <td valign="top" style="text-align:left"><b>Elevation threshold (m):</b></td>
+                            <td style="text-align:right">
+                                <input type="number" 
+                                    name="elevationthreshold" 
+                                    value="{{ form.elevationthreshold.value }}" 
+                                    step="0.01" 
+                                    min="0" 
+                                    max="10"
+                                    id="id_elevationthreshold" 
+                                    style="text-align:right">
+                                </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <h2>Visible columns</h2>
+            <div class="row">
+                <div class="col-3">
+                    <table class="scalefont">
+                        <tr>
+                            <td>
+                                <label class="checkcontainer">Average speed
+                                    <input type="checkbox"
+                                        name="show_avgspeed" 
+                                        {% if form.show_avgspeed.value %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_show_avgspeed">
+                                    <span class="checkmark"></span> 
+                                </label>
+                          </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="checkcontainer">Maximum speed
+                                <input type="checkbox" 
+                                    name="show_maxspeed" 
+                                    {% if form.show_maxspeed.value %}
+                                        checked="checked }}" 
+                                    {% endif %}
+                                    id="id_show_maxspeed">
+                                <span class="checkmark"></span> 
+                            </label>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="checkcontainer">Total ascent
+                                <input type="checkbox" 
+                                    name="show_totalascent" 
+                                    {% if form.show_totalascent.value %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_totalascent">
+                                <span class="checkmark"></span> 
+                            </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="checkcontainer">Total descent
+                                <input type="checkbox" 
+                                    name="show_totaldescent" 
+                                    {% if form.show_totaldescent.value %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_totaladecent">
+                                <span class="checkmark"></span> 
+                            </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="checkcontainer">Average cadence
+                                <input type="checkbox" 
+                                    name="show_avgcadence" 
+                                    {% if form.show_avgcadence.value %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_avgcadence">
+                                <span class="checkmark"></span> 
+                            </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="checkcontainer">Average heartrate
+                                <input type="checkbox" 
+                                    name="show_avgheartrate" 
+                                    {% if form.show_avgheartrate.value %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_avgheartrate">
+                                <span class="checkmark"></span> 
+                            </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <button type="submit" class="save btn btn-default scalefont">Save</button>
+        </form>
+    </div>
+{% endblock %}

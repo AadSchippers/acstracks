@@ -1,9 +1,18 @@
 from django import forms
-from .models import Threshold
+from .models import Preference
 
 
-class ThresholdForm(forms.ModelForm):
+class PreferenceForm(forms.ModelForm):
 
     class Meta:
-        model = Threshold
-        fields = ('speedthreshold', 'elevationthreshold',)
+        model = Preference
+        fields = (
+            'speedthreshold',
+            'elevationthreshold',
+            'show_avgspeed',
+            'show_maxspeed',
+            'show_totalascent',
+            'show_totaldescent',
+            'show_avgcadence',
+            'show_avgheartrate',
+            )

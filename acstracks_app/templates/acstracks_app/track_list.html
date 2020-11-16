@@ -103,32 +103,40 @@
                         {% else %}
                             <option value="duration_descending">Duration (descending)</option>
                         {% endif %}
-                        {% if order_selected == "avgspeed_ascending" %}
-                            <option value="avgspeed_ascending" selected="selected">Average speed (ascending)</option>
-                        {% else %}
-                            <option value="avgspeed_ascending">Average speed (ascending)</option>
+                        {% if preference.show_avgspeed %}
+                            {% if order_selected == "avgspeed_ascending" %}
+                                <option value="avgspeed_ascending" selected="selected">Average speed (ascending)</option>
+                            {% else %}
+                                <option value="avgspeed_ascending">Average speed (ascending)</option>
+                            {% endif %}
                         {% endif %}
-                        {% if order_selected == "avgspeed_descending" %}
-                            <option value="avgspeed_descending" selected="selected">Average speed (descending)</option>
-                        {% else %}
-                            <option value="avgspeed_descending">Average speed (descending)</option>
+                        {% if preference.show_avgspeed %}
+                            {% if order_selected == "avgspeed_descending" %}
+                                <option value="avgspeed_descending" selected="selected">Average speed (descending)</option>
+                            {% else %}
+                                <option value="avgspeed_descending">Average speed (descending)</option>
+                            {% endif %}
                         {% endif %}
-                        {% if order_selected == "maxspeed_ascending" %}
-                            <option value="maxspeed_ascending" selected="selected">Maximum speed_ascending</option>
-                        {% else %}
-                            <option value="maxspeed_ascending">Maximum speed (ascending)</option>
+                        {% if preference.show_maxspeed %}
+                            {% if order_selected == "maxspeed_ascending" %}
+                                <option value="maxspeed_ascending" selected="selected">Maximum speed_ascending</option>
+                            {% else %}
+                                <option value="maxspeed_ascending">Maximum speed (ascending)</option>
+                            {% endif %}
                         {% endif %}
-                        {% if order_selected == "maxspeed_descending" %}
-                            <option value="maxspeed_descending" selected="selected">Maximum speed (descending)</option>
-                        {% else %}
-                            <option value="maxspeed_descending">Maximum speed (descending)</option>
+                        {% if preference.show_maxspeed %}
+                            {% if order_selected == "maxspeed_descending" %}
+                                <option value="maxspeed_descending" selected="selected">Maximum speed (descending)</option>
+                            {% else %}
+                                <option value="maxspeed_descending">Maximum speed (descending)</option>
+                            {% endif %}
                         {% endif %}
                         </select>
                 </form>   
             </td>
         </tr>
     </table><br><br>  
-    <table id="click-table" style="width: 100%;overflow-x:auto;" class="table-hover scalefont">
+    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
         <th valign="Top" width=400>Filename</th>
         <th valign="Top" width=200>Created&nbsp;date</th>
         <th valign="Top" width=200>Name</th>
@@ -152,12 +160,24 @@
         </th>
         <th valign="Top" style="text-align:right">Length</th>
         <th valign="Top" style="text-align:right">Duration</th>
-        <th valign="Top" style="text-align:right">Average<br>speed</th>
-        <th valign="Top" style="text-align:right">Maximum<br>speed</th>
-        <th valign="Top" style="text-align:right">Total<br>ascent</th>
-        <th valign="Top" style="text-align:right">Total<br>descent</th>
-        <th valign="Top" style="text-align:right">Average<br>cadence</th>
-        <th valign="Top" style="text-align:right">Average<br>heartrate</th>
+        {% if preference.show_avgspeed %}
+            <th valign="Top" style="text-align:right">Average<br>speed</th>
+        {% endif %}
+        {% if preference.show_maxspeed %}
+            <th valign="Top" style="text-align:right">Maximum<br>speed</th>
+        {% endif %}
+        {% if preference.show_totalascent %}
+            <th valign="Top" style="text-align:right">Total<br>ascent</th>
+        {% endif %}
+        {% if preference.show_totaldescent %}
+            <th valign="Top" style="text-align:right">Total<br>descent</th>
+        {% endif %}
+        {% if preference.show_avgcadence %}
+            <th valign="Top" style="text-align:right">Average<br>cadence</th>
+        {% endif %}
+        {% if preference.show_avgheartrate %}
+            <th valign="Top" style="text-align:right">Average<br>heartrate</th>
+        {% endif %}
         {% for track in tracks %}
             <tr class="table-row">
                 <td><a href="{% url 'track_detail' pk=track.pk order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">{{ track.displayfilename }}</a></td>
@@ -166,19 +186,31 @@
                 <td>{{ track.profile }}</td>
                 <td style="text-align:right">{{ track.length }}</td>
                 <td style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
-                <td style="text-align:right">{{ track.avgspeed }}</td>
-                <td style="text-align:right">{{ track.maxspeed }}</td>
-                <td style="text-align:right">{{ track.totalascent }}</td>
-                <td style="text-align:right">{{ track.totaldescent }}</td>
-                {% if track.avgcadence %}
-                    <td style="text-align:right">{{ track.avgcadence }}</td>
-                {% else %}
-                    <td  style="text-align:right">-</td>
+                {% if preference.show_avgspeed %}
+                    <td style="text-align:right">{{ track.avgspeed }}</td>
                 {% endif %}
-                {% if track.avgheartrate %}
-                    <td  style="text-align:right">{{ track.avgheartrate }}</td>
-                {% else %}
-                    <td  style="text-align:right">-</td>
+                {% if preference.show_maxspeed %}
+                    <td style="text-align:right">{{ track.maxspeed }}</td>
+                {% endif %}
+                {% if preference.show_totalascent %}
+                    <td style="text-align:right">{{ track.totalascent }}</td>
+                {% endif %}
+                {% if preference.show_totaldescent %}
+                    <td style="text-align:right">{{ track.totaldescent }}</td>
+                {% endif %}
+                {% if preference.show_avgcadence %}
+                    {% if track.avgcadence %}
+                        <td style="text-align:right">{{ track.avgcadence }}</td>
+                    {% else %}
+                        <td  style="text-align:right">-</td>
+                    {% endif %}
+                {% endif %}
+                {% if preference.show_avgheartrate %}
+                    {% if track.avgheartrate %}
+                        <td  style="text-align:right">{{ track.avgheartrate }}</td>
+                    {% else %}
+                        <td  style="text-align:right">-</td>
+                    {% endif %}
                 {% endif %}
                 </tr>
         {% endfor %}

@@ -10,7 +10,7 @@ from pytz import timezone
 from dateutil.parser import parse
 import time
 from haversine import haversine, Unit
-from .models import Threshold
+from .models import Preference
 import csv
 from django.http import HttpResponse
 
@@ -27,9 +27,9 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
     gpx = gpxpy.parse(gpx_file)
 
     try:
-        threshold = Threshold.objects.get(user=request.user)
-        speedthreshold = threshold.speedthreshold
-        elevationthreshold = threshold.elevationthreshold
+        preference = Preference.objects.get(user=request.user)
+        speedthreshold = preference.speedthreshold
+        elevationthreshold = preference.elevationthreshold
     except:
         speedthreshold = settings.SPEEDTHRESHOLD
         elevationthreshold = settings.ELEVATIONTHRESHOLD
