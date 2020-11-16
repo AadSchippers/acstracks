@@ -44,7 +44,12 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
 
     statistics = compute_statistics(tracks)
 
-    preference = Preference.objects.get(user=request.user)
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
 
     return render(request, 'acstracks_app/track_list.html', {
         'tracks': tracks,
@@ -318,7 +323,13 @@ def process_preferences(request):
                 preference = Preference.objects.create(
                     user=request.user,
                     speedthreshold=speedthreshold,
-                    elevationthreshold=elevationthreshold
+                    elevationthreshold=elevationthreshold,
+                    show_avgspeed=show_avgspeed,
+                    show_maxspeed=show_maxspeed,
+                    show_totalascent=show_totalascent,
+                    show_totaldescent=show_totaldescent,
+                    show_avgcadence=show_avgcadence,
+                    show_avgheartrate=show_avgheartrate,
                 )
 
             recalculate_tracks(request)
