@@ -115,6 +115,12 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         intermediate_points_selected = 0
 
     atrack = Track.objects.get(id=pk)
+    
+    map_filename = (
+        "/static/maps/" +
+        os.path.splitext(atrack.storagefilename)[0]+".html"
+    )
+    bike_profiles = get_bike_profiles(request)
 
     csvsave = None
 
@@ -125,11 +131,29 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         if is_input_valid(name):
             atrack.name = name
             atrack.save()
+            return render(request, 'acstracks_app/track_detail.html', {
+                'atrack': atrack,
+                'map_filename': map_filename,
+                'profile_filter': profile_filter,
+                'order_selected': order_selected,
+                'intermediate_points_selected': int(intermediate_points_selected),     
+                'bike_profiles': bike_profiles,
+                }
+            )
 
         profile = request.POST.get('profile_input')
         if is_input_valid(profile):
             atrack.profile = profile
             atrack.save()
+            return render(request, 'acstracks_app/track_detail.html', {
+                'atrack': atrack,
+                'map_filename': map_filename,
+                'profile_filter': profile_filter,
+                'order_selected': order_selected,
+                'intermediate_points_selected': int(intermediate_points_selected),     
+                'bike_profiles': bike_profiles,
+                }
+            )
 
         csvsave = request.POST.get('csvsave')
 
@@ -139,12 +163,6 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, True, False)
     else:
         process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, True, False)
-    
-    map_filename = (
-        "/static/maps/" +
-        os.path.splitext(atrack.storagefilename)[0]+".html"
-    )
-    bike_profiles = get_bike_profiles(request)
 
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
@@ -196,7 +214,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
         )
         trk.save()
 
-        process_gpx_file(request, trk.storagefilename, intermediate_points_selected, trk, False)
+        process_gpx_file(request, trk.storagefilename, intermediate_points_selected, trk, False, False)
     except:
         pass
 
@@ -310,6 +328,8 @@ def process_preferences(request):
 
             try:
                 preference = Preference.objects.get(user=request.user)
+                old_speedthreshold = preference.speedthreshold
+                old_elevationthreshold = preference.elevationthreshold
                 preference.speedthreshold = speedthreshold
                 preference.elevationthreshold = elevationthreshold
                 preference.show_avgspeed = show_avgspeed
@@ -320,6 +340,8 @@ def process_preferences(request):
                 preference.show_avgheartrate = show_avgheartrate
                 preference.save()
             except:
+                old_speedthreshold = settings.SPEEDTHRESHOLD
+                old_elevationthreshold = settings.ELEVATIONTHRESHOLD
                 preference = Preference.objects.create(
                     user=request.user,
                     speedthreshold=speedthreshold,
@@ -332,7 +354,9 @@ def process_preferences(request):
                     show_avgheartrate=show_avgheartrate,
                 )
 
-            recalculate_tracks(request)
+            if old_speedthreshold != speedthreshold or old_elevationthreshold != elevationthreshold:
+                print('recalculate_tracks')
+                recalculate_tracks(request)
             return redirect('track_list')
     else:
         try:
@@ -356,6 +380,6 @@ def process_preferences(request):
 def recalculate_tracks(request):
     tracks = Track.objects.filter(user=request.user)
     for track in tracks:
-        process_gpx_file(request, track.storagefilename, 0, track, False)
+        process_gpx_file(request, track.storagefilename, 0, track, False, False)
 
     return

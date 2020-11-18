@@ -1,6 +1,17 @@
 {% extends 'registration/base.html' %}
 
 {% block content %}
+<script>
+    function mouseOver() {
+      document.getElementById("id_helptext").style.visibility = "visible";
+    }
+    
+    function mouseOut() {
+      document.getElementById("id_helptext").style.visibility = "hidden";
+    }
+    </script>
+    
+    </table>
     <div class="scalefont">
         <form method="POST" class="preference-form">
             {% csrf_token %}
@@ -18,7 +29,9 @@
                                     min="0" 
                                     max="10"
                                     id="id_speedthreshold" 
-                                    style="text-align:right">
+                                    style="text-align:right"
+                                    onmouseover="mouseOver()" 
+                                    onmouseout="mouseOut()">
                                 <br><br></td>
                         </tr>
                         <tr>
@@ -31,12 +44,17 @@
                                     min="0" 
                                     max="10"
                                     id="id_elevationthreshold" 
-                                    style="text-align:right">
-                                </td>
+                                    style="text-align:right"
+                                    onmouseover="mouseOver()" 
+                                    onmouseout="mouseOut()">
+                            </td>
                         </tr>
                     </table>
                 </div>
             </div>
+            <p id="id_helptext" class="scalefont" style="visibility: hidden">
+                <i>Changing thresholds leads to recalculating all tracks, depending on the number of tracks this might take considerable time.</i>
+            </p>
             <hr>
             <h2>Optional columns</h2>
             <div class="row">

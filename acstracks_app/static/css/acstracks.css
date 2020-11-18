@@ -49,6 +49,18 @@
   }  
 }
 
+.scalefont:hover {
+  color: #700394;
+}
+
+.helptext {
+  visibility: hidden;
+}
+
+.helptext:hover {
+  visibility: visible;
+}
+
 @media only screen and (orientation: portrait) {
     /* For mobile phones: */
     [class*="col-"] {
