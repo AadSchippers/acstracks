@@ -304,7 +304,7 @@ def make_map(points, points_info, filename, intermediate_points_selected):
                 avgcadence,
                 )
             popup = folium.Popup(html_popup, max_width=400)
-            folium.Marker(points[x], tooltip=tooltip, popup=popup).add_to(my_map)
+            folium.Marker(points[x], icon=folium.Icon(color='purple'), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
     tooltip_text = 'Start, click for details'
@@ -317,7 +317,7 @@ def make_map(points, points_info, filename, intermediate_points_selected):
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[0], icon=folium.Icon(color='green'), tooltip=tooltip, popup=popup).add_to(my_map)
+    folium.Marker(points[0], icon=folium.Icon(color='lightgray'), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # finish marker
     tooltip_text = 'Finish, click for details'
@@ -341,7 +341,7 @@ def make_map(points, points_info, filename, intermediate_points_selected):
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[-1], icon=folium.Icon(color='red'), tooltip=tooltip, popup=popup).add_to(my_map)
+    folium.Marker(points[-1], icon=folium.Icon(color='gray'), tooltip=tooltip, popup=popup).add_to(my_map)
  
     # folium.LayerControl(collapsed=True).add_to(my_map)
 
