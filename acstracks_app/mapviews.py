@@ -130,6 +130,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                     previous_avgheartrate = heartrate
                     avgcadence = cadence
                     previous_avgcadence = cadence
+
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                     ]))
@@ -206,7 +207,7 @@ def update_track(atrack, points_info, elevationthreshold):
                 totalascent = totalascent + (point[9] - previous_elevation)
             if point[9] < previous_elevation:
                 totaldescent = totaldescent + (previous_elevation - point[9])
-        previous_elevation = point[9]
+            previous_elevation = point[9]
 
     getcontext().prec = 2
 
