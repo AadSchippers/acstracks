@@ -216,8 +216,8 @@ def update_track(atrack, points_info, elevationthreshold):
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
     atrack.maxspeed = round(trkMaxspeed, 2)
-    atrack.totalascent = round(totalascent, 2)
-    atrack.totaldescent = round(totaldescent, 2)
+    atrack.totalascent = round(totalascent, 0)
+    atrack.totaldescent = round(totaldescent, 0)
     atrack.avgcadence = trkAvgcadence
     atrack.maxcadence = trkMaxcadence
     atrack.avgheartrate = trkAvgheartrate
