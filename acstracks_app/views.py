@@ -157,6 +157,11 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
 
         csvsave = request.POST.get('csvsave')
 
+        confirm_delete = request.POST.get('confirm_delete')
+        if confirm_delete:
+            atrack.delete()
+            return redirect('track_list')
+
     if csvsave == 'True':
         return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, False, True)
     elif atrack.length == 0:
