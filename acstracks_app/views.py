@@ -244,6 +244,7 @@ def compute_statistics(tracks):
     highest_avgspeed = 0
     highest_maxspeed = 0
     longest_length = float(0)
+    t0 = 0
     longest_duration = '00:00:00'
     max_ascent = float(0)
     max_descent = float(0)
@@ -257,6 +258,11 @@ def compute_statistics(tracks):
     for t in tracks:
         total_length = total_length + float(t.length)
         total_avgspeed = total_avgspeed + float(t.avgspeed * t.length)
+        t0 = t0 + (
+            (int(t.timelength.strftime("%H")) * 3600) +
+            (int(t.timelength.strftime("%M")) * 60) +
+            (int(t.timelength.strftime("%S")))
+            )
         if longest_length < t.length:
             longest_length = t.length
             datetime_longest_length = t.created_date
@@ -280,9 +286,16 @@ def compute_statistics(tracks):
         total_avgspeed = round((total_avgspeed / total_length), 2)
 
     total_length = round((total_length), 2)
+
+    total_duration = (
+        str(int(t0 / 3600)) + ":" +
+        str(int(t0 % 3600 / 60)) + ":" +
+        str(int(t0 % 3600 % 60))
+    )
             
     statistics = {
         'total_length': total_length,
+        'total_duration': total_duration,
         'total_avgspeed': total_avgspeed,
         'highest_avgspeed': highest_avgspeed,
         'highest_maxspeed': highest_maxspeed,
