@@ -118,7 +118,7 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     
     map_filename = (
         "/static/maps/" +
-        os.path.splitext(atrack.storagefilename)[0]+".html"
+        request.user.username+".html"
     )
     bike_profiles = get_bike_profiles(request)
 

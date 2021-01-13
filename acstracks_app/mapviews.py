@@ -155,7 +155,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
         update_track(atrack, points_info, elevationthreshold)
 
     if makemap:
-        make_map(points, points_info, filename, intermediate_points_selected)
+        make_map(request, points, points_info, filename, intermediate_points_selected)
 
     if savecsv:
         return save_csv(request, atrack, points, points_info)
@@ -229,7 +229,7 @@ def update_track(atrack, points_info, elevationthreshold):
     return
 
 
-def make_map(points, points_info, filename, intermediate_points_selected):
+def make_map(request, points, points_info, filename, intermediate_points_selected):
 
     # print(points)
     ave_lat = sum(p[0] for p in points)/len(points)
@@ -352,7 +352,7 @@ def make_map(points, points_info, filename, intermediate_points_selected):
     # Save map
     mapfilename = os.path.join(
             settings.MAPS_ROOT,
-            os.path.splitext(filename)[0]+".html"
+            request.user.username+".html"
         )
     my_map.save(mapfilename)
 
