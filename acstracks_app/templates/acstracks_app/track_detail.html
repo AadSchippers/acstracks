@@ -115,31 +115,31 @@
                     <td><b>Total&nbsp;ascent&nbsp;(m)</b></td>
                     <td style="text-align:right">{{ atrack.totalascent }}</td>
                 </tr>
-                {% if atrack.avgcadence %}
-                <tr>
-                    <td><b>Average&nbsp;cadence</b></td>
-                    <td style="text-align:right">{{ atrack.avgcadence }}</td>
-                </tr>
+                {% if atrack.avgcadence > 0 %}
+                    <tr>
+                        <td><b>Average&nbsp;cadence</b></td>
+                        <td style="text-align:right">{{ atrack.avgcadence }}</td>
+                    </tr>
                 {% endif %}
-                {% if atrack.maxcadence %}
+                {% if atrack.maxcadence > 0 %}
                     <tr>
                         <td><b>Maximum&nbsp;cadence</b></td>
                         <td  style="text-align:right">{{ atrack.maxcadence }}</td>
                     </tr>
                 {% endif %}
                 <tr>
-                    {% if atrack.avgheartrate %}
+                    {% if atrack.avgheartrate > 0 %}
                     <td><b>Average&nbsp;heartrate</b></td>
                     <td  style="text-align:right">{{ atrack.avgheartrate }}</td>
                 </tr>
                 {% endif %}
-                {% if atrack.minheartrate %}
+                {% if atrack.minheartrate  < 999 %}
                     <tr>
                         <td><b>Mininimum&nbsp;heartrate</b></td>
                         <td  style="text-align:right">{{ atrack.minheartrate }}</td>
                     </tr>
                 {% endif %}
-                {% if atrack.maxheartrate %}
+                {% if atrack.maxheartrate  > 0 %}
                     <tr>
                         <td><b>Maximum&nbsp;heartrate</b></td>
                         <td  style="text-align:right">{{ atrack.maxheartrate }}</td>
