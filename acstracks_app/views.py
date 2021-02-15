@@ -16,6 +16,7 @@ from datetime import datetime
 import time
 from .mapviews import *
 import re
+import hashlib
 
 
 @login_required(login_url='/login/')
@@ -260,6 +261,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
             created_date=parse(created_date),
             name=name,
             profile=profile,
+            publickey=hashlib.sha256(storagefilename.encode()).hexdigest(),
         )
         trk.save()
 
