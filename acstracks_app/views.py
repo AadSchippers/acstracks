@@ -114,7 +114,10 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     if not intermediate_points_selected:
         intermediate_points_selected = 0
 
-    atrack = Track.objects.get(id=pk)
+    try:
+        atrack = Track.objects.get(id=pk, user=request.user)
+    except:
+        return redirect('track_list')
     
     map_filename = (
         "/static/maps/" +
