@@ -16,7 +16,7 @@ from django.http import HttpResponse
 
 
 
-def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, makemap=False, savecsv=False):
+def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, map_filename=None, savecsv=False):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -154,8 +154,8 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
     if atrack:
         update_track(atrack, points_info, elevationthreshold)
 
-    if makemap:
-        make_map(request, points, points_info, filename, intermediate_points_selected)
+    if map_filename:
+        make_map(request, points, points_info, filename, intermediate_points_selected, map_filename)
 
     if savecsv:
         return save_csv(request, atrack, points, points_info)
@@ -229,7 +229,7 @@ def update_track(atrack, points_info, elevationthreshold):
     return
 
 
-def make_map(request, points, points_info, filename, intermediate_points_selected):
+def make_map(request, points, points_info, filename, intermediate_points_selected, map_filename):
 
     # print(points)
     ave_lat = sum(p[0] for p in points)/len(points)
@@ -352,7 +352,7 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
     # Save map
     mapfilename = os.path.join(
             settings.MAPS_ROOT,
-            request.user.username+".html"
+            map_filename
         )
     my_map.save(mapfilename)
 

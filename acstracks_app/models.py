@@ -23,6 +23,7 @@ class Track(models.Model):
     avgheartrate = models.IntegerField(null=True, blank=True, default=None)
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
+    publickey = models.CharField(max_length=255, null=True, blank=True, default=None)
 
     class Meta:
         unique_together = ('user', 'displayfilename')

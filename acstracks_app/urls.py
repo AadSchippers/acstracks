@@ -11,6 +11,8 @@ urlpatterns = [
     path('track/<int:pk>,<str:order_selected>,<str:profile_filter>,<int:intermediate_points_selected>', views.track_detail, name='track_detail'),
     path('preference/', views.process_preferences, name='preference'),
     path('preference/,<str:order_selected>,<str:profile_filter>,<int:intermediate_points_selected>', views.process_preferences, name='preference'),
+    path('publictrack/<str:publickey>', views.publictrack_detail, name='publictrack_detail'),
+    path('publictrack/<str:publickey>,<int:intermediate_points_selected>', views.publictrack_detail, name='publictrack_detail'),
     url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
     url(r'^logout/$', views.logout_view, name='logout'),
 ]

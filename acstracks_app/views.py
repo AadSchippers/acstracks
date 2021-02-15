@@ -120,12 +120,19 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
         return redirect('track_list')
     
     map_filename = (
-        "/static/maps/" +
         request.user.username+".html"
     )
+    
+    full_map_filename = (
+        "/static/maps/" +
+        atrack.user.username+".html"
+    )
+
     bike_profiles = get_bike_profiles(request)
 
     csvsave = None
+
+    public_url = request.scheme + "://" + request.get_host() + "/publictrack/" + atrack.publickey
 
     if request.method == 'POST':
         intermediate_points_selected = request.POST.get('Intermediate_points')
@@ -136,11 +143,12 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
-                'map_filename': map_filename,
+                'map_filename': full_map_filename,
                 'profile_filter': profile_filter,
                 'order_selected': order_selected,
                 'intermediate_points_selected': int(intermediate_points_selected),     
                 'bike_profiles': bike_profiles,
+                'public_url': public_url,
                 }
             )
 
@@ -150,11 +158,12 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
-                'map_filename': map_filename,
+                'map_filename': full_map_filename,
                 'profile_filter': profile_filter,
                 'order_selected': order_selected,
                 'intermediate_points_selected': int(intermediate_points_selected),     
                 'bike_profiles': bike_profiles,
+                'public_url': public_url,
                 }
             )
 
@@ -166,19 +175,51 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             return redirect('track_list')
 
     if csvsave == 'True':
-        return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, False, True)
+        return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, None, True)
     elif atrack.length == 0:
-        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, True, False)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, map_filename, False)
     else:
-        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, True, False)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, map_filename, False)
 
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
-        'map_filename': map_filename,
+        'map_filename': full_map_filename,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
         'intermediate_points_selected': int(intermediate_points_selected),     
         'bike_profiles': bike_profiles,
+        'public_url': public_url,
+        }
+    )
+
+
+def publictrack_detail(request, publickey, intermediate_points_selected=None):
+    if not intermediate_points_selected:
+        intermediate_points_selected = 0
+
+    try:
+        atrack = Track.objects.get(publickey=publickey)
+    except:
+        return redirect('track_list')
+
+    map_filename = (
+        atrack.user.username+"_public.html"
+    )
+
+    full_map_filename = (
+        "/static/maps/" +
+        atrack.user.username+"_public.html"
+    )
+
+    if request.method == 'POST':
+        intermediate_points_selected = request.POST.get('Intermediate_points')
+
+    process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, map_filename, False)
+
+    return render(request, 'acstracks_app/publictrack_detail.html', {
+        'atrack': atrack,
+        'map_filename': full_map_filename,
+        'intermediate_points_selected': int(intermediate_points_selected),
         }
     )
 

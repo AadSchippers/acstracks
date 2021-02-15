@@ -1,4 +1,4 @@
-{% extends 'acstracks_app/base.html' %}
+{% extends 'registration/base.html' %}
 {% load static %}
 
 {% block content %}
@@ -10,8 +10,6 @@
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
                         <form method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="Order" value="{{ order_selected }}">
-                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
                             {% csrf_token %}
                             <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
                                 {% if intermediate_points_selected == 0 %}
@@ -53,43 +51,11 @@
                 </tr>
                 <tr>
                     <td><b>Name</b></td>
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" name="Order" value="{{ order_selected }}">
-                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                        <td style="text-align:right"><input 
-                            type="text" style="text-align:right" 
-                            name="name_input" 
-                            autocomplete="off"
-                            value="{{ atrack.name }}" 
-                            onchange=this.form.submit()>
-                        </td>
-                    </form>
+                    <td style="text-align:right">{{ atrack.name }}</td>
                 </tr>
                 <tr>
                     <td><b>Profile</b></td>
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" name="Order" value="{{ order_selected }}">
-                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                        <td style="text-align:right"><input 
-                            type="text" style="text-align:right" 
-                            name="profile_input" 
-                            list="profile_list" 
-                            autocomplete="off"
-                            value="{{ atrack.profile }}" 
-                            onchange=this.form.submit()>
-                        </td>
-                        <datalist name="Profile" id="profile_list" onchange=this.form.submit()>
-                            {% if bike_profiles %}
-                                {% for profile in bike_profiles %}
-                                    <option value="{{ profile }}">{{ profile }}</option>
-                                {% endfor %}
-                            {% endif %}
-                        </datalist>
-                    </form>
+                    <td style="text-align:right">{{ atrack.profile }}</td>
                 </tr>
                 <tr>
                     <td><b>Length&nbsp;(km)</b></td>
@@ -146,50 +112,9 @@
                     </tr>
                 {% endif %}
             </table>
-            <hr>
-            <table class="scalefont">
-                <tr>
-                    <td>
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="hidden" name="Order" value="{{ order_selected }}">
-                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                            <input type="hidden" name="csvsave" value="True">
-                            <input type="submit" id="csvsave" value="Save as .csv file" class="save btn btn-default scalefont">
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <hr>
-            <table class="scalefont">
-                <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="Order" value="{{ order_selected }}">
-                <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                <tr>
-                    <td>
-                        <input type="submit" id="delete" value="Delete this track" class="save btn btn-default scalefont">
-                    </td>
-                </tr>
-                <tr>
-                    <td><br><br>
-                        <label class="checkcontainer" style="font-weight: normal;"><i>I understand that deleting this track is an action that cannot be undone</i>
-                            <input type="checkbox"
-                                name="confirm_delete" 
-                                id="id_confirm_delete">
-                            <span class="checkmark"></span> 
-                        </label>
-                    </td>
-                </tr>
-                </form>
-            </table>
-            <hr>
-            <a href={{ public_url }} target="_blank"><b>Obtain a shareble link to this track</b></a>
         </div>
         <div class="col-9">
-                <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
+            <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
         </div>
     </div>
 </div>
