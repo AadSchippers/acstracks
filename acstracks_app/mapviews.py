@@ -59,8 +59,9 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                 for extension in point.extensions:
                     if extension.tag == 'distance':
                         distance = float(extension.text) - starting_distance
-                    if extension.tag == 'speed':
-                        speed = float(extension.text) * 3.6
+                    # speed value in extension in unreliable
+                    # if extension.tag == 'speed':
+                    #     speed = float(extension.text) * 3.6
                     if extension.tag in settings.HEARTRATETAGS:
                         heartrate = int(extension.text)
                     if extension.tag in settings.CADENCETAGS:
@@ -88,12 +89,14 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                     duration = tx - t0
                     txminus1 = datetime.strptime(points_info[x-1][0], "%Y-%m-%d %H:%M:%S")
                     previous_duration = txminus1 - t0
+
                     if not speed:
                         speed = (point_distance / (duration.seconds - previous_duration.seconds)) * 3.6
                     if speed <= speedthreshold and (not cadence or cadence == 0):
                         pass
                     else:
                         moving_duration = moving_duration + (duration - previous_duration)
+
                     if heartrate:
                         avgheartrate = (
                             (previous_avgheartrate * (previous_duration.seconds - no_hr_detected_seconds)) +
