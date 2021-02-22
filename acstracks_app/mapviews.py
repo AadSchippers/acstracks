@@ -72,8 +72,9 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                         if TrackPointExtension.tag in settings.CADENCETAGS:
                             cadence = int(TrackPointExtension.text)
                 printspeed = speed
+
+                point_distance = calculate_using_haversine(point, previous_point)
                 if not distance:
-                    point_distance = calculate_using_haversine(point, previous_point)
                     distance = previous_distance + point_distance
                     previous_distance = distance
                     speed = None
@@ -92,6 +93,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
 
                     if not speed:
                         speed = (point_distance / (duration.seconds - previous_duration.seconds)) * 3.6
+
                     if speed <= speedthreshold and (not cadence or cadence == 0):
                         pass
                     else:
@@ -187,6 +189,7 @@ def update_track(atrack, points_info, elevationthreshold):
         trkAvgheartrate = None
 
     trkMaxspeed = 0
+    trkPreviousMaxspeed = 0
     trkMaxcadence = 0
     trkMinheartrate = 999
     trkMaxheartrate = 0
@@ -197,6 +200,7 @@ def update_track(atrack, points_info, elevationthreshold):
 
     for point in points_info:
         if point[4] > trkMaxspeed: 
+            trkPreviousMaxspeed = trkMaxspeed
             trkMaxspeed = point[4]
         if point[5]:
             if point[5] > trkMaxheartrate: 
@@ -218,7 +222,10 @@ def update_track(atrack, points_info, elevationthreshold):
     atrack.length = round(trkLength, 2)
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
-    atrack.maxspeed = round(trkMaxspeed, 2)
+    if trkMaxspeed > trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR:
+       atrack.maxspeed = round((trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR), 2)
+    else:
+       atrack.maxspeed = round(trkMaxspeed, 2)
     atrack.totalascent = round(totalascent, 0)
     atrack.totaldescent = round(totaldescent, 0)
     atrack.avgcadence = trkAvgcadence
