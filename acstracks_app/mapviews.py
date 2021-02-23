@@ -57,11 +57,6 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                 heartrate = 0
                 cadence = 0
                 for extension in point.extensions:
-                    if extension.tag == 'distance':
-                        distance = float(extension.text) - starting_distance
-                    # speed value in extension in unreliable
-                    # if extension.tag == 'speed':
-                    #     speed = float(extension.text) * 3.6
                     if extension.tag in settings.HEARTRATETAGS:
                         heartrate = int(extension.text)
                     if extension.tag in settings.CADENCETAGS:
@@ -197,11 +192,14 @@ def update_track(atrack, points_info, elevationthreshold):
     totalascent = 0 
     totaldescent = 0 
     previous_elevation = points_info[0][9] 
+    PointIndex = 0
 
     for point in points_info:
         if point[4] > trkMaxspeed: 
+            trkPointMaxspeed = PointIndex
             trkPreviousMaxspeed = trkMaxspeed
             trkMaxspeed = point[4]
+        PointIndex = PointIndex + 1
         if point[5]:
             if point[5] > trkMaxheartrate: 
                 trkMaxheartrate = point[5]
@@ -222,10 +220,29 @@ def update_track(atrack, points_info, elevationthreshold):
     atrack.length = round(trkLength, 2)
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
+
+    trkMaxSpeedIndex = 0 
+    try:
+        trkMaxspeed0 = points_info[trkPointMaxspeed-1][4]
+        trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+    except:
+        trkMaxspeed0 = 0
+    trkMaxspeed1 = points_info[trkPointMaxspeed][4]
+    trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+    try:
+        trkMaxspeed2 = points_info[trkPointMaxspeed+1][4]
+        trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+    except:
+        trkMaxspeed2 = 0
+    trkMaxspeed = (
+        (trkMaxspeed0 + trkMaxspeed1 + trkMaxspeed2) / trkMaxSpeedIndex
+    )
+    
     if trkMaxspeed > trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR:
-       atrack.maxspeed = round((trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR), 2)
+        atrack.maxspeed = round((trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR), 2)
     else:
        atrack.maxspeed = round(trkMaxspeed, 2)
+    
     atrack.totalascent = round(totalascent, 0)
     atrack.totaldescent = round(totaldescent, 0)
     atrack.avgcadence = trkAvgcadence
