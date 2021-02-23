@@ -184,7 +184,7 @@ def update_track(atrack, points_info, elevationthreshold):
         trkAvgheartrate = None
 
     trkMaxspeed = 0
-    trkPreviousMaxspeed = 0
+    trkSecondMaxspeed = 0
     trkMaxcadence = 0
     trkMinheartrate = 999
     trkMaxheartrate = 0
@@ -197,8 +197,9 @@ def update_track(atrack, points_info, elevationthreshold):
     for point in points_info:
         if point[4] > trkMaxspeed: 
             trkPointMaxspeed = PointIndex
-            trkPreviousMaxspeed = trkMaxspeed
             trkMaxspeed = point[4]
+        elif point[4] > trkSecondMaxspeed:
+            trkSecondMaxspeed = point[4]
         PointIndex = PointIndex + 1
         if point[5]:
             if point[5] > trkMaxheartrate: 
@@ -223,23 +224,31 @@ def update_track(atrack, points_info, elevationthreshold):
 
     trkMaxSpeedIndex = 0 
     try:
-        trkMaxspeed0 = points_info[trkPointMaxspeed-1][4]
-        trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+        if points_info[trkPointMaxspeed-1][4] > 0:
+            trkMaxspeed0 = points_info[trkPointMaxspeed-1][4]
+            trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+        else:
+            trkMaxspeed0 = 0
     except:
         trkMaxspeed0 = 0
     trkMaxspeed1 = points_info[trkPointMaxspeed][4]
     trkMaxSpeedIndex = trkMaxSpeedIndex + 1
     try:
-        trkMaxspeed2 = points_info[trkPointMaxspeed+1][4]
-        trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+        if points_info[trkPointMaxspeed+1][4] > 0:
+            trkMaxspeed2 = points_info[trkPointMaxspeed+1][4]
+            trkMaxSpeedIndex = trkMaxSpeedIndex + 1
+        else:
+            trkMaxspeed2 = 0
     except:
         trkMaxspeed2 = 0
     trkMaxspeed = (
         (trkMaxspeed0 + trkMaxspeed1 + trkMaxspeed2) / trkMaxSpeedIndex
     )
-    
-    if trkMaxspeed > trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR:
-        atrack.maxspeed = round((trkPreviousMaxspeed * settings.MAXSPEEDCAPPINGFACTOR), 2)
+    if trkMaxspeed < trkMaxspeed1:
+        trkMaxspeed = trkMaxspeed1
+
+    if trkMaxspeed > trkSecondMaxspeed * settings.MAXSPEEDCAPPINGFACTOR:
+        atrack.maxspeed = round((trkSecondMaxspeed * settings.MAXSPEEDCAPPINGFACTOR), 2)
     else:
        atrack.maxspeed = round(trkMaxspeed, 2)
     
