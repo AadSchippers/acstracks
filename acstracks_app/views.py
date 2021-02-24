@@ -383,6 +383,7 @@ def process_preferences(request):
             data = form.cleaned_data
             speedthreshold = data['speedthreshold']
             elevationthreshold = data['elevationthreshold']
+            maxspeedcappingfactor = data['maxspeedcappingfactor']
             show_avgspeed = data['show_avgspeed']
             show_maxspeed = data['show_maxspeed']
             show_totalascent = data['show_totalascent']
@@ -394,8 +395,10 @@ def process_preferences(request):
                 preference = Preference.objects.get(user=request.user)
                 old_speedthreshold = preference.speedthreshold
                 old_elevationthreshold = preference.elevationthreshold
+                old_maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
                 preference.speedthreshold = speedthreshold
                 preference.elevationthreshold = elevationthreshold
+                preference.maxspeedcappingfactor = maxspeedcappingfactor
                 preference.show_avgspeed = show_avgspeed
                 preference.show_maxspeed = show_maxspeed
                 preference.show_totalascent = show_totalascent
@@ -406,10 +409,12 @@ def process_preferences(request):
             except:
                 old_speedthreshold = settings.SPEEDTHRESHOLD
                 old_elevationthreshold = settings.ELEVATIONTHRESHOLD
+                old_maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
                 preference = Preference.objects.create(
                     user=request.user,
                     speedthreshold=speedthreshold,
                     elevationthreshold=elevationthreshold,
+                    maxspeedcappingfactor=maxspeedcappingfactor,
                     show_avgspeed=show_avgspeed,
                     show_maxspeed=show_maxspeed,
                     show_totalascent=show_totalascent,
@@ -418,8 +423,11 @@ def process_preferences(request):
                     show_avgheartrate=show_avgheartrate,
                 )
 
-            if old_speedthreshold != speedthreshold or old_elevationthreshold != elevationthreshold:
-                print('recalculate_tracks')
+            if (
+                old_speedthreshold != speedthreshold or 
+                old_elevationthreshold != elevationthreshold or
+                old_maxspeedcappingfactor != maxspeedcappingfactor
+            ):
                 recalculate_tracks(request)
             return redirect('track_list')
     else:
@@ -428,6 +436,7 @@ def process_preferences(request):
             form = PreferenceForm(initial={
                 'speedthreshold': preference.speedthreshold,
                 'elevationthreshold': preference.elevationthreshold,
+                'maxspeedcappingfactor': preference.maxspeedcappingfactor,
                 'show_avgspeed': preference.show_avgspeed,
                 'show_maxspeed': preference.show_maxspeed,
                 'show_totalascent': preference.show_totalascent,

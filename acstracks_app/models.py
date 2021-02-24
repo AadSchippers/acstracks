@@ -42,6 +42,7 @@ class Preference(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     speedthreshold = models.DecimalField(max_digits=6, decimal_places=2, default=3.60)
     elevationthreshold = models.DecimalField(max_digits=6, decimal_places=2, default=0.25)
+    maxspeedcappingfactor = models.DecimalField(max_digits=6, decimal_places=2, default=1.25)
     show_avgspeed = models.BooleanField(default=True)
     show_maxspeed = models.BooleanField(default=True)
     show_totalascent = models.BooleanField(default=True)

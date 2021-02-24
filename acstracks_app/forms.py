@@ -9,6 +9,7 @@ class PreferenceForm(forms.ModelForm):
         fields = (
             'speedthreshold',
             'elevationthreshold',
+            'maxspeedcappingfactor',
             'show_avgspeed',
             'show_maxspeed',
             'show_totalascent',

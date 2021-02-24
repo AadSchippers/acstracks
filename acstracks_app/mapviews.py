@@ -30,9 +30,11 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
         preference = Preference.objects.get(user=request.user)
         speedthreshold = preference.speedthreshold
         elevationthreshold = preference.elevationthreshold
+        maxspeedcappingfactor = preference.maxspeedcappingfactor
     except:
         speedthreshold = settings.SPEEDTHRESHOLD
         elevationthreshold = settings.ELEVATIONTHRESHOLD
+        maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
 
     points = []
     points_info = []
@@ -152,7 +154,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                 previous_speed = speed
 
     if atrack:
-        update_track(atrack, points_info, elevationthreshold)
+        update_track(atrack, points_info, elevationthreshold, maxspeedcappingfactor)
 
     if map_filename:
         make_map(request, points, points_info, filename, intermediate_points_selected, map_filename)
@@ -163,7 +165,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
     return
 
 
-def update_track(atrack, points_info, elevationthreshold):
+def update_track(atrack, points_info, elevationthreshold, maxspeedcappingfactor):
 
     last = len(points_info) - 1
     created_date = points_info[0][0]
@@ -219,11 +221,11 @@ def update_track(atrack, points_info, elevationthreshold):
             trkMaxspeed4 = avgMaxSpeed
         PointIndex = PointIndex + 1
 
-    if trkMaxspeed1 <= trkMaxspeed4 * settings.MAXSPEEDCAPPINGFACTOR:
+    if trkMaxspeed1 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed1    
-    elif trkMaxspeed2 <= trkMaxspeed4 * settings.MAXSPEEDCAPPINGFACTOR:
+    elif trkMaxspeed2 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed2    
-    elif trkMaxspeed3 <= trkMaxspeed4 * settings.MAXSPEEDCAPPINGFACTOR:
+    elif trkMaxspeed3 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed3
     else:
         trkMaxspeed = trkMaxspeed4
@@ -304,7 +306,7 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
     ip = int(intermediate_points_selected)
     if ip > 0:
         for x in range(len(points)):
-            distance = float(points_info[x][1]) / 1000
+            distance = float(points_info[x][1])
             if distance < previous_marker_distance + ip:
                 continue
             previous_marker_distance = distance
@@ -321,7 +323,7 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
             avgheartrate = points_info[x][6]
             cadence = points_info[x][7]
             avgcadence = points_info[x][8]
-            tooltip_text = 'Intermediate point ' + str(i) + ' km, click for details'
+            tooltip_text = 'Intermediate point ' + str(i/1000) + ' km, ' + str(speed) + ' km/h'
             tooltip_style = 'color: #700394; font-size: 0.85vw'
             tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
 

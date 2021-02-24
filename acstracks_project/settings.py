@@ -136,6 +136,6 @@ CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension
 
 SPEEDTHRESHOLD = 3.60
 ELEVATIONTHRESHOLD = 0.25
-MAXSPEEDCAPPINGFACTOR = 1.1
+MAXSPEEDCAPPINGFACTOR = 1.25
 
 from .config import *   # noqa
