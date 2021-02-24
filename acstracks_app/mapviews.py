@@ -184,7 +184,10 @@ def update_track(atrack, points_info, elevationthreshold):
         trkAvgheartrate = None
 
     trkMaxspeed = 0
-    trkSecondMaxspeed = 0
+    trkMaxspeed1 = 0
+    trkMaxspeed2 = 0
+    trkMaxspeed3 = 0
+    trkMaxspeed4 = 0
     trkMaxcadence = 0
     trkMinheartrate = 999
     trkMaxheartrate = 0
@@ -192,15 +195,40 @@ def update_track(atrack, points_info, elevationthreshold):
     totalascent = 0 
     totaldescent = 0 
     previous_elevation = points_info[0][9] 
-    PointIndex = 0
 
-    for point in points_info:
-        if point[4] > trkMaxspeed: 
-            trkPointMaxspeed = PointIndex
-            trkMaxspeed = point[4]
-        elif point[4] > trkSecondMaxspeed:
-            trkSecondMaxspeed = point[4]
+    PointIndex = 0
+    while PointIndex < len(points_info):
+        avgMaxSpeed = 0
+        try:
+            avgMaxSpeed = (
+                (
+                    points_info[PointIndex][4] +
+                    points_info[PointIndex+1][4] +
+                    points_info[PointIndex+2][4]
+                ) / 3
+            )
+        except:
+            pass
+        if avgMaxSpeed > trkMaxspeed1:
+            trkMaxspeed1 = avgMaxSpeed
+        elif avgMaxSpeed > trkMaxspeed2:
+            trkMaxspeed2 = avgMaxSpeed
+        elif avgMaxSpeed > trkMaxspeed3:
+            trkMaxspeed3 = avgMaxSpeed
+        elif avgMaxSpeed > trkMaxspeed4:
+            trkMaxspeed4 = avgMaxSpeed
         PointIndex = PointIndex + 1
+
+    if trkMaxspeed1 <= trkMaxspeed4 * settings.MAXSPEEDCAPPINGFACTOR:
+        trkMaxspeed = trkMaxspeed1    
+    elif trkMaxspeed2 <= trkMaxspeed4 * settings.MAXSPEEDCAPPINGFACTOR:
+        trkMaxspeed = trkMaxspeed2    
+    elif trkMaxspeed3 <= trkMaxspeed4 * settings.MAXSPEEDCAPPINGFACTOR:
+        trkMaxspeed = trkMaxspeed3
+    else:
+        trkMaxspeed = trkMaxspeed4
+                
+    for point in points_info:
         if point[5]:
             if point[5] > trkMaxheartrate: 
                 trkMaxheartrate = point[5]
@@ -221,37 +249,7 @@ def update_track(atrack, points_info, elevationthreshold):
     atrack.length = round(trkLength, 2)
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
-
-    trkMaxSpeedIndex = 0 
-    try:
-        if points_info[trkPointMaxspeed-1][4] > 0:
-            trkMaxspeed0 = points_info[trkPointMaxspeed-1][4]
-            trkMaxSpeedIndex = trkMaxSpeedIndex + 1
-        else:
-            trkMaxspeed0 = 0
-    except:
-        trkMaxspeed0 = 0
-    trkMaxspeed1 = points_info[trkPointMaxspeed][4]
-    trkMaxSpeedIndex = trkMaxSpeedIndex + 1
-    try:
-        if points_info[trkPointMaxspeed+1][4] > 0:
-            trkMaxspeed2 = points_info[trkPointMaxspeed+1][4]
-            trkMaxSpeedIndex = trkMaxSpeedIndex + 1
-        else:
-            trkMaxspeed2 = 0
-    except:
-        trkMaxspeed2 = 0
-    trkMaxspeed = (
-        (trkMaxspeed0 + trkMaxspeed1 + trkMaxspeed2) / trkMaxSpeedIndex
-    )
-    if trkMaxspeed < trkMaxspeed1:
-        trkMaxspeed = trkMaxspeed1
-
-    if trkMaxspeed > trkSecondMaxspeed * settings.MAXSPEEDCAPPINGFACTOR:
-        atrack.maxspeed = round((trkSecondMaxspeed * settings.MAXSPEEDCAPPINGFACTOR), 2)
-    else:
-       atrack.maxspeed = round(trkMaxspeed, 2)
-    
+    atrack.maxspeed = round(trkMaxspeed, 2)  
     atrack.totalascent = round(totalascent, 0)
     atrack.totaldescent = round(totaldescent, 0)
     atrack.avgcadence = trkAvgcadence
