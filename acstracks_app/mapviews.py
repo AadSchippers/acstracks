@@ -487,7 +487,7 @@ def make_html_popup(
         cadence,
         avgcadence,
     ):
-    line_title = "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Intermediate point "+ intermediate_point+" km</h3>"
+    line_title = "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Intermediate point "+ str(int(intermediate_point)/1000)+" km</h3>"
     line_table_start = "<table style='color: #700394; font-size: 0.85vw'>"
     line_table_end = "</table>"
     line_time_distance = (
