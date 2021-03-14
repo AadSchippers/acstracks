@@ -79,7 +79,11 @@
                             name="profile_input" 
                             list="profile_list" 
                             autocomplete="off"
-                            value="{{ atrack.profile }}" 
+                            {% if atrack.profile %}
+                                value="{{ atrack.profile }}" 
+                            {% else %}
+                                value="-" 
+                            {% endif %}
                             onchange=this.form.submit()>
                         </td>
                         <datalist name="Profile" id="profile_list" onchange=this.form.submit()>

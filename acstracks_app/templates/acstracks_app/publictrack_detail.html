@@ -55,7 +55,11 @@
                 </tr>
                 <tr>
                     <td><b>Profile</b></td>
-                    <td style="text-align:right">{{ atrack.profile }}</td>
+                    {% if atrack.profile %}
+                        <td style="text-align:right">{{ atrack.profile }}</td>
+                    {% else %}
+                        <td style="text-align:right">-</td>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td><b>Length&nbsp;(km)</b></td>

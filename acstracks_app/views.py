@@ -39,7 +39,7 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
         
         profile_filter = request.POST.get('Profile')
 
-    bike_profiles = get_bike_profiles(request)
+    bike_profile_filters = get_bike_profile_filters(request)
     
     tracks = get_tracks(request, order_selected, profile_filter)
 
@@ -55,7 +55,7 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
     return render(request, 'acstracks_app/track_list.html', {
         'tracks': tracks,
         'preference': preference,
-        'bike_profiles': bike_profiles,
+        'bike_profile_filters': bike_profile_filters,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
         'statistics': statistics,
@@ -96,10 +96,16 @@ def get_tracks(request, order_selected, profile_filter):
         order_by = "-maxspeed"
     
     if profile_filter != "All":
-        tracks = Track.objects.filter(
+        tracks1 = Track.objects.filter(
             user=request.user,
-            profile=profile_filter
-            ).order_by(order_by)
+            profile__startswith=profile_filter
+            )
+        tracks2 = Track.objects.filter(
+            user=request.user,
+            profile__icontains='+' + profile_filter
+            )
+        alltracks = tracks1 | tracks2
+        tracks = alltracks.distinct().order_by(order_by)
     else:
         tracks = Track.objects.filter(user=request.user).order_by(order_by)
 
@@ -154,7 +160,11 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             )
 
         profile = request.POST.get('profile_input')
+        if profile == '':
+            profile = '-'
         if is_input_valid(profile):
+            if profile == '-':
+                profile = None
             atrack.profile = profile
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
@@ -250,7 +260,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
             profile = "Toerfiets"
     else:
         created_date = "00:00:00"
-        profile = "Fiets"
+        profile = None
 
     try:
         trk = Track.objects.create(
@@ -280,6 +290,26 @@ def get_bike_profiles(request):
         listbike_profiles.append(p.get('profile'))
 
     return listbike_profiles
+
+
+def get_bike_profile_filters(request):
+    dictbike_profiles = Track.objects.values('profile').distinct().filter(user=request.user)
+
+    listbike_profiles = ['All']
+    for p in dictbike_profiles:
+        listbike_profiles.append(p.get('profile'))
+
+    listbike_profile_filters = []
+    for lp in listbike_profiles:
+        if lp:
+            alist= lp.split('+')
+            for l in alist:
+                listbike_profile_filters.append(l)
+    
+    profile_filters = list(set(listbike_profile_filters))
+    profile_filters.sort()
+ 
+    return profile_filters
 
 
 def compute_statistics(tracks):
@@ -361,7 +391,7 @@ def compute_statistics(tracks):
 
 
 def is_input_valid(input=None):
-    pattern = (r"^[A-z0-9\- \ ]+$")
+    pattern = (r"^[A-z0-9\- +\ ]+$")
     try:
         return re.match(pattern, input) is not None
     except:

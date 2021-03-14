@@ -149,8 +149,8 @@
             <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
             <label for="Profile">Profile:</label>
             <select name="Profile" id="profile" onchange=this.form.submit()>
-            {% if bike_profiles %}
-                {% for profile in bike_profiles %}
+            {% if bike_profile_filters %}
+                {% for profile in bike_profile_filters %}
                     {% if profile == profile_filter %}
                         <option value="{{ profile }}" selected="selected">{{ profile }}</option>
                     {% else %}
@@ -185,7 +185,11 @@
                 <td><a href="{% url 'track_detail' pk=track.pk order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">{{ track.displayfilename }}</a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
-                <td>{{ track.profile }}</td>
+                {% if track.profile %}
+                    <td>{{ track.profile }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
                 <td style="text-align:right">{{ track.length }}</td>
                 <td style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
                 {% if preference.show_avgspeed %}
