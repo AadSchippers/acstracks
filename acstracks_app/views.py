@@ -294,7 +294,10 @@ def get_bike_profiles(request):
 
     listbike_profiles = ['All']
     for p in dictbike_profiles:
-        listbike_profiles.append(p.get('profile').lower())
+        try:
+            listbike_profiles.append(p.get('profile').lower())
+        except:
+            pass
 
     return listbike_profiles
 
@@ -304,7 +307,10 @@ def get_bike_profile_filters(request):
 
     listbike_profiles = ['All']
     for p in dictbike_profiles:
-        listbike_profiles.append(p.get('profile').lower())
+        try:
+            listbike_profiles.append(p.get('profile').lower())
+        except:
+            pass
 
     listbike_profile_filters = []
     for lp in listbike_profiles:
