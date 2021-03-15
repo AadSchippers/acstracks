@@ -116,6 +116,19 @@
                     </tr>
                 {% endif %}
             </table>
+            <hr>
+            <table class="scalefont">
+                <tr>
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                            <input type="hidden" name="gpxdownload" value="True">
+                            <input type="submit" id="gpxdownload" value="Download .gpx file" class="save btn btn-default scalefont">
+                        </form>
+                    </td>
+                </tr>
+            </table>
         </div>
         <div class="col-9">
             <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>

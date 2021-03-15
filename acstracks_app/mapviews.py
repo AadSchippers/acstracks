@@ -16,7 +16,7 @@ from django.http import HttpResponse
 
 
 
-def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, map_filename=None, savecsv=False):
+def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, map_filename=None, savecsv=False, downloadgpx=False):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -161,6 +161,9 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
 
     if savecsv:
         return save_csv(request, atrack, points, points_info)
+
+    if downloadgpx:
+        return download_gpx(request, atrack, points, points_info)
 
     return
 
@@ -459,6 +462,41 @@ def save_csv(request, atrack, points, points_info):
             int(points_info[row][8]),
         ])
         row += 1
+
+    return response
+
+
+def download_gpx(request, atrack, points, points_info):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    gpxfilename = os.path.splitext(atrack.displayfilename)[0]+".gpx"
+    response['Content-Disposition'] = 'attachment; filename="'+gpxfilename+'"'
+
+    writer = csv.writer(response)
+
+    writer.writerow([str("<?xml version='1.0' encoding='UTF-8'?>")])
+
+    writer.writerow([
+        str("<gpx version='1.1' creator='AcsTracks' " +
+        "xmlns='http://www.topografix.com/GPX/1/1' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "+ 
+        "xsi:schemaLocation='http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd'>")
+        ])
+    writer.writerow([str("  <trk>")])
+    writer.writerow([str("    <name>"+atrack.name+"</name>")])
+    writer.writerow([str("    <trkseg>")])
+
+    row = 0
+    while row < len(points):
+        writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
+        writer.writerow([str("        <ele>"+str(round(points_info[row][9], 2))+"</ele>")])
+        writer.writerow([str("      </trkpt>")])
+        row += 1
+
+
+    writer.writerow([str("    </trkseg>")])
+    writer.writerow([str("  </trk>")])
+    writer.writerow([str("</gpx>")])
+
 
     return response
 

@@ -186,11 +186,11 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             return redirect('track_list')
 
     if csvsave == 'True':
-        return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, None, True)
+        return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, None, True, False)
     elif atrack.length == 0:
-        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, map_filename, False)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, map_filename, False, False)
     else:
-        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, map_filename, False)
+        process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, map_filename, False, False)
 
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
@@ -222,10 +222,17 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         atrack.user.username+"_public.html"
     )
 
+    gpxdownload = None
+
     if request.method == 'POST':
         intermediate_points_selected = request.POST.get('Intermediate_points')
+        gpxdownload = request.POST.get('gpxdownload')
 
-    process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, map_filename, False)
+
+    if gpxdownload == 'True':
+        return process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, atrack, None, False, True)
+
+    process_gpx_file(request, atrack.storagefilename, intermediate_points_selected, None, map_filename, False, False)
 
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'atrack': atrack,
@@ -275,7 +282,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
         )
         trk.save()
 
-        process_gpx_file(request, trk.storagefilename, intermediate_points_selected, trk, False, False)
+        process_gpx_file(request, trk.storagefilename, intermediate_points_selected, trk, False, False, False)
     except:
         pass
 
@@ -484,6 +491,6 @@ def process_preferences(request):
 def recalculate_tracks(request):
     tracks = Track.objects.filter(user=request.user)
     for track in tracks:
-        process_gpx_file(request, track.storagefilename, 0, track, False, False)
+        process_gpx_file(request, track.storagefilename, 0, track, False, False, False)
 
     return
