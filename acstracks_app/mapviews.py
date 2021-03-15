@@ -532,7 +532,7 @@ def make_html_popup(
         "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
         time+"</td>" +
         "<td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(round(distance, 2)) + "</td></tr>"
+        str(round(distance/1000, 2)) + "</td></tr>"
     )
     line_duration = (
         "<tr><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
