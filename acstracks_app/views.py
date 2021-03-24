@@ -439,7 +439,7 @@ def process_preferences(request):
                 preference = Preference.objects.get(user=request.user)
                 old_speedthreshold = preference.speedthreshold
                 old_elevationthreshold = preference.elevationthreshold
-                old_maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
+                old_maxspeedcappingfactor = preference.maxspeedcappingfactor
                 preference.speedthreshold = speedthreshold
                 preference.elevationthreshold = elevationthreshold
                 preference.maxspeedcappingfactor = maxspeedcappingfactor
