@@ -10,6 +10,8 @@
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
                         <form method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="Date_end" value="{{ date_end }}">
+                            <input type="hidden" name="Date_start" value="{{ date_start }}">
                             <input type="hidden" name="Order" value="{{ order_selected }}">
                             <input type="hidden" name="Profile" value="{{ profile_filter }}">
                             {% csrf_token %}
@@ -55,6 +57,8 @@
                     <td><b>Name</b></td>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
+                        <input type="hidden" name="Date_end" value="{{ date_end }}">
+                        <input type="hidden" name="Date_start" value="{{ date_start }}">
                         <input type="hidden" name="Order" value="{{ order_selected }}">
                         <input type="hidden" name="Profile" value="{{ profile_filter }}">
                         <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
@@ -71,6 +75,8 @@
                     <td><b>Profile</b></td>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
+                        <input type="hidden" name="Date_end" value="{{ date_end }}">
+                        <input type="hidden" name="Date_start" value="{{ date_start }}">
                         <input type="hidden" name="Order" value="{{ order_selected }}">
                         <input type="hidden" name="Profile" value="{{ profile_filter }}">
                         <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
@@ -156,6 +162,8 @@
                     <td>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
+                            <input type="hidden" name="Date_end" value="{{ date_end }}">
+                            <input type="hidden" name="Date_start" value="{{ date_start }}">
                             <input type="hidden" name="Order" value="{{ order_selected }}">
                             <input type="hidden" name="Profile" value="{{ profile_filter }}">
                             <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
@@ -169,6 +177,8 @@
             <table class="scalefont">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
+                <input type="hidden" name="Date_end" value="{{ date_end }}">
+                <input type="hidden" name="Date_start" value="{{ date_start }}">
                 <input type="hidden" name="Order" value="{{ order_selected }}">
                 <input type="hidden" name="Profile" value="{{ profile_filter }}">
                 <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">

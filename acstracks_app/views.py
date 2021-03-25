@@ -20,13 +20,23 @@ import hashlib
 
 
 @login_required(login_url='/login/')
-def track_list(request, order_selected=None, profile_filter=None, intermediate_points_selected=None):
+def track_list(request, date_start=None, date_end=None, order_selected=None, profile_filter=None, intermediate_points_selected=None):
     if not order_selected:
         order_selected = "created_date_ascending"
     if not profile_filter:
         profile_filter = "All"
     if not intermediate_points_selected:
         intermediate_points_selected = 0
+   
+    try:
+        datetime.strptime(date_start, '%Y-%m-%d')
+    except:
+        date_start = "2000-01-01"
+    
+    try:
+        datetime.strptime(date_end, '%Y-%m-%d')
+    except:
+        date_end = datetime.now().strftime("%Y-%m-%d")
 
     if request.method == 'POST':
         files = request.FILES.getlist('gpxfile')
@@ -35,13 +45,25 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
             storagefilename = fs.save(file.name, file)
             parse_file(request, storagefilename, file.name, intermediate_points_selected)
     
+        date_start = request.POST.get('Date_start')
+        try:
+            datetime.strptime(date_start, '%Y-%m-%d')
+        except:
+            date_start = "2000-01-01"
+
+        date_end = request.POST.get('Date_end')
+        try:
+            datetime.strptime(date_end, '%Y-%m-%d')
+        except:
+            date_end = datetime.now().strftime("%Y-%m-%d")
+
         order_selected = request.POST.get('Order')
         
         profile_filter = request.POST.get('Profile')
 
     bike_profile_filters = get_bike_profile_filters(request)
     
-    tracks = get_tracks(request, order_selected, profile_filter)
+    tracks = get_tracks(request, date_start, date_end, order_selected, profile_filter)
 
     statistics = compute_statistics(tracks)
 
@@ -56,6 +78,8 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
         'tracks': tracks,
         'preference': preference,
         'bike_profile_filters': bike_profile_filters,
+        'date_start': date_start,
+        'date_end': date_end,
         'profile_filter': profile_filter,
         'order_selected': order_selected,
         'statistics': statistics,
@@ -64,7 +88,7 @@ def track_list(request, order_selected=None, profile_filter=None, intermediate_p
     )
 
 
-def get_tracks(request, order_selected, profile_filter):
+def get_tracks(request, date_start, date_end, order_selected, profile_filter):
     if order_selected == "created_date_ascending":
         order_by = "created_date"
     
@@ -94,26 +118,34 @@ def get_tracks(request, order_selected, profile_filter):
     
     if order_selected == "maxspeed_descending":
         order_by = "-maxspeed"
-    
+
     if profile_filter != "All":
         tracks1 = Track.objects.filter(
             user=request.user,
-            profile__startswith=profile_filter
+            profile__startswith=profile_filter,
+            created_date__gte=date_start,
+            created_date__lte=date_end,
             )
         tracks2 = Track.objects.filter(
             user=request.user,
-            profile__icontains='+' + profile_filter
+            profile__icontains='+' + profile_filter,
+            created_date__gte=date_start,
+            created_date__lte=date_end,
             )
         alltracks = tracks1 | tracks2
         tracks = alltracks.distinct().order_by(order_by)
     else:
-        tracks = Track.objects.filter(user=request.user).order_by(order_by)
+        tracks = Track.objects.filter(
+            user=request.user,
+            created_date__gte=date_start,
+            created_date__lte=date_end,
+            ).order_by(order_by)
 
     return tracks
 
 
 @login_required(login_url='/login/')
-def track_detail(request, pk, order_selected=None, profile_filter=None, intermediate_points_selected=None):
+def track_detail(request, pk, date_start=None, date_end=None, order_selected=None, profile_filter=None, intermediate_points_selected=None):
     if not order_selected:
         order_selected = "created_date_ascending"
     if not profile_filter:
@@ -151,8 +183,10 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
                 'map_filename': full_map_filename,
-                'profile_filter': profile_filter,
+                'date_start': date_start,
+                'date_end': date_end,
                 'order_selected': order_selected,
+                'profile_filter': profile_filter,
                 'intermediate_points_selected': int(intermediate_points_selected),     
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
@@ -170,8 +204,10 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
                 'map_filename': full_map_filename,
-                'profile_filter': profile_filter,
+                'date_start': date_start,
+                'date_end': date_end,
                 'order_selected': order_selected,
+                'profile_filter': profile_filter,
                 'intermediate_points_selected': int(intermediate_points_selected),     
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
@@ -195,8 +231,12 @@ def track_detail(request, pk, order_selected=None, profile_filter=None, intermed
     return render(request, 'acstracks_app/track_detail.html', {
         'atrack': atrack,
         'map_filename': full_map_filename,
-        'profile_filter': profile_filter,
+        'date_start': date_start,
+        'date_end': date_end,
+        'date_start': date_start,
+        'date_end': date_end,
         'order_selected': order_selected,
+        'profile_filter': profile_filter,
         'intermediate_points_selected': int(intermediate_points_selected),     
         'bike_profiles': bike_profiles,
         'public_url': public_url,
