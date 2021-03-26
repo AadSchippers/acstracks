@@ -33,17 +33,31 @@ def track_list(request, date_start=None, date_end=None, order_selected=None, pro
         for file in files:
             fs = FileSystemStorage()
             storagefilename = fs.save(file.name, file)
-            parse_file(request, storagefilename, file.name, intermediate_points_selected)
+            parse_file(request, storagefilename, file.name)
     
-        date_start = request.POST.get('Date_start')
-        date_end = request.POST.get('Date_end')
-        order_selected = request.POST.get('Order')
-        profile_filter = request.POST.get('Profile')
-  
+        if files:
+            date_start = None
+            date_end = None
+            order_selected = None
+            profile_filter = None
+        else:
+            date_start = request.POST.get('Date_start')
+            date_end = request.POST.get('Date_end')
+            order_selected = request.POST.get('Order')
+            profile_filter = request.POST.get('Profile')
+
+
+    if not order_selected:
+        order_selected = "created_date_descending"
+    if not profile_filter:
+        profile_filter = "All"
+    if not intermediate_points_selected:
+        intermediate_points_selected = 0
+ 
     try:
         datetime.strptime(date_start, '%Y-%m-%d')
     except:
-        date_start = "2000-01-01"
+        date_start = get_first_date(request)
     
     try:
         datetime.strptime(date_end, '%Y-%m-%d')
@@ -131,6 +145,19 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
             ).order_by(order_by)
 
     return tracks
+
+
+def get_first_date(request):
+    tracks = Track.objects.filter(
+        user=request.user,
+        ).order_by('created_date')
+
+    try:
+        date_start = tracks[0].created_date.strftime("%Y-%m-%d")
+    except:
+        date_start = datetime.now().strftime("%Y-%m-%d")
+
+    return date_start
 
 
 @login_required(login_url='/login/')
