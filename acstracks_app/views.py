@@ -22,12 +22,24 @@ import hashlib
 @login_required(login_url='/login/')
 def track_list(request, date_start=None, date_end=None, order_selected=None, profile_filter=None, intermediate_points_selected=None):
     if not order_selected:
-        order_selected = "created_date_ascending"
+        order_selected = "created_date_descending"
     if not profile_filter:
         profile_filter = "All"
     if not intermediate_points_selected:
         intermediate_points_selected = 0
-   
+ 
+    if request.method == 'POST':
+        files = request.FILES.getlist('gpxfile')
+        for file in files:
+            fs = FileSystemStorage()
+            storagefilename = fs.save(file.name, file)
+            parse_file(request, storagefilename, file.name, intermediate_points_selected)
+    
+        date_start = request.POST.get('Date_start')
+        date_end = request.POST.get('Date_end')
+        order_selected = request.POST.get('Order')
+        profile_filter = request.POST.get('Profile')
+  
     try:
         datetime.strptime(date_start, '%Y-%m-%d')
     except:
@@ -37,29 +49,6 @@ def track_list(request, date_start=None, date_end=None, order_selected=None, pro
         datetime.strptime(date_end, '%Y-%m-%d')
     except:
         date_end = datetime.now().strftime("%Y-%m-%d")
-
-    if request.method == 'POST':
-        files = request.FILES.getlist('gpxfile')
-        for file in files:
-            fs = FileSystemStorage()
-            storagefilename = fs.save(file.name, file)
-            parse_file(request, storagefilename, file.name, intermediate_points_selected)
-    
-        date_start = request.POST.get('Date_start')
-        try:
-            datetime.strptime(date_start, '%Y-%m-%d')
-        except:
-            date_start = "2000-01-01"
-
-        date_end = request.POST.get('Date_end')
-        try:
-            datetime.strptime(date_end, '%Y-%m-%d')
-        except:
-            date_end = datetime.now().strftime("%Y-%m-%d")
-
-        order_selected = request.POST.get('Order')
-        
-        profile_filter = request.POST.get('Profile')
 
     bike_profile_filters = get_bike_profile_filters(request)
     
