@@ -122,6 +122,9 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
     if order_selected == "maxspeed_descending":
         order_by = "-maxspeed"
 
+    date_start = date_start + " 00:00:00"
+    date_end = date_end + " 23:59:59"
+
     if profile_filter != "All":
         tracks1 = Track.objects.filter(
             user=request.user,
