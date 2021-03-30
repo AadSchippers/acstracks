@@ -1,0 +1,38 @@
+{% extends 'registration/base.html' %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table class="scalefont">
+        <tr>
+            <td>
+                <input type="submit" id="delete" value="Delete these files" class="save btn btn-default scalefont">
+            </td>
+        </tr>
+        <tr>
+            <td><br><br>
+                <label class="checkcontainer" style="font-weight: normal;"><i>I understand that deleting these files is an action that cannot be undone</i>
+                    <input type="checkbox"
+                        name="confirm_delete" 
+                        id="id_confirm_delete">
+                    <span class="checkmark"></span> 
+                </label>
+            </td>
+        </tr>
+    </table>
+</form>
+<hr>
+<h2>Obsolete files</h2>
+</table class="scalefont">
+
+<table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+    <th valign="Top" width=400>Filename</th>
+    <th valign="Top" style="text-align:right" width=200>Size (Kb)</th>
+    {% for name, size in obsolete_files %}
+        <tr class="table-row">
+            <td>{{ name }}</td>
+            <td style="text-align:right">{{ size }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

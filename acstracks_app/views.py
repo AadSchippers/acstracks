@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.shortcuts import HttpResponseRedirect
 from django import forms
@@ -559,3 +559,31 @@ def recalculate_tracks(request):
         process_gpx_file(request, track.storagefilename, 0, track, False, False, False)
 
     return
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def cleanup(request):
+    fs = FileSystemStorage()
+
+    if request.method == "POST":
+        confirm_delete = request.POST.get('confirm_delete')
+        if confirm_delete:
+            try:
+                for fname, fsize in obsolete_files:
+                    fs.delete(fname)
+            except:
+                return redirect('track_list')
+    
+    try:
+        files = fs.listdir(settings.MEDIA_ROOT)[1]
+        obsolete_files = []
+        for f in files:
+            if len(Track.objects.filter(storagefilename=f)) == 0:
+                obsolete_files.append(tuple([f, int(((fs.size(f)/1024)+0.5))]))
+    except:
+        return redirect('track_list')
+
+    return render(request, 'acstracks_app/cleanup.html', {
+        'obsolete_files': obsolete_files, 
+        }
+    )
