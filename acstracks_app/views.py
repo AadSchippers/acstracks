@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -122,8 +123,8 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
     if order_selected == "maxspeed_descending":
         order_by = "-maxspeed"
 
-    date_start = date_start + " 00:00:00"
-    date_end = date_end + " 23:59:59"
+    date_start = make_aware(parse(date_start + " 00:00:00"))
+    date_end = make_aware(parse(date_end + " 23:59:59"))
 
     if profile_filter != "All":
         tracks1 = Track.objects.filter(

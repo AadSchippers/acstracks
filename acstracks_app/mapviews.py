@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.timezone import make_aware
 import os
 import gpxpy
 import gpxpy.gpx
@@ -48,9 +49,10 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
     avgcadence = None
     avgheartrate = None
     previous_avgcadence = 0
-    timezone_info = timezone(settings.TIME_ZONE)   
+    timezone_info = timezone(settings.TIME_ZONE)      
     previous_point = None
     distance = None
+    iFlagged = 0
     for track in gpx.tracks:
         for segment in track.segments:
             for point in segment.points:
@@ -81,7 +83,11 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                 if x > 0:
                     if distance < previous_distance:
                         distance = previous_distance
-                        speed = previous_speed                    
+                        speed = previous_speed
+                        flagged = True
+                        iFlagged += 1
+                    else:
+                        flagged = False
                     t0 = datetime.strptime(points_info[0][0], "%Y-%m-%d %H:%M:%S")
                     tx = datetime.strptime(point.time.astimezone(timezone_info).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
                     duration = tx - t0
@@ -132,6 +138,7 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                     previous_avgheartrate = heartrate
                     avgcadence = cadence
                     previous_avgcadence = cadence
+                    flagged = False
 
                 points.append(tuple([point.latitude,
                                     point.longitude,
@@ -148,10 +155,13 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                     cadence,
                     avgcadence,
                     round(point.elevation, 2),
+                    flagged,
                    ]))
                     
                 previous_distance = distance
                 previous_speed = speed
+
+    print(f"Filename: {filename}, number of points: {str(len(points))}, points_flagged {str(iFlagged)}")
 
     if atrack:
         update_track(atrack, points_info, elevationthreshold, maxspeedcappingfactor)
@@ -472,6 +482,8 @@ def download_gpx(request, atrack, points, points_info):
     gpxfilename = os.path.splitext(atrack.displayfilename)[0]+".gpx"
     response['Content-Disposition'] = 'attachment; filename="'+gpxfilename+'"'
 
+    gpx_timezone_info = timezone(settings.GPX_TIME_ZONE)
+
     writer = csv.writer(response)
 
     writer.writerow([str("<?xml version='1.0' encoding='UTF-8'?>")])
@@ -487,9 +499,11 @@ def download_gpx(request, atrack, points, points_info):
 
     row = 0
     while row < len(points):
-        writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
-        writer.writerow([str("        <ele>"+str(round(points_info[row][9], 2))+"</ele>")])
-        writer.writerow([str("      </trkpt>")])
+        if points_info[row][10] == False:
+            writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
+            writer.writerow([str("        <ele>"+str(round(points_info[row][9], 2))+"</ele>")])
+            writer.writerow([str("        <time>"+make_aware(parse(points_info[row][0])).astimezone(gpx_timezone_info).strftime("%Y-%m-%dT%H:%M:%SZ")+"</time>")])
+            writer.writerow([str("      </trkpt>")])
         row += 1
 
 
