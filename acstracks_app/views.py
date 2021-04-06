@@ -335,7 +335,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
             displayfilename=displayfilename,
             storagefilename=storagefilename,
             creator=creator,
-            created_date=parse(created_date),
+            created_date=make_aware(parse(created_date)),
             name=name,
             profile=profile,
             publickey=hashlib.sha256(storagefilename.encode()).hexdigest(),
@@ -494,6 +494,8 @@ def process_preferences(request):
             show_totaldescent = data['show_totaldescent']
             show_avgcadence = data['show_avgcadence']
             show_avgheartrate = data['show_avgheartrate']
+            gpx_contains_heartrate = data['gpx_contains_heartrate']
+            gpx_contains_cadence = data['gpx_contains_cadence']
 
             try:
                 preference = Preference.objects.get(user=request.user)
@@ -509,6 +511,8 @@ def process_preferences(request):
                 preference.show_totaldescent = show_totaldescent
                 preference.show_avgcadence = show_avgcadence
                 preference.show_avgheartrate = show_avgheartrate
+                preference.gpx_contains_heartrate = gpx_contains_heartrate
+                preference.gpx_contains_cadence = gpx_contains_cadence
                 preference.save()
             except:
                 old_speedthreshold = settings.SPEEDTHRESHOLD
@@ -525,6 +529,8 @@ def process_preferences(request):
                     show_totaldescent=show_totaldescent,
                     show_avgcadence=show_avgcadence,
                     show_avgheartrate=show_avgheartrate,
+                    gpx_contains_heartrate=gpx_contains_heartrate,
+                    gpx_contains_cadence=gpx_contains_cadence,
                 )
 
             if (
@@ -547,6 +553,8 @@ def process_preferences(request):
                 'show_totaldescent': preference.show_totaldescent,
                 'show_avgcadence': preference.show_avgcadence,
                 'show_avgheartrate': preference.show_avgheartrate,
+                'gpx_contains_heartrate': preference.gpx_contains_heartrate,
+                'gpx_contains_cadence': preference.gpx_contains_cadence,
             })
         except:
             form = PreferenceForm()

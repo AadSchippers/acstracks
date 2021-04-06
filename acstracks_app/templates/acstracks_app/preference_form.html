@@ -71,12 +71,19 @@
                 <i>Changing thresholds leads to recalculating all tracks, depending on the number of tracks this might take considerable time.</i>
             </p>
             <hr>
-            <h2>Optional columns</h2>
             <div class="row">
-                <div class="col-3">
+                <div class="col-12">
                     <table class="scalefont">
                         <tr>
-                            <td>
+                            <td style="width: 500px;">
+                                <h2>Optional columns</h2>
+                            </td>
+                            <td style="width: 500px;">
+                                <h2>Exported GPX file also contains</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>       
                                 <label class="checkcontainer">Average speed
                                     <input type="checkbox"
                                         name="show_avgspeed" 
@@ -86,20 +93,42 @@
                                         id="id_show_avgspeed">
                                     <span class="checkmark"></span> 
                                 </label>
-                          </td>
+                            </td>
+                            <td>       
+                                <label class="checkcontainer">Heartrate
+                                    <input type="checkbox"
+                                        name="gpx_contains_heartrate" 
+                                        {% if form.gpx_contains_heartrate.value %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="gpx_contains_heartrate">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
                         </tr>
                         <tr>
                             <td>
                                 <label class="checkcontainer">Maximum speed
-                                <input type="checkbox" 
-                                    name="show_maxspeed" 
-                                    {% if form.show_maxspeed.value %}
-                                        checked="checked }}" 
-                                    {% endif %}
-                                    id="id_show_maxspeed">
-                                <span class="checkmark"></span> 
-                            </label>
-                        </td>
+                                    <input type="checkbox" 
+                                        name="show_maxspeed" 
+                                        {% if form.show_maxspeed.value %}
+                                            checked="checked }}" 
+                                        {% endif %}
+                                        id="id_show_maxspeed">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                            <td>       
+                                <label class="checkcontainer">Cadence
+                                    <input type="checkbox"
+                                        name="gpx_contains_cadence" 
+                                        {% if form.gpx_contains_cadence.value %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="gpx_contains_cadence">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
                         </tr>
                         <tr>
                             <td>

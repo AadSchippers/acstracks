@@ -161,7 +161,8 @@ def process_gpx_file(request, filename, intermediate_points_selected, atrack=Non
                 previous_distance = distance
                 previous_speed = speed
 
-    print(f"Filename: {filename}, number of points: {str(len(points))}, points_flagged {str(iFlagged)}")
+    if iFlagged > 0:
+        print(f"Filename: {filename}, number of points: {str(len(points))}, points flagged {str(iFlagged)}")
 
     if atrack:
         update_track(atrack, points_info, elevationthreshold, maxspeedcappingfactor)
@@ -260,7 +261,7 @@ def update_track(atrack, points_info, elevationthreshold, maxspeedcappingfactor)
 
     getcontext().prec = 2
 
-    atrack.created_date = parse(created_date)
+    atrack.created_date = make_aware(parse(created_date))
     atrack.length = round(trkLength, 2)
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
@@ -484,6 +485,13 @@ def download_gpx(request, atrack, points, points_info):
 
     gpx_timezone_info = timezone(settings.GPX_TIME_ZONE)
 
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
     writer = csv.writer(response)
 
     writer.writerow([str("<?xml version='1.0' encoding='UTF-8'?>")])
@@ -503,6 +511,12 @@ def download_gpx(request, atrack, points, points_info):
             writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
             writer.writerow([str("        <ele>"+str(round(points_info[row][9], 2))+"</ele>")])
             writer.writerow([str("        <time>"+make_aware(parse(points_info[row][0])).astimezone(gpx_timezone_info).strftime("%Y-%m-%dT%H:%M:%SZ")+"</time>")])
+            writer.writerow([str("        <extensions>")])
+            if preference.gpx_contains_heartrate:
+                writer.writerow([str("          <heartrate>"+str(points_info[row][5])+"</heartrate>")])
+            if preference.gpx_contains_cadence:
+                writer.writerow([str("          <cadence>"+str(points_info[row][7])+"</cadence>")])
+            writer.writerow([str("        </extensions>")])
             writer.writerow([str("      </trkpt>")])
         row += 1
 

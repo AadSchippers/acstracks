@@ -49,6 +49,9 @@ class Preference(models.Model):
     show_totaldescent = models.BooleanField(default=True)
     show_avgcadence = models.BooleanField(default=True)
     show_avgheartrate = models.BooleanField(default=True)
+    gpx_contains_heartrate = models.BooleanField(default=False)
+    gpx_contains_cadence = models.BooleanField(default=False)
+
 
     def __str__(self):
         return "%s, %s, %s" % (

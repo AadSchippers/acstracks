@@ -16,4 +16,6 @@ class PreferenceForm(forms.ModelForm):
             'show_totaldescent',
             'show_avgcadence',
             'show_avgheartrate',
+            'gpx_contains_heartrate',
+            'gpx_contains_cadence',
             )
