@@ -501,6 +501,9 @@ def download_gpx(request, atrack, points, points_info):
         "xmlns='http://www.topografix.com/GPX/1/1' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "+ 
         "xsi:schemaLocation='http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd'>")
         ])
+    writer.writerow([str("  <metadata>")])
+    writer.writerow([str("    <time>"+make_aware(parse(points_info[0][0])).astimezone(gpx_timezone_info).strftime("%Y-%m-%dT%H:%M:%SZ")+"</time>")])
+    writer.writerow([str("  </metadata>")])
     writer.writerow([str("  <trk>")])
     writer.writerow([str("    <name>"+atrack.name+"</name>")])
     writer.writerow([str("    <trkseg>")])

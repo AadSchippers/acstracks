@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'acstracks_app.apps.AcstracksAppConfig',
+    'acstracks_app',
 ]
 
 MIDDLEWARE = [
