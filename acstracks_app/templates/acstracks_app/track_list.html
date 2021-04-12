@@ -1,6 +1,13 @@
 {% extends 'acstracks_app/base.html' %}
 
 {% block content %}
+    <script>
+        function procesFiles() {
+            showPleaseWait()
+        document.getElementById("uploadform").submit();
+        }
+    </script>
+
     <table class="scalefont" style="width:100%">
         <tr>
             <td>
@@ -19,7 +26,7 @@
                         <div class="file-path-wrapper">
                             <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
                         </div>
-                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=this.form.submit()>2. Click to upload selected file(s)</label>
+                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to upload selected file(s)</label>
                         <input type="submit" id="gpxload" style="display:none">
                     </div>
                 </form>

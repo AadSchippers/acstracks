@@ -316,17 +316,21 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
     namespace = settings.NAMESPACE
     gpxroot = gpxfile.getroot()
     creator = gpxroot.attrib['creator']
+    metadata = gpxroot.find('ns:metadata', namespace)
+    if metadata:
+        created_date = metadata.find('ns:time', namespace).text
+    else:
+        created_date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     gpxtrk = gpxroot.find('ns:trk', namespace)
     name = gpxtrk.find('ns:name', namespace).text
+
     extensions = gpxtrk.find('ns:extensions', namespace)
     if extensions:
-        created_date = extensions.find('ns:time', namespace).text
         profile = extensions.find('ns:profile', namespace).text
         # ivm met naamwijziging
         if profile == "Vakantiefiet":
             profile = "Toerfiets"
     else:
-        created_date = "00:00:00"
         profile = None
 
     try:
@@ -335,7 +339,7 @@ def parse_file(request, storagefilename=None, displayfilename=None, intermediate
             displayfilename=displayfilename,
             storagefilename=storagefilename,
             creator=creator,
-            created_date=make_aware(parse(created_date)),
+            created_date=parse(created_date),
             name=name,
             profile=profile,
             publickey=hashlib.sha256(storagefilename.encode()).hexdigest(),
