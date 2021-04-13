@@ -18,6 +18,7 @@ import time
 from .mapviews import *
 import re
 import hashlib
+import ast
 
 
 @login_required(login_url='/login/')
@@ -582,6 +583,7 @@ def cleanup(request):
         confirm_delete = request.POST.get('confirm_delete')
         if confirm_delete:
             try:
+                obsolete_files = ast.literal_eval(request.POST.get('obsolete_files'))
                 for fname, fsize in obsolete_files:
                     fs.delete(fname)
             except:

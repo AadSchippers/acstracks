@@ -3,6 +3,7 @@
 {% block content %}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="hidden" name="obsolete_files" value="{{ obsolete_files }}">
     <table class="scalefont">
         <tr>
             <td>
