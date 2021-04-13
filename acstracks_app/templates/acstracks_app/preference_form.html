@@ -11,7 +11,8 @@
         }
 
         function procesFiles() {
-            showPleaseWait()
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
         document.getElementById("uploadform").submit();
         }
     </script>
@@ -71,8 +72,12 @@
                         </tr>
                     </table>
                 </div>
+                <div class="col-4">
+                    <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
+                    <img id="id-processing-img" style="float:right; visibility: hidden;" src="/static/img/acstracks-progress.gif">
+                </div>
             </div>
-            <p id="id_helptext" class="scalefont" style="visibility: hidden">
+            <p id="id_helptext" class="scalefont" style="visibility: hidden;">
                 <i>Changing thresholds leads to recalculating all tracks, depending on the number of tracks this might take considerable time.</i>
             </p>
             <hr>

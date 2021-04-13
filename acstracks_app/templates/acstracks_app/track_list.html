@@ -3,7 +3,8 @@
 {% block content %}
     <script>
         function procesFiles() {
-            showPleaseWait()
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
         document.getElementById("uploadform").submit();
         }
     </script>
@@ -36,7 +37,6 @@
     <table class="scalefont" style="width: 100%;overflow-x: auto">
         <tr>
             <td>
-            {% if statistics.total_length > 0 %}
             <table class="scalefont">
                 <tr>
                     <td><b>Number&nbsp;of&nbsp;tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
@@ -75,7 +75,20 @@
                     <td style="width: 300px;">{{ statistics.datetime_max_descent|date:"d b Y" }}</td>
                 </tr>
             </table>
-            {% endif %}
+            </td>
+            <td valign="Top">
+                <table>
+                    <tr>
+                        <td>
+                            <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img id="id-processing-img" style="float:right; visibility: hidden;" src="/static/img/acstracks-progress.gif">
+                        </td>
+                    </tr>
+                </table>
             </td>
             <td valign="Bottom">
                 <table style="width: 100%;overflow-x: auto">
