@@ -34,6 +34,10 @@ def track_list(request, date_start=None, date_end=None, order_selected=None, pro
         files = request.FILES.getlist('gpxfile')
         for file in files:
             fs = FileSystemStorage()
+            try:
+                fs.delete(file.name)
+            except:
+                pass
             storagefilename = fs.save(file.name, file)
             parse_file(request, storagefilename, file.name)
     
@@ -239,7 +243,13 @@ def track_detail(request, pk, date_start=None, date_end=None, order_selected=Non
 
         confirm_delete = request.POST.get('confirm_delete')
         if confirm_delete:
+            fs = FileSystemStorage()
+            try:
+                fs.delete(atrack.storagefilename)
+            except:
+                pass
             atrack.delete()
+
             return redirect('track_list')
 
     if csvsave == 'True':
