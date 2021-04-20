@@ -308,7 +308,7 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
     my_map.fit_bounds([sw, ne]) 
 
 
-    # add a markers
+    # add all markers
     # for each in points:  
     #     folium.Marker(each).add_to(my_map)
     # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
