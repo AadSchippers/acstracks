@@ -24,6 +24,7 @@ urlpatterns = [
         name='preference'
         ),
     path('cleanup/', views.cleanup, name='cleanup'),
+    path('statistics/<str:statistics_type>', views.show_statistics, name='show_statistics'),
     path('publictrack/<str:publickey>', views.publictrack_detail, name='publictrack_detail'),
     path('publictrack/<str:publickey>,<int:intermediate_points_selected>', views.publictrack_detail, name='publictrack_detail'),
     url(r'^login/$', auth_views.LoginView.as_view(), name='login'),

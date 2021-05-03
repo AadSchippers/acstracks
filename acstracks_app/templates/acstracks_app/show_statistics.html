@@ -1,0 +1,76 @@
+{% extends 'registration/base.html' %}
+
+{% block content %}
+<table class="scalefont" style="width: 100%;overflow-x: auto">
+    <tr>
+        <td>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label class="checkcontainer"><b>{{ annual_statistics }}</b>
+                <input type="checkbox"
+                    name="annual_statistics"
+                    {% if page_headline == annual_statistics %}
+                        checked="checked" 
+                        disabled="disabled"
+                    {% else %}
+                        onchange=this.form.submit()
+                    {% endif %}
+                    id="id_annual_statistics">
+                <span class="checkmark"></span> 
+                </label>
+                <label class="checkcontainer"><b>{{ profile_statistics }}</b>
+                <input type="checkbox"
+                    name="profile_statistics"
+                    {% if page_headline == profile_statistics %}
+                        checked="checked" 
+                        disabled="disabled"
+                    {% else %}
+                        onchange=this.form.submit()
+                    {% endif %}
+                    id="id_profile_statistics">
+                    <span class="checkmark"></span> 
+                </label>
+            </td>
+        </form>
+    </tr>
+    {% for track in tracks %}
+    <tr>
+        <td>
+            <h2>{{ track.year }}</h2>
+        </td>
+        <table class="table-hover scalefont">
+            <thead>
+                <th>Profile</th>
+                <th>Rides</th>
+                <th>Total length (km)</th>
+                <th>Average speed (km/h)</th>
+                <th>Highest average speed (km/h)</th>
+                <th>Highest maximum speed (km/h)</th>
+                <th>Longest track (km)</th>
+                <th>Longest duration</th>
+                <th>Maximum ascent</th>
+                <th>Maximum descent</th>
+            </thead>
+            <tbody>
+                {% for stats_collection in track.stats_collection %}
+                    {% if stats_collection.statistics.number_of_tracks > 0 %}
+                        <tr>
+                            <td>{{ stats_collection.profile }}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
+                            <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.total_avgspeed }}</td> 
+                            <td style="text-align:right">{{ stats_collection.statistics.highest_avgspeed }}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.highest_maxspeed }}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.longest_length }}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.longest_duration }}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.max_ascent }}</td>
+                            <td style="text-align:right">{{ stats_collection.statistics.max_descent }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </tr> 
+    {% endfor %}
+{% endblock %}

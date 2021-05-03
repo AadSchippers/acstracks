@@ -12,23 +12,25 @@
 
     </head>
     <body>
-        <div class="detail">     
-            <table style="width:100%">
-                <tr>
-                    <td>
-                        <a href="{% url 'track_list' date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">
-                        <h1 style="font-size: 2.5vw; font-weight: 500;">AcsTracks</h1></a>
-                    </td>
-                    {% if request.user.username %}                  
-                        <td class="scalefont" style="text-align:right">User {{ request.user.username }} logged in<br>
+
+    <div class="detail">     
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <a href="{% url 'track_list' date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">
+                    <h1 style="font-size: 2.5vw; font-weight: 500;">AcsTracks</h1></a>
+                </td>
+                {% if request.user.username %}                  
+                    <td class="scalefont" style="text-align:right">User {{ request.user.username }} logged in<br>
                             <a href="/preference/"><b>Preferences</b></a><br>
-                            <a href="/logout/"><b>Logout</b></a></td>
-                    {% endif %}    
-                </tr>
-            </table>
-            <br><br>
-            {% block content %}
-            {% endblock %}
+                            <a href="/logout/"><b>Logout</b></a>
+                    </td>
+                {% endif %}    
+            </tr>
+        </table>
+        <br><br>
+        {% block content %}
+        {% endblock %}
     </div>
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>

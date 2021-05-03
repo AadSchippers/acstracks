@@ -98,6 +98,7 @@ def track_list(request, date_start=None, date_end=None, order_selected=None, pro
 
 
 def get_tracks(request, date_start, date_end, order_selected, profile_filter):
+    order_by = None
     if order_selected == "created_date_ascending":
         order_by = "created_date"
     
@@ -145,13 +146,23 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
             created_date__lte=date_end,
             )
         alltracks = tracks1 | tracks2
-        tracks = alltracks.distinct().order_by(order_by)
+        if order_by:
+            tracks = alltracks.distinct().order_by(order_by)
+        else:
+            tracks = alltracks.distinct()
     else:
-        tracks = Track.objects.filter(
-            user=request.user,
-            created_date__gte=date_start,
-            created_date__lte=date_end,
-            ).order_by(order_by)
+        if order_by:
+            tracks = Track.objects.filter(
+                user=request.user,
+                created_date__gte=date_start,
+                created_date__lte=date_end,
+                ).order_by(order_by)
+        else:
+            tracks = Track.objects.filter(
+                user=request.user,
+                created_date__gte=date_start,
+                created_date__lte=date_end
+                )
 
     return tracks
 
@@ -401,6 +412,46 @@ def get_bike_profile_filters(request):
     return profile_filters
 
 
+@login_required(login_url='/login/')
+def show_statistics(request, statistics_type):
+    annual_statistics = "Statistics per year"
+    profile_statistics = "Statistics per profile"
+
+    bike_profile_filters = get_bike_profile_filters(request)
+
+    first_year = int(get_first_date(request)[0:4])
+    current_year = datetime.now().year
+
+    alltracks = []
+    if statistics_type == "annual":
+        page_headline = annual_statistics
+        while current_year >= first_year:
+            date_start = str(current_year) + "-01-01"
+            date_end = str(current_year) + "-12-31"
+            stats_collection = []
+            for profile_filter in bike_profile_filters:  
+                tracks = get_tracks(request, date_start, date_end, None, profile_filter)
+                statistics = compute_statistics(tracks)
+                stats_collection.append({
+                    "profile": profile_filter,
+                    "statistics": statistics,
+                })
+            alltracks.append({
+                "year": current_year,
+                "stats_collection": stats_collection,
+            })
+            current_year -= 1
+
+
+    return render(request, 'acstracks_app/show_statistics.html', {
+        "page_headline": page_headline,
+        "annual_statistics": annual_statistics,
+        "profile_statistics": profile_statistics,
+        "tracks": alltracks,
+        }
+    )
+
+
 def compute_statistics(tracks):
     statistics = {}
 
@@ -459,6 +510,7 @@ def compute_statistics(tracks):
     )
             
     statistics = {
+        'number_of_tracks': tracks.count(),
         'total_length': total_length,
         'total_duration': total_duration,
         'total_avgspeed': total_avgspeed,
