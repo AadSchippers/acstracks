@@ -1,10 +1,17 @@
 {% extends 'registration/base.html' %}
 
-{% block content %}
+{% block content %}    <script>
+    function procesFiles() {
+    document.getElementById("id-processing-p").style.visibility = "visible";
+    document.getElementById("id-processing-img").style.visibility = "visible";
+    document.getElementById("uploadform").submit();
+    }
+</script>
+
 <table class="scalefont" style="width: 100%;overflow-x: auto">
     <tr>
         <td>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="uploadform">
                 {% csrf_token %}
                 <label class="checkcontainer"><b>{{ annual_statistics }}</b>
                 <input type="checkbox"
@@ -13,7 +20,7 @@
                         checked="checked" 
                         disabled="disabled"
                     {% else %}
-                        onchange=this.form.submit()
+                        onchange=procesFiles()
                     {% endif %}
                     id="id_annual_statistics">
                 <span class="checkmark"></span> 
@@ -25,14 +32,20 @@
                         checked="checked" 
                         disabled="disabled"
                     {% else %}
-                        onchange=this.form.submit()
+                        onchange=procesFiles()
                     {% endif %}
                     id="id_profile_statistics">
                     <span class="checkmark"></span> 
                 </label>
             </td>
         </form>
-    </tr>
+        <div class='col1'>
+        <td>
+            <p id="id-processing-p" class="scalefont" style="text-align: left; visibility: hidden;">Please be patient, I'm busy...</p>
+            <img id="id-processing-img" style="float:left; width:135px;height:111px; visibility: hidden;" src="/static/img/acstracks-progress.gif">
+        </td>
+    </div>
+</tr>
     {% for track in tracks %}
     <tr>
         <td>
@@ -50,14 +63,14 @@
                     <th>Profile</th>
                 {% endif %}
                 <th>Rides</th>
-                <th>Total length (km)</th>
-                <th>Average speed (km/h)</th>
-                <th>Highest average speed (km/h)</th>
-                <th>Highest maximum speed (km/h)</th>
-                <th>Longest track (km)</th>
-                <th>Longest duration</th>
-                <th>Maximum ascent</th>
-                <th>Maximum descent</th>
+                <th style="text-align:right">Total length (km)</th>
+                <th style="text-align:right">Average speed (km/h)</th>
+                <th style="text-align:right">Highest average speed (km/h)</th>
+                <th style="text-align:right">Highest maximum speed (km/h)</th>
+                <th style="text-align:right">Longest track (km)</th>
+                <th style="text-align:right">Longest duration</th>
+                <th style="text-align:right">Maximum ascent</th>
+                <th style="text-align:right">Maximum descent</th>
             </thead>
             <tbody>
                 {% for stats_collection in track.stats_collection %}
