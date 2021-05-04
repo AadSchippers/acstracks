@@ -36,11 +36,19 @@
     {% for track in tracks %}
     <tr>
         <td>
-            <h2>{{ track.year }}</h2>
-        </td>
+            {% if page_headline == annual_statistics %}
+                <h2>{{ track.year }}</h2>
+            {% else %}
+                <h2>{{ track.profile }}</h2>
+            {% endif %}
+            </td>
         <table class="table-hover scalefont">
             <thead>
-                <th>Profile</th>
+                {% if page_headline == annual_statistics %}
+                   <th>Year</th>
+                {% else %}
+                    <th>Profile</th>
+                {% endif %}
                 <th>Rides</th>
                 <th>Total length (km)</th>
                 <th>Average speed (km/h)</th>
@@ -55,7 +63,11 @@
                 {% for stats_collection in track.stats_collection %}
                     {% if stats_collection.statistics.number_of_tracks > 0 %}
                         <tr>
-                            <td>{{ stats_collection.profile }}</td>
+                            {% if page_headline == annual_statistics %}
+                                <td>{{ stats_collection.profile }}</td>
+                            {% else %}
+                                <td>{{ stats_collection.year }}</td>
+                            {% endif %}
                             <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
                             <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>
                             <td style="text-align:right">{{ stats_collection.statistics.total_avgspeed }}</td> 

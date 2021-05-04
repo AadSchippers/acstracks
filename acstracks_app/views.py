@@ -413,18 +413,27 @@ def get_bike_profile_filters(request):
 
 
 @login_required(login_url='/login/')
-def show_statistics(request, statistics_type):
+def show_statistics(request):
+    statistics_type = None
+    if request.method == 'POST':
+        statistics_type = request.POST.get('annual_statistics')
+
+    if statistics_type:
+        statistics_type = "annual"
+    else:
+        statistics_type = "profile"
+
     annual_statistics = "Statistics per year"
     profile_statistics = "Statistics per profile"
 
     bike_profile_filters = get_bike_profile_filters(request)
 
     first_year = int(get_first_date(request)[0:4])
-    current_year = datetime.now().year
 
     alltracks = []
     if statistics_type == "annual":
         page_headline = annual_statistics
+        current_year = datetime.now().year
         while current_year >= first_year:
             date_start = str(current_year) + "-01-01"
             date_end = str(current_year) + "-12-31"
@@ -441,7 +450,26 @@ def show_statistics(request, statistics_type):
                 "stats_collection": stats_collection,
             })
             current_year -= 1
-
+    else:
+        page_headline = profile_statistics
+        for profile_filter in bike_profile_filters:  
+            stats_collection = []
+            current_year = datetime.now().year
+            while current_year >= first_year:
+                date_start = str(current_year) + "-01-01"
+                date_end = str(current_year) + "-12-31"
+                tracks = get_tracks(request, date_start, date_end, None, profile_filter)
+                statistics = compute_statistics(tracks)
+                stats_collection.append({
+                    "year": current_year,
+                    "statistics": statistics,
+                })
+                current_year -= 1
+            alltracks.append({
+                    "profile": profile_filter,
+                    "stats_collection": stats_collection,
+                })
+    
 
     return render(request, 'acstracks_app/show_statistics.html', {
         "page_headline": page_headline,
