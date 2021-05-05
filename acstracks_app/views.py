@@ -33,12 +33,17 @@ def track_list(request, date_start=None, date_end=None, order_selected=None, pro
     if request.method == 'POST':
         files = request.FILES.getlist('gpxfile')
         for file in files:
+            storagefilename = (
+                request.user.username +
+                '-' +
+                file.name
+             )
             fs = FileSystemStorage()
             try:
-                fs.delete(file.name)
+                fs.delete(storagefilename)
             except:
                 pass
-            storagefilename = fs.save(file.name, file)
+            storagefilename = fs.save(storagefilename, file)
             parse_file(request, storagefilename, file.name)
     
         if files:

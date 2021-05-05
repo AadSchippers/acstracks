@@ -5,7 +5,7 @@
 <div class="container"
     <div class="row">
         <div class="col-3">
-            <table class="scalefont">
+            <table>
                 <tr>
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
@@ -157,7 +157,7 @@
                 {% endif %}
             </table>
             <hr>
-            <table class="scalefont">
+            <table>
                 <tr>
                     <td>
                         <form method="post" enctype="multipart/form-data">
@@ -168,13 +168,13 @@
                             <input type="hidden" name="Profile" value="{{ profile_filter }}">
                             <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                             <input type="hidden" name="csvsave" value="True">
-                            <input type="submit" id="csvsave" value="Save as .csv file" class="save btn btn-default scalefont">
+                            <input type="submit" id="csvsave" value="Save as .csv file">
                         </form>
                     </td>
                 </tr>
             </table>
             <hr>
-            <table class="scalefont">
+            <table>
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="Date_end" value="{{ date_end }}">
@@ -184,7 +184,7 @@
                 <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                 <tr>
                     <td>
-                        <input type="submit" id="delete" value="Delete this track" class="save btn btn-default scalefont">
+                        <input type="submit" id="delete" value="Delete this track">
                     </td>
                 </tr>
                 <tr>

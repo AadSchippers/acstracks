@@ -28,24 +28,52 @@
     display: table;
 }
 
-@media only screen and (max-width: 600px) {
 .scalefont {
+  color: #700394; 
+}  
+
+@media only screen and (max-width: 600px) {
+  .scalefont {
     font-size: 1.5vw; 
-    color: #700394; 
+  }  
+  .scalefont h1{
+    font-size: 4vw;
+  }  
+  .scalefont h2{
+    font-size: 3.5vw;
+  }  
+  .scalefont h3{
+    font-size: 2.5vw;
   }  
 }
 
 @media only screen and (min-width: 600px) {
 .scalefont {
     font-size: 1vw; 
-    color: #700394;
+  }  
+  .scalefont h1{
+    font-size: 3vw;
+  }  
+  .scalefont h2{
+    font-size: 2.5vw;
+  }  
+  .scalefont h3{
+    font-size: 2vw;
   }  
 }
 
 @media only screen and (min-width: 1600px) {
 .scalefont {
     font-size: 0.85vw; 
-    color: #700394;
+  }  
+  .scalefont h1{
+    font-size: 2.5vw;
+  }  
+  .scalefont h2{
+    font-size: 2vw;
+  }  
+  .scalefont h3{
+    font-size: 1.5vw;
   }  
 }
 
@@ -128,18 +156,7 @@ table, th, td {
     color: #700394;
 }
 
-h1, h1 a, h1 a:visited, h1 a:active {
-    color: #700394;
-    font-size: 36pt;
-    font-family: 'Oswald';
-}
-
-h2, h2 a, h2 a:visited {
-    color: #700394;
-    font-family: 'Oswald';
-}
-
-a, a:active, a:visited, a:hover {
+a, a:active, a:visited, a:hover, a:link {
     color: #700394;  
 }
 
@@ -199,7 +216,7 @@ a, a:active, a:visited, a:hover {
     width: 15px;
     background-color: #fb89ec;
   }
-  
+
   /* On mouse-over, add a grey background color */
   .checkcontainer:hover input ~ .checkmark {
     background-color: #fa56e4;

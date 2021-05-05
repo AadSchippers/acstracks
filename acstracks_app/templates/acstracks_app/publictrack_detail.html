@@ -5,7 +5,7 @@
 <div class="container"
     <div class="row">
         <div class="col-3">
-            <table class="scalefont">
+            <table>
                 <tr>
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
@@ -117,14 +117,14 @@
                 {% endif %}
             </table>
             <hr>
-            <table class="scalefont">
+            <table>
                 <tr>
                     <td>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                             <input type="hidden" name="gpxdownload" value="True">
-                            <input type="submit" id="gpxdownload" value="Download .gpx file" class="save btn btn-default scalefont">
+                            <input type="submit" id="gpxdownload" value="Download .gpx file">
                         </form>
                     </td>
                 </tr>

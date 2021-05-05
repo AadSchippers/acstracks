@@ -2,14 +2,14 @@
 
 {% block content %}
     <script>
-        function procesFiles() {
-        document.getElementById("id-processing-p").style.visibility = "visible";
-        document.getElementById("id-processing-img").style.visibility = "visible";
-        document.getElementById("uploadform").submit();
+        function procesFiles(id) {
+            document.getElementById("id-processing-p").style.visibility = "visible";
+            document.getElementById("id-processing-img").style.visibility = "visible";
+            document.getElementById(id).submit();
         }
     </script>
 
-    <table class="scalefont" style="width:100%">
+    <table style="width:100%">
         <tr>
             <td>
                 <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
@@ -27,18 +27,18 @@
                         <div class="file-path-wrapper">
                             <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
                         </div>
-                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to upload selected file(s)</label>
+                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles("uploadform")>2. Click to upload selected file(s)</label>
                         <input type="submit" id="gpxload" style="display:none">
                     </div>
                 </form>
             </td>
         </tr>
     </table>
-    <table class="scalefont" style="width: 100%;overflow-x: auto">
+    <table style="width: 100%;overflow-x: auto">
         <tr>
             <td>
             <a href="/statistics/"><h3>Statistics</h3></a>
-            <table class="scalefont">
+            <table>
                 <tr>
                     <td><b>Number&nbsp;of&nbsp;tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
                 </tr>
@@ -81,7 +81,7 @@
                 <table>
                     <tr>
                         <td>
-                            <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
+                            <p id="id-processing-p" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
                         </td>
                     </tr>
                     <tr>
@@ -193,7 +193,7 @@
             </td>
         </tr>
     </table><br><br>  
-    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+    <table id="click-table" style="overflow-x:auto;" class="table-hover">
         <th valign="Top" width=400>Filename</th>
         <th valign="Top" width=200>Created&nbsp;date</th>
         <th valign="Top" width=200>Name</th>
