@@ -129,6 +129,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MAPS_URL = '/acstracks_app/static/maps/'
 MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
 
+# Folium map colours
+LINE_COLOR = "red"
+MARKER_COLOR = 'purple'
+NOT_SELECTED_COLOR = 'gray'
+START_COLOR = "pink"
+END_COLOR = "darkpurple"
+CONNECT_COLOR="darkred"
+HEATMAP_LINE_COLOR = "darkpurple"
+
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}
 

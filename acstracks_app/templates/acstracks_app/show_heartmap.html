@@ -1,0 +1,61 @@
+{% extends 'registration/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container"
+    <div class="row">
+        <div class="col-4">
+            <table style="width: 100%;overflow-x: auto">
+                <tr>
+                    <td><a href="/statistics/"><h3>Statistics</h3></a></td>
+                </tr>
+                <tr>
+                    <td><b>Year</b></td><td><b>{{ year }}</b></td>
+                </tr>
+                <tr>
+                    <td><b>Profile</b></td><td><b>{{ profile }}</b></td>
+                </tr>
+                <tr>
+                    <td><b>Number&nbsp;of&nbsp;tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;length&nbsp;(km)</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;duration&nbsp;</b></td><td style="text-align:right">{{ statistics.total_duration }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;average&nbsp;speed (km/h)</b></td><td style="text-align:right">{{ statistics.total_avgspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Longest&nbsp;track&nbsp;(km)</b></td><td style="text-align:right">{{ statistics.longest_length }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Longest&nbsp;duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Highest&nbsp;maximum&nbsp;speed&nbsp;(km/h)</b></td><td style="text-align:right">{{ statistics.highest_maxspeed }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_highest_maxspeed|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Highest&nbsp;average&nbsp;speed&nbsp;(km/h)</b></td><td style="text-align:right">{{ statistics.highest_avgspeed }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_highest_avgspeed|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Maximum&nbsp;ascent&nbsp;(m)</b></td><td style="text-align:right">{{ statistics.max_ascent }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_max_ascent|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Maximum&nbsp;descent&nbsp;(m)</b></td><td style="text-align:right">{{ statistics.max_descent }}</td>
+                    <td style="width: 300px;">{{ statistics.datetime_max_descent|date:"d b Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-8">
+            <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}

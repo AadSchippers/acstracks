@@ -1,10 +1,10 @@
 {% extends 'registration/base.html' %}
 
 {% block content %}    <script>
-    function procesFiles(id) {
+    function processFiles(id) {
         document.getElementById("id-processing-p").style.visibility = "visible";
         document.getElementById("id-processing-img").style.visibility = "visible";
-    document.getElementById(id).submit();
+        document.getElementById(id).submit();
     }
 </script>
 
@@ -20,7 +20,7 @@
                         checked="checked" 
                         disabled="disabled"
                     {% else %}
-                        onchange=procesFiles("uploadform")
+                        onchange=processFiles("uploadform")
                     {% endif %}
                     id="id_annual_statistics">
                 <span class="checkmark"></span> 
@@ -32,7 +32,7 @@
                         checked="checked" 
                         disabled="disabled"
                     {% else %}
-                        onchange=procesFiles("uploadform")
+                        onchange=processFiles("uploadform")
                     {% endif %}
                     id="id_profile_statistics">
                     <span class="checkmark"></span> 
@@ -50,12 +50,12 @@
     <tr>
         <td>
             {% if page_headline == annual_statistics %}
-                <h3>{{ track.year }}</h3>
+                <a href="{% url 'heatmap' year=track.year profile='All' %}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
             {% else %}
-                <h3>{{ track.profile }}</h3>
+                <a href="{% url 'heatmap' year='0' profile=track.profile %}" onclick=processFiles()><h3>{{ track.profile }}</h3>
             {% endif %}
             </td>
-        <table class="table-hover">
+        <table id="click-table" class="table-hover">
             <thead>
                 {% if page_headline == annual_statistics %}
                    <th>Year</th>
@@ -77,9 +77,9 @@
                     {% if stats_collection.statistics.number_of_tracks > 0 %}
                         <tr>
                             {% if page_headline == annual_statistics %}
-                                <td>{{ stats_collection.profile }}</td>
+                                <td><a href="{% url 'heatmap' year=track.year profile=stats_collection.profile %}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
                             {% else %}
-                                <td>{{ stats_collection.year }}</td>
+                                <td><a href="{% url 'heatmap' year=stats_collection.year profile=track.profile %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
                             {% endif %}
                             <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
                             <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>

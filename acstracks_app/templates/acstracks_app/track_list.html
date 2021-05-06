@@ -2,7 +2,7 @@
 
 {% block content %}
     <script>
-        function procesFiles(id) {
+        function processFiles(id) {
             document.getElementById("id-processing-p").style.visibility = "visible";
             document.getElementById("id-processing-img").style.visibility = "visible";
             document.getElementById(id).submit();
@@ -27,7 +27,7 @@
                         <div class="file-path-wrapper">
                             <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
                         </div>
-                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles("uploadform")>2. Click to upload selected file(s)</label>
+                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=processFiles("uploadform")>2. Click to upload selected file(s)</label>
                         <input type="submit" id="gpxload" style="display:none">
                     </div>
                 </form>
@@ -36,8 +36,7 @@
     </table>
     <table style="width: 100%;overflow-x: auto">
         <tr>
-            <td>
-            <a href="/statistics/"><h3>Statistics</h3></a>
+            <td><a href="/statistics/"><h3>Statistics</h3></a>
             <table>
                 <tr>
                     <td><b>Number&nbsp;of&nbsp;tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>

@@ -16,7 +16,6 @@ import csv
 from django.http import HttpResponse
 
 
-
 def process_gpx_file(request, filename, intermediate_points_selected, atrack=None, map_filename=None, savecsv=False, downloadgpx=False):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
@@ -610,3 +609,110 @@ def make_html_popup(
     )
 
     return html_popup
+
+
+def gather_heatmap_data(request, filename, map_filename=None):
+    fullfilename = os.path.join(
+        settings.MEDIA_ROOT,
+        filename
+    )
+
+    gpx_file = open(fullfilename, 'r')
+
+    gpx = gpxpy.parse(gpx_file)
+
+    # try:
+    points = []
+    atrack = {}
+    timezone_info = timezone(settings.TIME_ZONE)   
+    previous_point = None
+    distance = 0
+    trackname = ""
+    for track in gpx.tracks:
+        trackname = track.name
+        for segment in track.segments:
+            for point in segment.points:
+                points.append(tuple([point.latitude,
+                                    point.longitude,
+                                    point.elevation,
+                                    ]))
+
+                #point_distance = calculate_using_haversine(points[len(points)-1], previous_point)
+                point_distance = calculate_using_haversine(point, previous_point)
+                distance += point_distance
+
+                #previous_point = points[len(points)-1]
+                previous_point = point
+
+        atrack["trackname"] = trackname
+        atrack["distance"] = round(distance/1000, 2)
+        atrack["points"] = points
+    # except:
+    #     atrack = None
+
+    return atrack
+
+
+def make_heatmap(request, tracks, map_filename):
+    ave_lats = []
+    ave_lons = []
+    for t in tracks:
+        ave_lats.append(sum(float(p[0]) for p in t["points"])/len(t["points"]))
+        ave_lons.append(sum(float(p[1]) for p in t["points"])/len(t["points"]))
+    
+    ave_lat = sum(float(p) for p in ave_lats) / len(ave_lats)
+    ave_lon = sum(float(p) for p in ave_lons) / len(ave_lons)
+
+    # Load map centred on average coordinates
+    my_map = folium.Map(location=[ave_lat, ave_lon], zoom_start=12)
+
+    min_lat = float(9999999)
+    max_lat = float(-9999999)
+    min_lon = float(9999999)
+    max_lon = float(-9999999)
+    for t in tracks:
+        for p in t["points"]:
+                if min_lat > p[0]:
+                    min_lat = p[0]
+                if max_lat < p[0]:
+                    max_lat = p[0]
+                if min_lon > p[1]:
+                    min_lon = p[1]
+                if max_lon < p[1]:
+                    max_lon = p[1]
+
+    sw = tuple([min_lat, min_lon])
+    ne = tuple([max_lat, max_lon])
+
+    my_map.fit_bounds([sw, ne])
+
+    points = []
+    for track in tracks:
+        for p in track["points"]:
+            points.append(tuple([p[0], p[1]]))
+
+    for track in tracks:
+        my_map = draw_heatmap(request, my_map, track)
+
+
+    folium.LayerControl(collapsed=True).add_to(my_map)
+
+    # Save map
+    mapfilename = os.path.join(
+            settings.MAPS_ROOT,
+            map_filename
+        )
+    my_map.save(mapfilename)
+
+    return
+
+
+def draw_heatmap(request, my_map, track):
+    points = []
+    for p in track["points"]:
+        points.append(tuple([p[0], p[1]]))
+ 
+    # add lines and markers
+    folium.PolyLine(points, color=settings.CONNECT_COLOR, weight=2.5, opacity=0.5).add_to(my_map)
+
+    return my_map

@@ -200,7 +200,7 @@ def track_detail(request, pk, date_start=None, date_end=None, order_selected=Non
         return redirect('track_list')
     
     map_filename = (
-        request.user.username+".html"
+        atrack.user.username+".html"
     )
     
     full_map_filename = (
@@ -481,6 +481,42 @@ def show_statistics(request):
         "annual_statistics": annual_statistics,
         "profile_statistics": profile_statistics,
         "tracks": alltracks,
+        }
+    )
+
+
+@login_required(login_url='/login/')
+def heatmap(request, year, profile):
+    if year == '0':
+        date_start = get_first_date(request)
+        date_end = datetime.now().strftime("%Y-%m-%d")
+        year = "All"
+    else:
+        date_start = str(year) + "-01-01"
+        date_end = str(year) + "-12-31"
+    tracks = get_tracks(request, date_start, date_end, None, profile)
+    statistics = compute_statistics(tracks)
+
+    map_filename = (
+        request.user.username+".html"
+    )
+    
+    full_map_filename = (
+        "/static/maps/" +
+        request.user.username+".html"
+    )
+
+    all_tracks = []
+    for atrack in tracks:
+        all_tracks.append(gather_heatmap_data(request, atrack.storagefilename, map_filename))
+
+    make_heatmap(request, all_tracks, map_filename)
+
+    return render(request, 'acstracks_app/show_heartmap.html', {
+        "year": year,
+        "profile": profile,
+        "statistics": statistics,
+        'map_filename': full_map_filename,
         }
     )
 

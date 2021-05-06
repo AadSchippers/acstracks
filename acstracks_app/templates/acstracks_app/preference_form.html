@@ -10,7 +10,7 @@
             document.getElementById("id_helptext").style.visibility = "hidden";
         }
 
-        function procesFiles() {
+        function processFiles() {
             document.getElementById("id-processing-p").style.visibility = "visible";
             document.getElementById("id-processing-img").style.visibility = "visible";
         }       
@@ -194,7 +194,7 @@
                 </div>
             </div>
             <hr>
-            <button type="submit" onclick=procesFiles()>Save</button>
+            <button type="submit" onclick=processFiles()>Save</button>
         </form>
     </div>
     {% if request.user.is_superuser %}
