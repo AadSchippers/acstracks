@@ -133,10 +133,10 @@ MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
 LINE_COLOR = "red"
 MARKER_COLOR = 'purple'
 NOT_SELECTED_COLOR = 'gray'
-START_COLOR = "pink"
-END_COLOR = "darkpurple"
+START_COLOR = "lightgray"
+END_COLOR = "gray"
 CONNECT_COLOR="darkred"
-HEATMAP_LINE_COLOR = "darkpurple"
+HEATMAP_LINE_COLOR = "darkred"
 
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}

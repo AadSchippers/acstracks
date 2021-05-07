@@ -306,16 +306,9 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
 
     my_map.fit_bounds([sw, ne]) 
 
-
-    # add all markers
-    # for each in points:  
-    #     folium.Marker(each).add_to(my_map)
-    # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
-
     i = 0
     previous_marker_distance = 0
 
-    # for x in range(int(len(points)/10), len(points), int(len(points)/11)):
     ip = int(intermediate_points_selected)
     if ip > 0:
         for x in range(len(points)):
@@ -354,7 +347,7 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
                 avgcadence,
                 )
             popup = folium.Popup(html_popup, max_width=400)
-            folium.Marker(points[x], icon=folium.Icon(color='purple'), tooltip=tooltip, popup=popup).add_to(my_map)
+            folium.Marker(points[x], icon=folium.Icon(color=settings.MARKER_COLOR), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
     tooltip_text = 'Start, click for details'
@@ -367,7 +360,7 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[0], icon=folium.Icon(color='lightgray'), tooltip=tooltip, popup=popup).add_to(my_map)
+    folium.Marker(points[0], icon=folium.Icon(color=settings.START_COLOR), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # finish marker
     tooltip_text = 'Finish, click for details'
@@ -391,12 +384,12 @@ def make_map(request, points, points_info, filename, intermediate_points_selecte
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[-1], icon=folium.Icon(color='gray'), tooltip=tooltip, popup=popup).add_to(my_map)
+    folium.Marker(points[-1], icon=folium.Icon(color=settings.END_COLOR), tooltip=tooltip, popup=popup).add_to(my_map)
  
     # folium.LayerControl(collapsed=True).add_to(my_map)
 
     # add lines
-    folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(my_map)
+    folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
 
     # Save map
     mapfilename = os.path.join(
@@ -713,6 +706,6 @@ def draw_heatmap(request, my_map, track):
         points.append(tuple([p[0], p[1]]))
  
     # add lines and markers
-    folium.PolyLine(points, color=settings.CONNECT_COLOR, weight=2.5, opacity=0.5).add_to(my_map)
+    folium.PolyLine(points, color=settings.HEATMAP_LINE_COLOR, weight=2.5, opacity=0.5).add_to(my_map)
 
     return my_map
