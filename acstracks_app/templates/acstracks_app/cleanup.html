@@ -4,7 +4,7 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="hidden" name="obsolete_files" value="{{ obsolete_files }}">
-    <table>
+    <table class="scalefont">
         <tr>
             <td>
                 <input type="submit" id="delete" value="Delete these files">
@@ -26,7 +26,7 @@
 <h2>Obsolete files</h2>
 </table>
 
-<table id="click-table" style="overflow-x:auto;" class="table-hover">
+<table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
     <th valign="Top" width=400>Filename</th>
     <th valign="Top" style="text-align:right" width=200>Size (Kb)</th>
     {% for name, size in obsolete_files %}

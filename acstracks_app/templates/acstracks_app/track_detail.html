@@ -5,7 +5,7 @@
 <div class="container"
     <div class="row">
         <div class="col-3">
-            <table>
+            <table class="scalefont">
                 <tr>
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
@@ -157,7 +157,7 @@
                 {% endif %}
             </table>
             <hr>
-            <table>
+            <table class="scalefont">
                 <tr>
                     <td>
                         <form method="post" enctype="multipart/form-data">
@@ -174,7 +174,7 @@
                 </tr>
             </table>
             <hr>
-            <table>
+            <table class="scalefont">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="Date_end" value="{{ date_end }}">

@@ -9,7 +9,7 @@
         }
     </script>
 
-    <table style="width:100%">
+    <table style="width:100%" class="scalefont">
         <tr>
             <td>
                 <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
@@ -34,12 +34,12 @@
             </td>
         </tr>
     </table>
-    <table style="width: 100%;overflow-x: auto">
+    <table style="width: 100%;overflow-x: auto" class="scalefont">
         <tr>
             <td><a href="/statistics/"><h3>Statistics</h3></a>
-            <table>
+            <table class="scalefont">
                 <tr>
-                    <td><b>Number&nbsp;of&nbsp;tracks</b></td><td style="text-align:right">{{ tracks.count }}</td>
+                    <td><b>Number&nbsp;of&nbsp;rides</b></td><td style="text-align:right">{{ statistics.number_of_tracks }}</td>
                 </tr>
                 <tr>
                     <td><b>Total&nbsp;length&nbsp;(km)</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
@@ -77,7 +77,7 @@
             </table>
             </td>
             <td valign="Top">
-                <table>
+                <table class="scalefont">
                     <tr>
                         <td>
                             <p id="id-processing-p" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
@@ -91,7 +91,7 @@
                 </table>
             </td>
             <td valign="Bottom">
-                <table style="width: 100%;overflow-x: auto">
+                <table style="width: 100%;overflow-x: auto" class="scalefont">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="hidden" name="Order" value="{{ order_selected }}">
@@ -192,7 +192,7 @@
             </td>
         </tr>
     </table><br><br>  
-    <table id="click-table" style="overflow-x:auto;" class="table-hover">
+    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
         <th valign="Top" width=400>Filename</th>
         <th valign="Top" width=200>Created&nbsp;date</th>
         <th valign="Top" width=200>Name</th>

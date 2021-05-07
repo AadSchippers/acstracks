@@ -8,7 +8,7 @@
     }
 </script>
 
-<table style="width: 100%;overflow-x: auto">
+<table style="width: 100%;overflow-x: auto" class="scalefont">
     <tr>
         <td>
             <form method="post" enctype="multipart/form-data" id="uploadform">
@@ -55,14 +55,14 @@
                 <a href="{% url 'heatmap' year='0' profile=track.profile %}" onclick=processFiles()><h3>{{ track.profile }}</h3>
             {% endif %}
             </td>
-        <table id="click-table" class="table-hover">
+        <table id="click-table" class="table-hover scalefont">
             <thead>
                 {% if page_headline == annual_statistics %}
                    <th>Year</th>
                 {% else %}
                     <th>Profile</th>
                 {% endif %}
-                <th>Rides</th>
+                <th style="text-align:right">Number of rides</th>
                 <th style="text-align:right">Total length (km)</th>
                 <th style="text-align:right">Average speed (km/h)</th>
                 <th style="text-align:right">Highest average speed (km/h)</th>
