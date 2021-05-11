@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block content %}
+<script>
+    function processFiles(id) {
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
+        document.getElementById(id).submit();
+    }
+</script>
+
 <div class="container"
     <div class="row">
         <div class="col-3">
@@ -9,12 +17,40 @@
                 <tr>
                     <td><h3>Heatmap</h3></td>
                 </tr>
+                <form method="post" enctype="multipart/form-data" id="uploadform">
+                {% csrf_token %}
                 <tr>
-                    <td><b>Year</b></td><td><b>{{ year }}</b></td>
+                    <td><label for="Date_start">Start date:</label></td>
+                    <td><input name="Date_start" id="date_start" type="date" value="{{ date_start }}"></td>
                 </tr>
                 <tr>
-                    <td><b>Profile</b></td><td><b>{{ profile }}</b></td>
+                    <td><label for="Date_end">End date:</label></td>
+                    <td><input name="Date_end" id="date_end" type="date" value="{{ date_end }}"></td>
                 </tr>
+                <tr>
+                    <td><b>Profile</b></td>
+                    <td>
+                        <select name="Profile" id="profile">
+                            {% if bike_profile_filters %}
+                                {% for profile in bike_profile_filters %}
+                                    {% if profile == profile_filter %}
+                                        <option value="{{ profile }}" selected="selected">{{ profile }}</option>
+                                    {% else %}
+                                        <option value="{{ profile }}">{{ profile }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td valign="Bottom" style="text-align:right">
+                        <input type="submit" onclick=processFiles("uploadform") value="Filter">
+                        <hr>   
+                    </td>
+                </tr>
+                </form>
                 <hr>    
                 <tr>
                     <td><a href="/statistics/"><h3>Statistics</h3></a></td>
@@ -48,6 +84,13 @@
                 </tr>
                 <tr>
                     <td><b>Maximum&nbsp;descent&nbsp;(m)</b></td><td style="text-align:right">{{ statistics.max_descent }}</td>
+                </tr>
+                <br><br>
+                <tr>
+                    <td>
+                        <p id="id-processing-p" style="text-align: left; visibility: hidden;">Please be patient, I'm busy...</p>
+                        <img id="id-processing-img" style="float:left; width:135px; height:111px; visibility: hidden;" src="/static/img/acstracks-progress.gif">
+                    </td>
                 </tr>
             </table>
         </div>
