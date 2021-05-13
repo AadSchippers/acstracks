@@ -1,4 +1,4 @@
-{% extends 'registration/base.html' %}
+{% extends 'acstracks_app/base.html' %}
 {% load static %}
 
 {% block content %}
@@ -19,24 +19,33 @@
                 </tr>
                 <form method="post" enctype="multipart/form-data" id="uploadform">
                 {% csrf_token %}
+                <input type="hidden" name="New_date_start" value="{{ new_date_start }}">
+                <input type="hidden" name="New_date_end" value="{{ new_date_end }}">
+                <input type="hidden" name="Order" value="{{ order_selected }}">
+                <input type="hidden" name="New_profile" value="{{ new_profile_filter }}">
+                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                <input type="hidden" name="Order" value="{{ order_selected }}">
+                <input type="hidden" name="Date_start" value="{{ date_start }}">
+                <input type="hidden" name="Date_end" value="{{ date_end }}">
+                <input type="hidden" name="Profile" value="{{ profile_filter }}">
                 <tr>
                     <td><label for="Date_start">Start date:</label></td>
-                    <td><input name="Date_start" id="date_start" type="date" value="{{ date_start }}"></td>
+                    <td><input name="New_date_start" id="new_date_start" type="date" value="{{ new_date_start }}"></td>
                 </tr>
                 <tr>
-                    <td><label for="Date_end">End date:</label></td>
-                    <td><input name="Date_end" id="date_end" type="date" value="{{ date_end }}"></td>
+                    <td><label for="New_date_end">End date:</label></td>
+                    <td><input name="New_date_end" id="new_date_end" type="date" value="{{ new_date_end }}"></td>
                 </tr>
                 <tr>
                     <td><b>Profile</b></td>
                     <td>
-                        <select name="Profile" id="profile">
+                        <select name="New_profile" id="new_profile">
                             {% if bike_profile_filters %}
-                                {% for profile in bike_profile_filters %}
-                                    {% if profile == profile_filter %}
-                                        <option value="{{ profile }}" selected="selected">{{ profile }}</option>
+                                {% for new_profile in bike_profile_filters %}
+                                    {% if new_profile == new_profile_filter %}
+                                        <option value="{{ new_profile }}" selected="selected">{{ new_profile }}</option>
                                     {% else %}
-                                        <option value="{{ profile }}">{{ profile }}</option>
+                                        <option value="{{ new_profile }}">{{ new_profile }}</option>
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
@@ -53,7 +62,8 @@
                 </form>
                 <hr>    
                 <tr>
-                    <td><a href="/statistics/"><h3>Statistics</h3></a></td>
+                    <td><a href="{% url 'show_statistics' date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">
+                        <h3>Statistics</h3></a></td>
                 </tr>
                 <tr>
                     <td><b>Number&nbsp;of&nbsp;rides</b></td><td style="text-align:right">{{ statistics.number_of_tracks }}</td>

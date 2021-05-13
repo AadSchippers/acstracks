@@ -319,8 +319,6 @@ def track_detail(
         'map_filename': full_map_filename,
         'date_start': date_start,
         'date_end': date_end,
-        'date_start': date_start,
-        'date_end': date_end,
         'order_selected': order_selected,
         'profile_filter': profile_filter,
         'intermediate_points_selected': int(intermediate_points_selected),
@@ -489,7 +487,10 @@ def get_bike_profile_filters(request):
 
 
 @login_required(login_url='/login/')
-def show_statistics(request):
+def show_statistics(
+    request, date_start=None, date_end=None, order_selected=None,
+    profile_filter=None, intermediate_points_selected=None
+):
     statistics_type = None
     if request.method == 'POST':
         statistics_type = request.POST.get('annual_statistics')
@@ -511,16 +512,16 @@ def show_statistics(request):
         page_headline = annual_statistics
         current_year = datetime.now().year
         while current_year >= first_year:
-            date_start = str(current_year) + "-01-01"
-            date_end = str(current_year) + "-12-31"
+            new_date_start = str(current_year) + "-01-01"
+            new_date_end = str(current_year) + "-12-31"
             stats_collection = []
-            for profile_filter in bike_profile_filters:
+            for profile in bike_profile_filters:
                 tracks = get_tracks(
-                    request, date_start, date_end, None, profile_filter
+                    request, new_date_start, new_date_end, None, profile
                     )
                 statistics = compute_statistics(tracks)
                 stats_collection.append({
-                    "profile": profile_filter,
+                    "profile": profile,
                     "statistics": statistics,
                 })
             alltracks.append({
@@ -530,14 +531,14 @@ def show_statistics(request):
             current_year -= 1
     else:
         page_headline = profile_statistics
-        for profile_filter in bike_profile_filters:
+        for profile in bike_profile_filters:
             stats_collection = []
             current_year = datetime.now().year
             while current_year >= first_year:
-                date_start = str(current_year) + "-01-01"
-                date_end = str(current_year) + "-12-31"
+                new_date_start = str(current_year) + "-01-01"
+                new_date_end = str(current_year) + "-12-31"
                 tracks = get_tracks(
-                    request, date_start, date_end, None, profile_filter
+                    request, new_date_start, new_date_end, None, profile
                     )
                 statistics = compute_statistics(tracks)
                 stats_collection.append({
@@ -546,7 +547,7 @@ def show_statistics(request):
                 })
                 current_year -= 1
             alltracks.append({
-                    "profile": profile_filter,
+                    "profile": profile,
                     "stats_collection": stats_collection,
                 })
 
@@ -555,27 +556,46 @@ def show_statistics(request):
         "annual_statistics": annual_statistics,
         "profile_statistics": profile_statistics,
         "tracks": alltracks,
+        'date_start': date_start,
+        'date_end': date_end,
+        'order_selected': order_selected,
+        'profile_filter': profile_filter,
+        'intermediate_points_selected': int(intermediate_points_selected),
         }
     )
 
 
 @login_required(login_url='/login/')
-def heatmap(request, profile, year=0, date_start=None, date_end=None):
+def heatmap(
+    request, new_profile=None, new_year=None, new_date_start=None, new_date_end=None,
+    date_start=None, date_end=None, order_selected=None,
+    profile_filter=None, intermediate_points_selected=None
+):
     if request.method == 'POST':
-        date_start = request.POST.get('Date_start')
-        date_end = request.POST.get('Date_end')
-        profile = request.POST.get('Profile')
+        new_date_start = request.POST.get('New_date_start')
+        new_date_end = request.POST.get('New_date_end')
+        new_profile = request.POST.get('New_profile')
+        new_year = None
 
-    if not date_start:
-        if year == '0':
-            date_start = get_first_date(request)
-            date_end = datetime.now().strftime("%Y-%m-%d")
-            year = "All"
+    if not new_date_start:
+        new_date_start = date_start
+
+    if not new_date_end:
+        new_date_end = date_end
+
+    if not new_profile:
+        new_profile = profile_filter
+
+    if new_year:
+        if new_year == '0':
+            new_date_start = get_first_date(request)
+            new_date_end = datetime.now().strftime("%Y-%m-%d")
+            new_year = "All"
         else:
-            date_start = str(year) + "-01-01"
-            date_end = str(year) + "-12-31"
+            new_date_start = str(new_year) + "-01-01"
+            new_date_end = str(new_year) + "-12-31"
 
-    tracks = get_tracks(request, date_start, date_end, None, profile)
+    tracks = get_tracks(request, new_date_start, new_date_end, None, new_profile)
     statistics = compute_statistics(tracks)
 
     bike_profile_filters = get_bike_profile_filters(request)
@@ -598,12 +618,17 @@ def heatmap(request, profile, year=0, date_start=None, date_end=None):
     make_heatmap(request, all_tracks, map_filename)
 
     return render(request, 'acstracks_app/show_heartmap.html', {
-        "profile_filter": profile,
+        "new_profile_filter": new_profile,
         "bike_profile_filters": bike_profile_filters,
-        "date_start": date_start,
-        "date_end": date_end,
+        "new_date_start": new_date_start,
+        "new_date_end": new_date_end,
         "statistics": statistics,
         'map_filename': full_map_filename,
+        "profile_filter": profile_filter,
+        "date_start": date_start,
+        "date_end": date_end,
+        'order_selected': order_selected,
+        'intermediate_points_selected': int(intermediate_points_selected),
         }
     )
 

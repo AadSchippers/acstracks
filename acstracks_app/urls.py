@@ -32,13 +32,35 @@ urlpatterns = [
         name='preference'
         ),
     path('cleanup/', views.cleanup, name='cleanup'),
-    path('statistics/', views.show_statistics, name='show_statistics'),
     path(
-        'heatmap/<str:profile>,<str:year>,<str:date_start>,<str:date_end>',
+        'statistics/' +
+        '<str:date_start>,<str:date_end>,<str:order_selected>,' +
+        '<str:profile_filter>,<int:intermediate_points_selected>',
+        views.show_statistics,
+        name='show_statistics'
+        ),
+    path(
+        'heatmap/<str:new_profile>,<str:new_year>,<str:new_date_start>,' +
+        '<str:new_date_end>,' +
+        '<str:date_start>,<str:date_end>,<str:order_selected>,' +
+        '<str:profile_filter>,<int:intermediate_points_selected>',
         views.heatmap,
         name='heatmap'
         ),
-    path('heatmap/<str:profile>,<str:year>', views.heatmap, name='heatmap'),
+    path(
+        'heatmap/<str:new_profile>,<str:new_year>,' +
+        '<str:date_start>,<str:date_end>,<str:order_selected>,' +
+        '<str:profile_filter>,<int:intermediate_points_selected>',
+        views.heatmap,
+        name='heatmap'
+        ),
+    path(
+        'heatmap/' +
+        '<str:date_start>,<str:date_end>,<str:order_selected>,' +
+        '<str:profile_filter>,<int:intermediate_points_selected>',
+        views.heatmap,
+        name='heatmap'
+        ),
     path(
         'publictrack/<str:publickey>',
         views.publictrack_detail,

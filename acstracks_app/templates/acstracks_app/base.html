@@ -22,7 +22,14 @@
                 </td>
                 {% if request.user.username %}                  
                     <td style="text-align:right">User {{ request.user.username }} logged in<br>
+                            <a href="{% url 'show_statistics' date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">
+                            <b>Statistics</b></a><br>
+                            <a href="{% url 'heatmap' date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}" onclick=processFiles()>
+                            <b>Heatmap</b></a><br>
                             <a href="/preference/"><b>Preferences</b></a><br>
+                            {% if request.user.is_superuser %}                  
+                                <a href="/admin/"><b>Admin panel</b></a><br>
+                            {% endif %}    
                             <a href="/logout/"><b>Logout</b></a>
                     </td>
                 {% endif %}    

@@ -52,7 +52,6 @@ class Preference(models.Model):
     gpx_contains_heartrate = models.BooleanField(default=False)
     gpx_contains_cadence = models.BooleanField(default=False)
 
-
     def __str__(self):
         return "%s, %s, %s" % (
             self.user.username,
