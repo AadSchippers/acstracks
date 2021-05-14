@@ -2,10 +2,10 @@
 
 {% block content %}
 <script>
-    function processFiles(id) {
+    function processFiles() {
         document.getElementById("id-processing-p").style.visibility = "visible";
         document.getElementById("id-processing-img").style.visibility = "visible";
-        document.getElementById(id).submit();
+        $(this).submit();
     }
 </script>
 
@@ -21,7 +21,7 @@
                         checked="checked" 
                         disabled="disabled"
                     {% else %}
-                        onchange=processFiles("uploadform")
+                        onchange=processFiles()
                     {% endif %}
                     id="id_annual_statistics">
                 <span class="checkmark"></span> 
@@ -33,7 +33,7 @@
                         checked="checked" 
                         disabled="disabled"
                     {% else %}
-                        onchange=processFiles("uploadform")
+                        onchange=processFiles()
                     {% endif %}
                     id="id_profile_statistics">
                     <span class="checkmark"></span> 

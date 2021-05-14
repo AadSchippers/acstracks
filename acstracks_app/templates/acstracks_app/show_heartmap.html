@@ -3,10 +3,10 @@
 
 {% block content %}
 <script>
-    function processFiles(id) {
+    function processFiles() {
         document.getElementById("id-processing-p").style.visibility = "visible";
         document.getElementById("id-processing-img").style.visibility = "visible";
-        document.getElementById(id).submit();
+        $(this).submit();
     }
 </script>
 
@@ -46,11 +46,11 @@
                 <tr>
                     <td></td>
                     <td valign="Bottom" style="text-align:right">
-                        <input type="submit" onclick=processFiles("uploadform") value="Filter">
-                        <hr>   
+                        <input type="submit" onclick=processFiles() value="Filter">
                     </td>
                 </tr>
                 </form>
+                <hr>   
                 <hr>    
                 <tr>
                     <td><h3>Statistics</h3></td>

@@ -2,10 +2,10 @@
 
 {% block content %}
     <script>
-        function processFiles(id) {
+        function processFiles() {
             document.getElementById("id-processing-p").style.visibility = "visible";
             document.getElementById("id-processing-img").style.visibility = "visible";
-            document.getElementById(id).submit();
+            $(this).submit();
         }
     </script>
 
@@ -22,7 +22,7 @@
                         <div class="file-path-wrapper">
                             <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
                         </div>
-                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=processFiles("uploadform")>2. Click to upload selected file(s)</label>
+                        <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=processFiles()>2. Click to upload selected file(s)</label>
                         <input type="submit" id="gpxload" style="display:none">
                     </div>
                 </form>
@@ -89,6 +89,11 @@
                 <table style="width: 100%;overflow-x: auto" class="scalefont">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
+                        <tr>
+                            <td valign="Bottom" style="text-align:right">
+                                <input type="submit" name="Reset_filters" value="Reset filters">
+                            </td>
+                        </tr>
                         <tr>
                             <td valign="Bottom" style="text-align:right">
                                 <label for="Date_start">Start date:</label>

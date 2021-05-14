@@ -37,7 +37,6 @@ def track_list(request):
         preference.date_end = datetime.now().strftime("%Y-%m-%d")
         preference.save()
 
-
     if request.method == 'POST':
         files = request.FILES.getlist('gpxfile')
         for file in files:
@@ -54,7 +53,7 @@ def track_list(request):
             storagefilename = fs.save(storagefilename, file)
             parse_file(request, storagefilename, file.name)
 
-        if files:
+        if files or request.POST.get('Reset_filters'):
             preference.date_start = get_first_date(request.user)
             preference.date_end = datetime.now().strftime("%Y-%m-%d")
             preference.order_selected = "created_date_descending"
@@ -88,6 +87,7 @@ def track_list(request):
         'preference': preference,
         'bike_profile_filters': bike_profile_filters,
         'statistics': statistics,
+        'page_name': "Home",
         }
     )
 
@@ -226,6 +226,7 @@ def track_detail(request, pk):
                 'preference': preference,
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
+                'page_name': "Track detail",
                 }
             )
 
@@ -243,6 +244,7 @@ def track_detail(request, pk):
                 'preference': preference,
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
+                'page_name': "Track detail",
                 }
             )
 
@@ -297,6 +299,7 @@ def track_detail(request, pk):
                 'preference': preference,
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
+                'page_name': "Track detail",
         }
     )
 
@@ -532,6 +535,7 @@ def show_statistics(request):
         "profile_statistics": profile_statistics,
         "tracks": alltracks,
         "preference": preference,
+        'page_name': "Statistics",
         }
     )
 
@@ -604,6 +608,7 @@ def heatmap(request, profile=None, year=None):
         "date_end": date_end,
         "statistics": statistics,
         'map_filename': full_map_filename,
+        'page_name': "Heatmap",
         }
     )
 

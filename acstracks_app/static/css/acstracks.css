@@ -1,5 +1,5 @@
 .page-header {
-    background-color: #C4C4C4;
+  background-color: #C4C4C4;
     margin-top: 0;
     padding: 20px 20px 30px 40px;
 }
@@ -258,3 +258,19 @@ a, a:active, a:visited, a:hover, a:link {
     margin-right: auto;
     width: 50%;
   }
+
+  .menubar {
+    background-color: #700394;
+  }
+
+  .menubar a, .menubar a:active, .menubar a:visited, .menubar a:hover, .menubar a:link {
+    color: pink;  
+    }
+
+  .menubar:hover {
+    background-color: #fb89ec;
+  }
+
+  .menubar:hover a, .menubar:hover a:active, .menubar:hover a:visited, .menubar:hover a:hover, .menubar:hover a:link {
+    color: #700394;  
+    }
