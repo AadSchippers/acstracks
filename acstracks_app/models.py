@@ -83,6 +83,9 @@ class Preference(models.Model):
     intermediate_points_selected = models.DecimalField(
         max_digits=6, decimal_places=0, default=0
         )
+    statistics_type = models.CharField(
+        max_length=255, null=True, blank=True, default="annual"
+        )
 
     def __str__(self):
         return "%s, %s, %s" % (

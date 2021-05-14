@@ -468,14 +468,12 @@ def show_statistics(request):
             user=request.user,
         )
 
-    statistics_type = None
     if request.method == 'POST':
-        statistics_type = request.POST.get('annual_statistics')
-
-    if statistics_type:
-        statistics_type = "annual"
-    else:
-        statistics_type = "profile"
+        if request.POST.get('annual_statistics'):
+            preference.statistics_type = "annual"
+        else:
+            preference.statistics_type = "profile"
+        preference.save()
 
     annual_statistics = "Statistics per year"
     profile_statistics = "Statistics per profile"
@@ -485,7 +483,7 @@ def show_statistics(request):
     first_year = int(get_first_date(request.user)[0:4])
 
     alltracks = []
-    if statistics_type == "annual":
+    if preference.statistics_type == "annual":
         page_headline = annual_statistics
         current_year = datetime.now().year
         while current_year >= first_year:
