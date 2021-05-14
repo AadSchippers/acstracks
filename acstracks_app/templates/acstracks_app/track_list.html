@@ -14,11 +14,6 @@
             <td>
                 <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" name="Date_start" value="{{ date_start }}">
-                    <input type="hidden" name="Date_end" value="{{ date_end }}">
-                    <input type="hidden" name="Order" value="{{ order_selected }}">
-                    <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                    <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                     <div class="file-field">
                         <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Click to select one or more gpx files to upload</label>
                         <div class="btn">
@@ -94,19 +89,16 @@
                 <table style="width: 100%;overflow-x: auto" class="scalefont">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" name="Order" value="{{ order_selected }}">
-                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                         <tr>
                             <td valign="Bottom" style="text-align:right">
                                 <label for="Date_start">Start date:</label>
-                                <input name="Date_start" id="date_start" type="date" value="{{ date_start }}">
+                                <input name="Date_start" id="date_start" type="date" value="{{ preference.date_start }}">
                             </td>
                         </tr>
                         <tr>
                             <td valign="Bottom" style="text-align:right">
                                     <label for="Date_end">End date:</label>
-                                    <input name="Date_end" id="date_end" type="date" value="{{ date_end }}">
+                                    <input name="Date_end" id="date_end" type="date" value="{{ preference.date_end }}">
                             </td>
                         </tr>
                         <tr>
@@ -120,65 +112,61 @@
                         <td valign="Bottom" style="text-align:right">
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <input type="hidden" name="Date_end" value="{{ date_end }}">
-                                <input type="hidden" name="Date_start" value="{{ date_start }}">
-                                <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                                 <label for="Order">Sort order:</label>
                                 <select name="Order" id="order" onchange=this.form.submit()>
-                                    {% if order_selected == "created_date_ascending" %}
+                                    {% if preference.order_selected == "created_date_ascending" %}
                                         <option value="created_date_ascending" selected="selected">Created date (ascending)</option>
                                     {% else %}
                                         <option value="created_date_ascending">Created date (ascending)</option>
                                     {% endif %}
-                                    {% if order_selected == "created_date_descending" %}
+                                    {% if preference.order_selected == "created_date_descending" %}
                                         <option value="created_date_descending" selected="selected">Created date (descending)</option>
                                     {% else %}
                                         <option value="created_date_descending">Created date (descending)</option>
                                     {% endif %}
-                                    {% if order_selected == "length_ascending" %}
+                                    {% if preference.order_selected == "length_ascending" %}
                                         <option value="length_ascending" selected="selected">Length (ascending)</option>
                                     {% else %}
                                         <option value="length_ascending">Length (ascending)</option>
                                     {% endif %}
-                                    {% if order_selected == "length_descending" %}
+                                    {% if preference.order_selected == "length_descending" %}
                                         <option value="length_descending" selected="selected">Length (descending)</option>
                                     {% else %}
                                         <option value="length_descending">Length (descending)</option>
                                     {% endif %}
-                                    {% if order_selected == "duration_ascending" %}
+                                    {% if preference.order_selected == "duration_ascending" %}
                                         <option value="duration_ascending" selected="selected">Duration (ascending)</option>
                                     {% else %}
                                         <option value="duration_ascending">Duration (ascending)</option>
                                     {% endif %}
-                                    {% if order_selected == "duration_descending" %}
+                                    {% if preference.order_selected == "duration_descending" %}
                                         <option value="duration_descending" selected="selected">Duration (descending)</option>
                                     {% else %}
                                         <option value="duration_descending">Duration (descending)</option>
                                     {% endif %}
                                     {% if preference.show_avgspeed %}
-                                        {% if order_selected == "avgspeed_ascending" %}
+                                        {% if preference.order_selected == "avgspeed_ascending" %}
                                             <option value="avgspeed_ascending" selected="selected">Average speed (ascending)</option>
                                         {% else %}
                                             <option value="avgspeed_ascending">Average speed (ascending)</option>
                                         {% endif %}
                                     {% endif %}
                                     {% if preference.show_avgspeed %}
-                                        {% if order_selected == "avgspeed_descending" %}
+                                        {% if preference.order_selected == "avgspeed_descending" %}
                                             <option value="avgspeed_descending" selected="selected">Average speed (descending)</option>
                                         {% else %}
                                             <option value="avgspeed_descending">Average speed (descending)</option>
                                         {% endif %}
                                     {% endif %}
                                     {% if preference.show_maxspeed %}
-                                        {% if order_selected == "maxspeed_ascending" %}
+                                        {% if preference.order_selected == "maxspeed_ascending" %}
                                             <option value="maxspeed_ascending" selected="selected">Maximum speed_ascending</option>
                                         {% else %}
                                             <option value="maxspeed_ascending">Maximum speed (ascending)</option>
                                         {% endif %}
                                     {% endif %}
                                     {% if preference.show_maxspeed %}
-                                        {% if order_selected == "maxspeed_descending" %}
+                                        {% if preference.order_selected == "maxspeed_descending" %}
                                             <option value="maxspeed_descending" selected="selected">Maximum speed (descending)</option>
                                         {% else %}
                                             <option value="maxspeed_descending">Maximum speed (descending)</option>
@@ -199,15 +187,11 @@
         <th valign="Top">
             <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="hidden" name="Date_end" value="{{ date_end }}">
-            <input type="hidden" name="Date_start" value="{{ date_start }}">
-            <input type="hidden" name="Order" value="{{ order_selected }}">
-            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
             <label for="Profile">Profile:</label>
             <select name="Profile" id="profile" onchange=this.form.submit()>
             {% if bike_profile_filters %}
                 {% for profile in bike_profile_filters %}
-                    {% if profile == profile_filter %}
+                    {% if profile == preference.profile_filter %}
                         <option value="{{ profile }}" selected="selected">{{ profile }}</option>
                     {% else %}
                         <option value="{{ profile }}">{{ profile }}</option>
@@ -239,7 +223,7 @@
         {% endif %}
         {% for track in tracks %}
             <tr class="table-row">
-                <td><a href="{% url 'track_detail' pk=track.pk date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}">{{ track.displayfilename }}</a></td>
+                <td><a href="{% url 'track_detail' pk=track.pk %}">{{ track.displayfilename }}</a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 {% if track.profile %}

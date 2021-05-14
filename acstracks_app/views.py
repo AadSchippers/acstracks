@@ -22,16 +22,21 @@ import ast
 
 
 @login_required(login_url='/login/')
-def track_list(
-    request, date_start=None, date_end=None, order_selected=None,
-    profile_filter=None, intermediate_points_selected=None
-):
-    if not order_selected:
-        order_selected = "created_date_descending"
-    if not profile_filter:
-        profile_filter = "All"
-    if not intermediate_points_selected:
-        intermediate_points_selected = 0
+def track_list(request):
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+    if preference.date_start is None:
+        preference.date_start = get_first_date(request.user)
+        preference.save()
+
+    if preference.date_end is None:
+        preference.date_end = datetime.now().strftime("%Y-%m-%d")
+        preference.save()
+
 
     if request.method == 'POST':
         files = request.FILES.getlist('gpxfile')
@@ -50,58 +55,39 @@ def track_list(
             parse_file(request, storagefilename, file.name)
 
         if files:
-            date_start = None
-            date_end = None
-            order_selected = None
-            profile_filter = None
+            preference.date_start = get_first_date(request.user)
+            preference.date_end = datetime.now().strftime("%Y-%m-%d")
+            preference.order_selected = "created_date_descending"
+            preference.profile_filter = "All"
+            preference.save()
         else:
-            date_start = request.POST.get('Date_start')
-            date_end = request.POST.get('Date_end')
-            order_selected = request.POST.get('Order')
-            profile_filter = request.POST.get('Profile')
-
-    if not order_selected:
-        order_selected = "created_date_descending"
-    if not profile_filter:
-        profile_filter = "All"
-    if not intermediate_points_selected:
-        intermediate_points_selected = 0
-
-    try:
-        datetime.strptime(date_start, '%Y-%m-%d')
-    except Exception:
-        date_start = get_first_date(request)
-
-    try:
-        datetime.strptime(date_end, '%Y-%m-%d')
-    except Exception:
-        date_end = datetime.now().strftime("%Y-%m-%d")
+            if request.POST.get('Date_start'):
+                preference.date_start = request.POST.get('Date_start')
+            if request.POST.get('Date_end'):
+                preference.date_end = request.POST.get('Date_end')
+            if request.POST.get('Order'):
+                preference.order_selected = request.POST.get('Order')
+            if request.POST.get('Profile'):
+                preference.profile_filter = request.POST.get('Profile')
+            preference.save()
 
     bike_profile_filters = get_bike_profile_filters(request)
 
     tracks = get_tracks(
-        request, date_start, date_end, order_selected, profile_filter
+        request,
+        preference.date_start,
+        preference.date_end,
+        preference.order_selected,
+        preference.profile_filter
         )
 
     statistics = compute_statistics(tracks)
-
-    try:
-        preference = Preference.objects.get(user=request.user)
-    except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
 
     return render(request, 'acstracks_app/track_list.html', {
         'tracks': tracks,
         'preference': preference,
         'bike_profile_filters': bike_profile_filters,
-        'date_start': date_start,
-        'date_end': date_end,
-        'profile_filter': profile_filter,
-        'order_selected': order_selected,
         'statistics': statistics,
-        'intermediate_points_selected': intermediate_points_selected,
         }
     )
 
@@ -176,9 +162,9 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
     return tracks
 
 
-def get_first_date(request):
+def get_first_date(user):
     tracks = Track.objects.filter(
-        user=request.user,
+        user=user,
         ).order_by('created_date')
 
     try:
@@ -190,16 +176,13 @@ def get_first_date(request):
 
 
 @login_required(login_url='/login/')
-def track_detail(
-    request, pk, date_start=None, date_end=None, order_selected=None,
-    profile_filter=None, intermediate_points_selected=None
-):
-    if not order_selected:
-        order_selected = "created_date_ascending"
-    if not profile_filter:
-        profile_filter = "All"
-    if not intermediate_points_selected:
-        intermediate_points_selected = 0
+def track_detail(request, pk):
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
 
     try:
         atrack = Track.objects.get(id=pk, user=request.user)
@@ -227,7 +210,11 @@ def track_detail(
         )
 
     if request.method == 'POST':
-        intermediate_points_selected = request.POST.get('Intermediate_points')
+        if request.POST.get('Intermediate_points'):
+            preference.intermediate_points_selected = (
+                request.POST.get('Intermediate_points')
+                )
+            preference.save()
 
         name = request.POST.get('name_input')
         if is_input_valid(name):
@@ -236,12 +223,7 @@ def track_detail(
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
                 'map_filename': full_map_filename,
-                'date_start': date_start,
-                'date_end': date_end,
-                'order_selected': order_selected,
-                'profile_filter': profile_filter,
-                'intermediate_points_selected':
-                int(intermediate_points_selected),
+                'preference': preference,
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
                 }
@@ -258,12 +240,7 @@ def track_detail(
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
                 'map_filename': full_map_filename,
-                'date_start': date_start,
-                'date_end': date_end,
-                'order_selected': order_selected,
-                'profile_filter': profile_filter,
-                'intermediate_points_selected':
-                int(intermediate_points_selected),
+                'preference': preference,
                 'bike_profiles': bike_profiles,
                 'public_url': public_url,
                 }
@@ -287,7 +264,7 @@ def track_detail(
             process_gpx_file(
                 request,
                 atrack.storagefilename,
-                intermediate_points_selected,
+                preference.intermediate_points_selected,
                 atrack,
                 None,
                 True,
@@ -297,7 +274,7 @@ def track_detail(
     elif atrack.length == 0:
         process_gpx_file(
             request, atrack.storagefilename,
-            intermediate_points_selected,
+            preference.intermediate_points_selected,
             atrack,
             map_filename,
             False,
@@ -307,7 +284,7 @@ def track_detail(
         process_gpx_file(
             request,
             atrack.storagefilename,
-            intermediate_points_selected,
+            preference.intermediate_points_selected,
             None,
             map_filename,
             False,
@@ -315,15 +292,11 @@ def track_detail(
             )
 
     return render(request, 'acstracks_app/track_detail.html', {
-        'atrack': atrack,
-        'map_filename': full_map_filename,
-        'date_start': date_start,
-        'date_end': date_end,
-        'order_selected': order_selected,
-        'profile_filter': profile_filter,
-        'intermediate_points_selected': int(intermediate_points_selected),
-        'bike_profiles': bike_profiles,
-        'public_url': public_url,
+                'atrack': atrack,
+                'map_filename': full_map_filename,
+                'preference': preference,
+                'bike_profiles': bike_profiles,
+                'public_url': public_url,
         }
     )
 
@@ -487,10 +460,14 @@ def get_bike_profile_filters(request):
 
 
 @login_required(login_url='/login/')
-def show_statistics(
-    request, date_start=None, date_end=None, order_selected=None,
-    profile_filter=None, intermediate_points_selected=None
-):
+def show_statistics(request):
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
     statistics_type = None
     if request.method == 'POST':
         statistics_type = request.POST.get('annual_statistics')
@@ -505,19 +482,19 @@ def show_statistics(
 
     bike_profile_filters = get_bike_profile_filters(request)
 
-    first_year = int(get_first_date(request)[0:4])
+    first_year = int(get_first_date(request.user)[0:4])
 
     alltracks = []
     if statistics_type == "annual":
         page_headline = annual_statistics
         current_year = datetime.now().year
         while current_year >= first_year:
-            new_date_start = str(current_year) + "-01-01"
-            new_date_end = str(current_year) + "-12-31"
+            date_start = str(current_year) + "-01-01"
+            date_end = str(current_year) + "-12-31"
             stats_collection = []
             for profile in bike_profile_filters:
                 tracks = get_tracks(
-                    request, new_date_start, new_date_end, None, profile
+                    request, date_start, date_end, None, profile
                     )
                 statistics = compute_statistics(tracks)
                 stats_collection.append({
@@ -535,10 +512,10 @@ def show_statistics(
             stats_collection = []
             current_year = datetime.now().year
             while current_year >= first_year:
-                new_date_start = str(current_year) + "-01-01"
-                new_date_end = str(current_year) + "-12-31"
+                date_start = str(current_year) + "-01-01"
+                date_end = str(current_year) + "-12-31"
                 tracks = get_tracks(
-                    request, new_date_start, new_date_end, None, profile
+                    request, date_start, date_end, None, profile
                     )
                 statistics = compute_statistics(tracks)
                 stats_collection.append({
@@ -556,46 +533,51 @@ def show_statistics(
         "annual_statistics": annual_statistics,
         "profile_statistics": profile_statistics,
         "tracks": alltracks,
-        'date_start': date_start,
-        'date_end': date_end,
-        'order_selected': order_selected,
-        'profile_filter': profile_filter,
-        'intermediate_points_selected': int(intermediate_points_selected),
+        "preference": preference,
         }
     )
 
 
 @login_required(login_url='/login/')
-def heatmap(
-    request, new_profile=None, new_year=None, new_date_start=None, new_date_end=None,
-    date_start=None, date_end=None, order_selected=None,
-    profile_filter=None, intermediate_points_selected=None
-):
+def heatmap(request, profile=None, year=None):
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
+    date_start = None
+    date_end = None
+    profile = None
+
     if request.method == 'POST':
-        new_date_start = request.POST.get('New_date_start')
-        new_date_end = request.POST.get('New_date_end')
-        new_profile = request.POST.get('New_profile')
-        new_year = None
+        date_start = request.POST.get('Date_start')
+        date_end = request.POST.get('Date_end')
+        profile = request.POST.get('Profile')
+        year = None
 
-    if not new_date_start:
-        new_date_start = date_start
+    if not date_start:
+        date_start = preference.date_start
 
-    if not new_date_end:
-        new_date_end = date_end
+    if not date_end:
+        date_end = preference.date_end
 
-    if not new_profile:
-        new_profile = profile_filter
+    if not profile:
+        profile = preference.profile_filter
 
-    if new_year:
-        if new_year == '0':
-            new_date_start = get_first_date(request)
-            new_date_end = datetime.now().strftime("%Y-%m-%d")
-            new_year = "All"
+    if year:
+        if year == '0':
+            date_start = get_first_date(request.user)
+            date_end = datetime.now().strftime("%Y-%m-%d")
+            year = "All"
         else:
-            new_date_start = str(new_year) + "-01-01"
-            new_date_end = str(new_year) + "-12-31"
+            date_start = str(year) + "-01-01"
+            date_end = str(year) + "-12-31"
 
-    tracks = get_tracks(request, new_date_start, new_date_end, None, new_profile)
+    tracks = get_tracks(
+        request, date_start, date_end, None, profile
+        )
     statistics = compute_statistics(tracks)
 
     bike_profile_filters = get_bike_profile_filters(request)
@@ -618,17 +600,12 @@ def heatmap(
     make_heatmap(request, all_tracks, map_filename)
 
     return render(request, 'acstracks_app/show_heartmap.html', {
-        "new_profile_filter": new_profile,
+        "profile_filter": profile,
         "bike_profile_filters": bike_profile_filters,
-        "new_date_start": new_date_start,
-        "new_date_end": new_date_end,
-        "statistics": statistics,
-        'map_filename': full_map_filename,
-        "profile_filter": profile_filter,
         "date_start": date_start,
         "date_end": date_end,
-        'order_selected': order_selected,
-        'intermediate_points_selected': int(intermediate_points_selected),
+        "statistics": statistics,
+        'map_filename': full_map_filename,
         }
     )
 

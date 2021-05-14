@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from datetime import datetime
 
 
 class Track(models.Model):
@@ -11,9 +12,11 @@ class Track(models.Model):
     creator = models.CharField(max_length=255)
     created_date = models.DateTimeField(default="00:00:00")
     name = models.CharField(max_length=255)
-    profile = models.CharField(max_length=255, null=True, blank=True, default=None)
+    profile = models.CharField(
+        max_length=255, null=True, blank=True, default=None
+        )
     length = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    timelength = models.TimeField(default="00:00:00")    
+    timelength = models.TimeField(default="00:00:00")
     avgspeed = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     maxspeed = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     totalascent = models.IntegerField(default=0)
@@ -23,7 +26,9 @@ class Track(models.Model):
     avgheartrate = models.IntegerField(null=True, blank=True, default=None)
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
-    publickey = models.CharField(max_length=255, null=True, blank=True, default=None)
+    publickey = models.CharField(
+        max_length=255, null=True, blank=True, default=None
+        )
 
     class Meta:
         unique_together = ('user', 'displayfilename')
@@ -40,9 +45,15 @@ class Track(models.Model):
 
 class Preference(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    speedthreshold = models.DecimalField(max_digits=6, decimal_places=2, default=3.60)
-    elevationthreshold = models.DecimalField(max_digits=6, decimal_places=2, default=0.25)
-    maxspeedcappingfactor = models.DecimalField(max_digits=6, decimal_places=2, default=1.25)
+    speedthreshold = models.DecimalField(
+        max_digits=6, decimal_places=2, default=3.60
+        )
+    elevationthreshold = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0.25
+        )
+    maxspeedcappingfactor = models.DecimalField(
+        max_digits=6, decimal_places=2, default=1.25
+        )
     show_avgspeed = models.BooleanField(default=True)
     show_maxspeed = models.BooleanField(default=True)
     show_totalascent = models.BooleanField(default=True)
@@ -51,6 +62,27 @@ class Preference(models.Model):
     show_avgheartrate = models.BooleanField(default=True)
     gpx_contains_heartrate = models.BooleanField(default=False)
     gpx_contains_cadence = models.BooleanField(default=False)
+    date_start = models.CharField(
+        max_length=255, null=True, blank=True, default=None
+        )
+    date_end = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        default=datetime.now().strftime("%Y-%m-%d")
+        )
+    profile_filter = models.CharField(
+        max_length=255, null=True, blank=True, default="All"
+        )
+    order_selected = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        default="created_date_descending"
+        )
+    intermediate_points_selected = models.DecimalField(
+        max_digits=6, decimal_places=0, default=0
+        )
 
     def __str__(self):
         return "%s, %s, %s" % (

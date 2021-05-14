@@ -10,33 +10,29 @@
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
                         <form method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="Date_end" value="{{ date_end }}">
-                            <input type="hidden" name="Date_start" value="{{ date_start }}">
-                            <input type="hidden" name="Order" value="{{ order_selected }}">
-                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
                             {% csrf_token %}
                             <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
-                                {% if intermediate_points_selected == 0 %}
+                                {% if preference.intermediate_points_selected == 0 %}
                                     <option value=0 selected="selected">none</option>
                                 {% else %}
                                     <option value=0>none</option>
                                 {% endif %}
-                                {% if intermediate_points_selected == 1000 %}
+                                {% if preference.intermediate_points_selected == 1000 %}
                                     <option value=1000 selected="selected">every 1 km</option>
                                 {% else %}
                                     <option value=1000>every 1 km</option>
                                 {% endif %}
-                                {% if intermediate_points_selected == 3000 %}
+                                {% if preference.intermediate_points_selected == 3000 %}
                                     <option value=3000 selected="selected">every 3 km</option>
                                 {% else %}
                                     <option value=3000>every 3 km</option>
                                 {% endif %}
-                                {% if intermediate_points_selected == 5000 %}
+                                {% if preference.intermediate_points_selected == 5000 %}
                                     <option value=5000 selected="selected">every 5 km</option>
                                 {% else %}
                                     <option value=5000>every 5 km</option>
                                 {% endif %}
-                                {% if intermediate_points_selected == 10000 %}
+                                {% if preference.intermediate_points_selected == 10000 %}
                                     <option value=10000 selected="selected">every 10 km</option>
                                 {% else %}
                                     <option value=10000>every 10 km</option>
@@ -57,11 +53,6 @@
                     <td><b>Name</b></td>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" name="Date_end" value="{{ date_end }}">
-                        <input type="hidden" name="Date_start" value="{{ date_start }}">
-                        <input type="hidden" name="Order" value="{{ order_selected }}">
-                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                         <td style="text-align:right"><input 
                             type="text" style="text-align:right" 
                             name="name_input" 
@@ -75,11 +66,6 @@
                     <td><b>Profile</b></td>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" name="Date_end" value="{{ date_end }}">
-                        <input type="hidden" name="Date_start" value="{{ date_start }}">
-                        <input type="hidden" name="Order" value="{{ order_selected }}">
-                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                         <td style="text-align:right"><input 
                             type="text" style="text-align:right" 
                             name="profile_input" 
@@ -162,12 +148,6 @@
                     <td>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <input type="hidden" name="Date_end" value="{{ date_end }}">
-                            <input type="hidden" name="Date_start" value="{{ date_start }}">
-                            <input type="hidden" name="Order" value="{{ order_selected }}">
-                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                            <input type="hidden" name="csvsave" value="True">
                             <input type="submit" id="csvsave" value="Save as .csv file">
                         </form>
                     </td>
@@ -177,11 +157,6 @@
             <table class="scalefont">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="hidden" name="Date_end" value="{{ date_end }}">
-                <input type="hidden" name="Date_start" value="{{ date_start }}">
-                <input type="hidden" name="Order" value="{{ order_selected }}">
-                <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                 <tr>
                     <td>
                         <input type="submit" id="delete" value="Delete this track">

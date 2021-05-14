@@ -14,11 +14,6 @@
         <td>
             <form method="post" enctype="multipart/form-data" id="uploadform">
                 {% csrf_token %}
-                <input type="hidden" name="Date_start" value="{{ date_start }}">
-                <input type="hidden" name="Date_end" value="{{ date_end }}">
-                <input type="hidden" name="Order" value="{{ order_selected }}">
-                <input type="hidden" name="Profile" value="{{ profile_filter }}">
-                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
                 <label class="checkcontainer"><b>{{ annual_statistics }}</b>
                 <input type="checkbox"
                     name="annual_statistics"
@@ -56,9 +51,9 @@
     <tr>
         <td>
             {% if page_headline == annual_statistics %}
-                <a href="{% url 'heatmap'  new_profile='All' new_year=track.year date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
+                <a href="{% url 'heatmap'  profile='All' year=track.year %}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
             {% else %}
-                <a href="{% url 'heatmap' new_profile=track.profile new_year='0' date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}" onclick=processFiles()><h3>{{ track.profile }}</h3>
+                <a href="{% url 'heatmap' profile=track.profile year='0' %}" onclick=processFiles()><h3>{{ track.profile }}</h3>
             {% endif %}
             </td>
         <table id="click-table" class="table-hover scalefont">
@@ -83,9 +78,9 @@
                     {% if stats_collection.statistics.number_of_tracks > 0 %}
                         <tr>
                             {% if page_headline == annual_statistics %}
-                                <td><a href="{% url 'heatmap' new_profile=stats_collection.profile new_year=track.year date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
+                                <td><a href="{% url 'heatmap' profile=stats_collection.profile year=track.year %}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
                             {% else %}
-                                <td><a href="{% url 'heatmap' new_profile=track.profile new_year=stats_collection.year date_start=date_start date_end=date_end order_selected=order_selected profile_filter=profile_filter intermediate_points_selected=intermediate_points_selected %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
+                                <td><a href="{% url 'heatmap' profile=track.profile year=stats_collection.year %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
                             {% endif %}
                             <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
                             <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>
