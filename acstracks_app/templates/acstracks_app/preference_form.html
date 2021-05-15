@@ -196,7 +196,7 @@
     {% if request.user.is_superuser %}
     <div class="row">
         <div class="col-3">
-            <a href="{% url 'cleanup' %}"><button >CleanUp</button></a>        
+            <a href="{% url 'cleanup' %}"><button onclick=processFiles()>CleanUp</button></a>        
         </div>
     </div>
     {% endif %}
