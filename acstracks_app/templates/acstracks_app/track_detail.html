@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block content %}
+<script>
+    function processFiles(id) {
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
+        document.getElementById(id).submit();
+    }
+</script>
+
 <div class="container"
     <div class="row">
         <div class="col-3">
@@ -9,9 +17,9 @@
                 <tr>
                     <td valign="Top"><b>Intermediate points</b></td>
                     <td valign="Bottom" style="text-align:right">
-                        <form method="post" enctype="multipart/form-data">
+                        <form method="post" id="form1" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
+                            <select name="Intermediate_points" id="intermediate_points" onchange=processFiles("form1")>
                                 {% if preference.intermediate_points_selected == 0 %}
                                     <option value=0 selected="selected">none</option>
                                 {% else %}
@@ -51,20 +59,20 @@
                 </tr>
                 <tr>
                     <td><b>Name</b></td>
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" id="form2" enctype="multipart/form-data">
                         {% csrf_token %}
                         <td style="text-align:right"><input 
                             type="text" style="text-align:right" 
                             name="name_input" 
                             autocomplete="off"
                             value="{{ atrack.name }}" 
-                            onchange=this.form.submit()>
+                            onchange=processFiles("form2")>
                         </td>
                     </form>
                 </tr>
                 <tr>
                     <td><b>Profile</b></td>
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" id="form3" enctype="multipart/form-data">
                         {% csrf_token %}
                         <td style="text-align:right"><input 
                             type="text" style="text-align:right" 
@@ -76,9 +84,9 @@
                             {% else %}
                                 value="-" 
                             {% endif %}
-                            onchange=this.form.submit()>
+                            onchange=processFiles("form3")>
                         </td>
-                        <datalist name="Profile" id="profile_list" onchange=this.form.submit()>
+                        <datalist name="Profile" id="profile_list" onchange=processFiles()>
                             {% if bike_profiles %}
                                 {% for profile in bike_profiles %}
                                     <option value="{{ profile }}">{{ profile }}</option>
@@ -148,7 +156,7 @@
                     <td>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <input type="submit" id="csvsave" value="Save as .csv file">
+                            <button type="submit" name="csvsave" id="id_csvsave" value="True">Save as .csv file</button
                         </form>
                     </td>
                 </tr>
@@ -159,7 +167,7 @@
                 {% csrf_token %}
                 <tr>
                     <td>
-                        <input type="submit" id="delete" value="Delete this track">
+                        <button type="submit" name="delete" id="delete" onclick="processFiles()">Delete this track</button>
                     </td>
                 </tr>
                 <tr>

@@ -261,7 +261,7 @@ def track_detail(request, pk):
 
             return redirect('track_list')
 
-    if csvsave == 'True':
+    if csvsave:
         return (
             process_gpx_file(
                 request,
