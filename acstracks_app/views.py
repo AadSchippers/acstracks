@@ -829,5 +829,6 @@ def cleanup(request):
 
     return render(request, 'acstracks_app/cleanup.html', {
         'obsolete_files': obsolete_files,
+        'page_name': "Cleanup",
         }
     )
