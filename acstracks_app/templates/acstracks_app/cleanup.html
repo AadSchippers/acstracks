@@ -1,13 +1,20 @@
 {% extends 'acstracks_app/base.html' %}
 
 {% block content %}
+<script>
+    function processFiles() {
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
+    }       
+</script>
+
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="hidden" name="obsolete_files" value="{{ obsolete_files }}">
     <table class="scalefont">
         <tr>
             <td>
-                <input type="submit" id="delete" value="Delete these files">
+                <button type="submit" name="delete" id="delete" onclick="processFiles()">Delete these files</button>
             </td>
         </tr>
         <tr>
