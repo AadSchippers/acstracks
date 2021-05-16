@@ -353,6 +353,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'atrack': atrack,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
+        'page_name': "Shared link",
         }
     )
 
@@ -542,32 +543,6 @@ def show_statistics(request):
 
 @login_required(login_url='/login/')
 def heatmap(request, profile=None, year=None):
-    try:
-        preference = Preference.objects.get(user=request.user)
-    except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
-
-    date_start = None
-    date_end = None
-    profile = None
-
-    if request.method == 'POST':
-        date_start = request.POST.get('Date_start')
-        date_end = request.POST.get('Date_end')
-        profile = request.POST.get('Profile')
-        year = None
-
-    if not date_start:
-        date_start = preference.date_start
-
-    if not date_end:
-        date_end = preference.date_end
-
-    if not profile:
-        profile = preference.profile_filter
-
     if year:
         if year == '0':
             date_start = get_first_date(request.user)
@@ -576,6 +551,31 @@ def heatmap(request, profile=None, year=None):
         else:
             date_start = str(year) + "-01-01"
             date_end = str(year) + "-12-31"
+    else:
+        try:
+            preference = Preference.objects.get(user=request.user)
+        except Exception:
+            preference = Preference.objects.create(
+                user=request.user,
+            )
+
+        date_start = None
+        date_end = None
+
+        if request.method == 'POST':
+            date_start = request.POST.get('Date_start')
+            date_end = request.POST.get('Date_end')
+            profile = request.POST.get('Profile')
+            year = None
+
+        if not date_start:
+            date_start = preference.date_start
+
+        if not date_end:
+            date_end = preference.date_end
+
+        if not profile:
+            profile = preference.profile_filter
 
     tracks = get_tracks(
         request, date_start, date_end, None, profile
