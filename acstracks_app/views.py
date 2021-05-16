@@ -211,9 +211,13 @@ def track_detail(request, pk):
 
     if request.method == 'POST':
         if request.POST.get('Intermediate_points'):
-            preference.intermediate_points_selected = (
-                request.POST.get('Intermediate_points')
-                )
+            try:
+                preference.intermediate_points_selected = (
+                    int(request.POST.get('Intermediate_points'))
+                    )
+            except Exception:
+                preference.intermediate_points_selected = 0
+
             preference.save()
 
         name = request.POST.get('name_input')
