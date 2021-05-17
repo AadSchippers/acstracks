@@ -303,16 +303,23 @@ def track_detail(request, pk):
         }
     )
 
-@login_required
+
 def deletetrack(atrack):
-    fs = FileSystemStorage()
-    try:
-        fs.delete(atrack.storagefilename)
-    except Exception:
-        pass
+    deletefile(atrack.storagefilename)
     atrack.delete()
 
     return
+
+
+def deletefile(storagefilename):
+    fs = FileSystemStorage()
+    try:
+        fs.delete(storagefilename)
+    except Exception:
+        pass
+
+    return
+
 
 def publictrack_detail(request, publickey, intermediate_points_selected=None):
     if not intermediate_points_selected:
@@ -381,6 +388,7 @@ def parse_file(
         )
         gpxfile = ET.parse(path)
     except Exception:
+        deletefile(storagefilename)
         # error processing file, file skipped
         messages.error(
             request,
