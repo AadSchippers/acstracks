@@ -5,11 +5,13 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
+from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect
 from django import forms
 import xml.etree.ElementTree as ET
 from .models import Track, Preference
 from .forms import PreferenceForm
+from .exceptions import *
 import os
 from dateutil.parser import parse
 from decimal import *
@@ -256,13 +258,7 @@ def track_detail(request, pk):
 
         confirm_delete = request.POST.get('confirm_delete')
         if confirm_delete:
-            fs = FileSystemStorage()
-            try:
-                fs.delete(atrack.storagefilename)
-            except Exception:
-                pass
-            atrack.delete()
-
+            deletetrack(atrack)
             return redirect('track_list')
 
     if csvsave:
@@ -307,6 +303,16 @@ def track_detail(request, pk):
         }
     )
 
+@login_required
+def deletetrack(atrack):
+    fs = FileSystemStorage()
+    try:
+        fs.delete(atrack.storagefilename)
+    except Exception:
+        pass
+    atrack.delete()
+
+    return
 
 def publictrack_detail(request, publickey, intermediate_points_selected=None):
     if not intermediate_points_selected:
@@ -375,7 +381,12 @@ def parse_file(
         )
         gpxfile = ET.parse(path)
     except Exception:
-        print("Problem with " + storagefilename)
+        # error processing file, file skipped
+        messages.error(
+            request,
+            "Error processing " +
+            displayfilename +
+            ", file skipped.")
         return
 
     namespace = settings.NAMESPACE
@@ -411,17 +422,27 @@ def parse_file(
         )
         trk.save()
 
-        process_gpx_file(
-            request,
-            trk.storagefilename,
-            intermediate_points_selected,
-            trk,
-            False,
-            False,
-            False
-            )
+        try:
+            process_gpx_file(
+                request,
+                trk.storagefilename,
+                intermediate_points_selected,
+                trk,
+                False,
+                False,
+                False
+                )
+        except AcsFileNoActivity:
+            deletetrack(trk)
+            # error processing file, file skipped
+            messages.error(
+                request,
+                displayfilename +
+                " is not an activity file, " +
+                " file skipped.")
+
     except Exception:
-        pass
+       pass
 
     return
 

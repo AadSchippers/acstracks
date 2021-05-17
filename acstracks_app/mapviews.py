@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils.timezone import make_aware
+from django.contrib import messages
 import os
 import gpxpy
 import gpxpy.gpx
@@ -14,6 +15,7 @@ from haversine import haversine, Unit
 from .models import Preference
 import csv
 from django.http import HttpResponse
+from .exceptions import *
 
 
 def process_gpx_file(
@@ -58,6 +60,9 @@ def process_gpx_file(
     for track in gpx.tracks:
         for segment in track.segments:
             for point in segment.points:
+                if not point.time:
+                    raise AcsFileNoActivity
+
                 distance = None
                 speed = None
                 heartrate = 0
@@ -72,7 +77,6 @@ def process_gpx_file(
                             heartrate = int(TrackPointExtension.text)
                         if TrackPointExtension.tag in settings.CADENCETAGS:
                             cadence = int(TrackPointExtension.text)
-                printspeed = speed
 
                 point_distance = calculate_using_haversine(
                     point, previous_point
