@@ -782,8 +782,12 @@ def make_heatmap(request, tracks, map_filename):
     ave_lons = []
     try:
         for t in tracks:
-            ave_lats.append(sum(float(p[0]) for p in t["points"])/len(t["points"]))
-            ave_lons.append(sum(float(p[1]) for p in t["points"])/len(t["points"]))
+            ave_lats.append(
+                sum(float(p[0]) for p in t["points"])/len(t["points"])
+                )
+            ave_lons.append(
+                sum(float(p[1]) for p in t["points"])/len(t["points"])
+                )
 
         ave_lat = sum(float(p) for p in ave_lats) / len(ave_lats)
         ave_lon = sum(float(p) for p in ave_lons) / len(ave_lons)
