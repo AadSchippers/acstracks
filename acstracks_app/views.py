@@ -450,7 +450,7 @@ def parse_file(
                 " file skipped.")
 
     except Exception:
-       pass
+        pass
 
     return
 
