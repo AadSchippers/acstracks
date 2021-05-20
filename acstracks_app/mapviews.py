@@ -427,7 +427,7 @@ def make_map(
     html = (
         "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>" +
         "Start</h3><table style='color: #700394; width: 100%; " +
-        "font-size: 0.85vw'><tr><td><b>Time</b></td>" +
+        "font-size: 0.85vw'><tr><td><b>Time </b></td>" +
         "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
         "</table>"
     )
@@ -670,7 +670,9 @@ def make_html_popup(
         "font-size: 1.5vw'>Intermediate point " +
         str(int(intermediate_point)/1000)+" km</h3>"
     )
-    line_table_start = "<table style='color: #700394; font-size: 0.85vw'>"
+    line_table_start = (
+        "<table style='color: #700394; font-size: 0.85vw; width: 100%'>"
+    )
     line_table_end = "</table>"
     line_time_distance = (
         "<tr><td><b>Time</b></td>" +

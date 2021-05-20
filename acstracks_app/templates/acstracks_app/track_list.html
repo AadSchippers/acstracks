@@ -230,7 +230,7 @@
         {% endif %}
         {% for track in tracks %}
             <tr class="table-row">
-                <td><a href="{% url 'track_detail' pk=track.pk %}">{{ track.displayfilename }}</a></td>
+                <td><a href="{% url 'track_detail' pk=track.pk %}" onclick=processFiles()>{{ track.displayfilename }}</a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 {% if track.profile %}
