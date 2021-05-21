@@ -5,6 +5,7 @@
         function processFiles() {
             document.getElementById("id-processing-p").style.display = "block";
             document.getElementById("id-processing-img").style.display = "block";
+            document.getElementById("id-messages").style.display = "none";
             $(this).submit();
         }
         function showUpload() {
@@ -229,8 +230,8 @@
             <th valign="Top" style="text-align:right">Average<br>heartrate</th>
         {% endif %}
         {% for track in tracks %}
-            <tr class="table-row">
-                <td><a href="{% url 'track_detail' pk=track.pk %}" onclick=processFiles()>{{ track.displayfilename }}</a></td>
+            <tr class="table-row" onclick=processFiles()>
+                <td><a href="{% url 'track_detail' pk=track.pk %}">{{ track.displayfilename }}</a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 {% if track.profile %}
