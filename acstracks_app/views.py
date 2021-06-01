@@ -400,10 +400,10 @@ def parse_file(
     namespace = settings.NAMESPACE
     gpxroot = gpxfile.getroot()
     creator = gpxroot.attrib['creator']
-    metadata = gpxroot.find('ns:metadata', namespace)
-    if metadata:
+    try:
+        metadata = gpxroot.find('ns:metadata', namespace)
         created_date = metadata.find('ns:time', namespace).text
-    else:
+    except Exception:
         created_date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     gpxtrk = gpxroot.find('ns:trk', namespace)
     name = gpxtrk.find('ns:name', namespace).text

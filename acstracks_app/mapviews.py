@@ -110,11 +110,14 @@ def process_gpx_file(
                     previous_duration = txminus1 - t0
 
                     if not speed:
-                        speed = (
-                            point_distance / (
-                                duration.seconds - previous_duration.seconds
-                                )
-                            ) * 3.6
+                        try:
+                            speed = (
+                                point_distance / (
+                                    duration.seconds - previous_duration.seconds
+                                    )
+                                ) * 3.6
+                        except Exception:
+                            speed = 0
 
                     if speed <= speedthreshold and (
                         not cadence or cadence == 0
