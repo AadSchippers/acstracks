@@ -576,14 +576,27 @@ def show_statistics(request):
 
 @login_required(login_url='/login/')
 def heatmap(request, profile=None, year=None):
+    date_start = None
+    date_end = None
+
+    if request.method == 'POST':
+        date_start = request.POST.get('Date_start')
+        date_end = request.POST.get('Date_end')
+        profile = request.POST.get('Profile')
+        # year = None
+
     if year:
         if year == '0':
-            date_start = get_first_date(request.user)
-            date_end = datetime.now().strftime("%Y-%m-%d")
+            if not date_start:
+                date_start = get_first_date(request.user)
+            if not date_end:
+                date_end = datetime.now().strftime("%Y-%m-%d")
             year = "All"
         else:
-            date_start = str(year) + "-01-01"
-            date_end = str(year) + "-12-31"
+            if not date_start:
+                date_start = str(year) + "-01-01"
+            if not date_end:
+                date_end = str(year) + "-12-31"
     else:
         try:
             preference = Preference.objects.get(user=request.user)
@@ -591,15 +604,6 @@ def heatmap(request, profile=None, year=None):
             preference = Preference.objects.create(
                 user=request.user,
             )
-
-        date_start = None
-        date_end = None
-
-        if request.method == 'POST':
-            date_start = request.POST.get('Date_start')
-            date_end = request.POST.get('Date_end')
-            profile = request.POST.get('Profile')
-            year = None
 
         if not date_start:
             date_start = preference.date_start

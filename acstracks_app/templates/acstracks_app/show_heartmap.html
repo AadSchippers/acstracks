@@ -18,37 +18,37 @@
                     <td><h3>Heatmap</h3></td>
                 </tr>
                 <form method="post" enctype="multipart/form-data" id="uploadform">
-                {% csrf_token %}
-                <tr>
-                    <td><label for="Date_start">Start date:</label></td>
-                    <td><input name="Date_start" id="date_start" type="date" value="{{ date_start }}"></td>
-                </tr>
-                <tr>
-                    <td><label for="Date_end">End date:</label></td>
-                    <td><input name="Date_end" id="date_end" type="date" value="{{ date_end }}"></td>
-                </tr>
-                <tr>
-                    <td><b>Profile</b></td>
-                    <td>
-                        <select name="Profile" id="profile">
-                            {% if bike_profile_filters %}
-                                {% for profile in bike_profile_filters %}
-                                    {% if profile == profile_filter %}
-                                        <option value="{{ profile }}" selected="selected">{{ profile }}</option>
-                                    {% else %}
-                                        <option value="{{ profile }}">{{ profile }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td valign="Bottom" style="text-align:right">
-                        <input type="submit" onclick=processFiles() value="Filter">
-                    </td>
-                </tr>
+                    {% csrf_token %}
+                    <tr>
+                        <td><label for="Date_start">Start date:</label></td>
+                        <td><input name="Date_start" id="date_start" type="date" value="{{ date_start }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="Date_end">End date:</label></td>
+                        <td><input name="Date_end" id="date_end" type="date" value="{{ date_end }}"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Profile</b></td>
+                        <td>
+                            <select name="Profile" id="profile">
+                                {% if bike_profile_filters %}
+                                    {% for profile in bike_profile_filters %}
+                                        {% if profile == profile_filter %}
+                                            <option value="{{ profile }}" selected="selected">{{ profile }}</option>
+                                        {% else %}
+                                            <option value="{{ profile }}">{{ profile }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td valign="Bottom" style="text-align:right">
+                            <input type="submit" onclick=processFiles() value="Filter">
+                        </td>
+                    </tr>
                 </form>
                 <hr>   
                 <hr>    
