@@ -590,7 +590,6 @@ def download_gpx(request, atrack, points, points_info):
         )
         ])
     writer.writerow([str("  <metadata>")])
-    writer.writerow([str("    <profile>"+atrack.profile+"</profile>")])
     writer.writerow([str(
         "    <time>" +
         make_aware(parse(points_info[0][0])).astimezone(
@@ -600,6 +599,9 @@ def download_gpx(request, atrack, points, points_info):
     writer.writerow([str("  </metadata>")])
     writer.writerow([str("  <trk>")])
     writer.writerow([str("    <name>"+atrack.name+"</name>")])
+    writer.writerow([str("    <extensions>")])
+    writer.writerow([str("      <profile>"+atrack.profile+"</profile>")])
+    writer.writerow([str("    </extensions>")])
     writer.writerow([str("    <trkseg>")])
 
     row = 0
