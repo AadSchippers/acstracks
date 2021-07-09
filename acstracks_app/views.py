@@ -656,6 +656,9 @@ def compute_statistics(tracks):
     total_length = float(0)
     total_avgspeed = float(0)
     highest_avgspeed = 0
+    highest_best20 = 0
+    highest_best30 = 0
+    highest_best60 = 0
     highest_maxspeed = 0
     longest_length = float(0)
     t0 = 0
@@ -663,7 +666,10 @@ def compute_statistics(tracks):
     max_ascent = float(0)
     max_descent = float(0)
     datetime_highest_avgspeed = datetime.now()
-    datetime_highest_maxspeed = datetime.now()
+    datetime_highest_avgspeed = datetime.now()
+    datetime_highest_best20 = datetime.now()
+    datetime_highest_best30 = datetime.now()
+    datetime_highest_best60 = datetime.now()
     datetime_longest_length = datetime.now()
     datetime_longest_duration = datetime.now()
     datetime_max_ascent = datetime.now()
@@ -686,6 +692,15 @@ def compute_statistics(tracks):
         if highest_avgspeed < t.avgspeed:
             highest_avgspeed = t.avgspeed
             datetime_highest_avgspeed = t.created_date
+        if highest_best20 < t.best20:
+            highest_best20 = t.best20
+            datetime_highest_best20 = t.created_date
+        if highest_best30 < t.best30:
+            highest_best30 = t.best30
+            datetime_highest_best30 = t.created_date
+        if highest_best60 < t.best60:
+            highest_best60 = t.best60
+            datetime_highest_best60 = t.created_date
         if highest_maxspeed < t.maxspeed:
             highest_maxspeed = t.maxspeed
             datetime_highest_maxspeed = t.created_date
@@ -713,12 +728,18 @@ def compute_statistics(tracks):
         'total_duration': total_duration,
         'total_avgspeed': total_avgspeed,
         'highest_avgspeed': highest_avgspeed,
+        'highest_best20': highest_best20,
+        'highest_best30': highest_best30,
+        'highest_best60': highest_best60,
         'highest_maxspeed': highest_maxspeed,
         'longest_length': longest_length,
         'longest_duration': longest_duration,
         'max_ascent': max_ascent,
         'max_descent': max_descent,
         'datetime_highest_avgspeed': datetime_highest_avgspeed,
+        'datetime_highest_best20': datetime_highest_best20,
+        'datetime_highest_best30': datetime_highest_best30,
+        'datetime_highest_best60': datetime_highest_best60,
         'datetime_highest_maxspeed': datetime_highest_maxspeed,
         'datetime_longest_length': datetime_longest_length,
         'datetime_longest_duration': datetime_longest_duration,
@@ -753,6 +774,7 @@ def process_preferences(request):
             speedthreshold = data['speedthreshold']
             elevationthreshold = data['elevationthreshold']
             maxspeedcappingfactor = data['maxspeedcappingfactor']
+            force_recalculate = data['force_recalculate']
             show_avgspeed = data['show_avgspeed']
             show_maxspeed = data['show_maxspeed']
             show_totalascent = data['show_totalascent']
@@ -770,6 +792,7 @@ def process_preferences(request):
                 preference.speedthreshold = speedthreshold
                 preference.elevationthreshold = elevationthreshold
                 preference.maxspeedcappingfactor = maxspeedcappingfactor
+                preference.force_recalculate = force_recalculate
                 preference.show_avgspeed = show_avgspeed
                 preference.show_maxspeed = show_maxspeed
                 preference.show_totalascent = show_totalascent
@@ -788,6 +811,7 @@ def process_preferences(request):
                     speedthreshold=speedthreshold,
                     elevationthreshold=elevationthreshold,
                     maxspeedcappingfactor=maxspeedcappingfactor,
+                    force_recalculate = force_recalculate,
                     show_avgspeed=show_avgspeed,
                     show_maxspeed=show_maxspeed,
                     show_totalascent=show_totalascent,
@@ -799,6 +823,7 @@ def process_preferences(request):
                 )
 
             if (
+                force_recalculate or
                 old_speedthreshold != speedthreshold or
                 old_elevationthreshold != elevationthreshold or
                 old_maxspeedcappingfactor != maxspeedcappingfactor
@@ -812,6 +837,8 @@ def process_preferences(request):
                 'speedthreshold': preference.speedthreshold,
                 'elevationthreshold': preference.elevationthreshold,
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
+                'maxspeedcappingfactor': preference.maxspeedcappingfactor,
+                'force_recalculate': preference.force_recalculate,
                 'show_avgspeed': preference.show_avgspeed,
                 'show_maxspeed': preference.show_maxspeed,
                 'show_totalascent': preference.show_totalascent,

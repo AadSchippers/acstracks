@@ -68,6 +68,19 @@
                                     onmouseout="mouseOut()">
                             </td>
                         </tr>
+                        <tr>
+                            <td><br>       
+                                <label class="checkcontainer">Recalculate all tracks
+                                    <input type="checkbox"
+                                        name="force_recalculate" 
+                                        {% if form.force_recalculate.value %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_force_recalculate">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>

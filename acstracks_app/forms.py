@@ -10,6 +10,7 @@ class PreferenceForm(forms.ModelForm):
             'speedthreshold',
             'elevationthreshold',
             'maxspeedcappingfactor',
+            'force_recalculate',
             'show_avgspeed',
             'show_maxspeed',
             'show_totalascent',

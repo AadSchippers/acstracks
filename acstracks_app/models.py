@@ -18,6 +18,9 @@ class Track(models.Model):
     length = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     timelength = models.TimeField(default="00:00:00")
     avgspeed = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    best20 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    best30 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    best60 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     maxspeed = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     totalascent = models.IntegerField(default=0)
     totaldescent = models.IntegerField(default=0)
@@ -54,6 +57,7 @@ class Preference(models.Model):
     maxspeedcappingfactor = models.DecimalField(
         max_digits=6, decimal_places=2, default=1.25
         )
+    force_recalculate = models.BooleanField(default=False)
     show_avgspeed = models.BooleanField(default=True)
     show_maxspeed = models.BooleanField(default=True)
     show_totalascent = models.BooleanField(default=True)

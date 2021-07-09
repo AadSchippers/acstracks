@@ -304,6 +304,11 @@ def update_track(
     else:
         trkMaxspeed = trkMaxspeed4
 
+    trkBest20 = trkAvgspeed
+    trkBest30 = trkAvgspeed
+    trkBest60 = trkAvgspeed
+    PointIndex_0 = 0
+
     for point in points_info:
         if point[5]:
             if point[5] > trkMaxheartrate:
@@ -318,6 +323,51 @@ def update_track(
             if point[9] < previous_elevation:
                 totaldescent = totaldescent + (previous_elevation - point[9])
             previous_elevation = point[9]
+        PointIndex = PointIndex_0 + 1
+        best20_done = False
+        best30_done = False
+        best60_done = False
+        distance_0 = point[1]
+        time_0 = point[3].seconds
+        while PointIndex < len(points_info)-1:
+            if not best20_done:
+                if points_info[PointIndex][3].seconds >= time_0 + 1200:
+                    best20_done = True
+                    try:
+                        Best20 = float(
+                            ((points_info[PointIndex][1] - distance_0) /
+                            (points_info[PointIndex][3].seconds - time_0)) * 3.6
+                            )
+                        if Best20 > trkBest20:
+                            trkBest20 = Best20
+                    except Exception:
+                        pass
+            if not best30_done:
+                if points_info[PointIndex][3].seconds >= time_0 + 1800:
+                    best30_done = True
+                    try:
+                        Best30 = float(
+                            ((points_info[PointIndex][1] - distance_0) /
+                            (points_info[PointIndex][3].seconds - time_0)) * 3.6
+                            )
+                        if Best30 > trkBest30:
+                            trkBest30 = Best30
+                    except Exception:
+                        pass
+            if not best60_done:
+                if points_info[PointIndex][3].seconds >= time_0 + 3600:
+                    best60_done = True
+                    try:
+                        Best60 = float(
+                            ((points_info[PointIndex][1] - distance_0) /
+                            (points_info[PointIndex][3].seconds - time_0)) * 3.6
+                            )
+                        if Best60 > trkBest60:
+                            trkBest60 = Best60
+                    except Exception:
+                        pass
+            PointIndex += 1
+        PointIndex_0 += 1
 
     getcontext().prec = 2
 
@@ -325,6 +375,9 @@ def update_track(
     atrack.length = round(trkLength, 2)
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
+    atrack.best20 = round(trkBest20, 2)
+    atrack.best30 = round(trkBest30, 2)
+    atrack.best60 = round(trkBest60, 2)
     atrack.maxspeed = round(trkMaxspeed, 2)
     atrack.totalascent = round(totalascent, 0)
     atrack.totaldescent = round(totaldescent, 0)
