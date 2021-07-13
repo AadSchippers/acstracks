@@ -113,7 +113,8 @@ def process_gpx_file(
                         try:
                             speed = (
                                 point_distance / (
-                                    duration.seconds - previous_duration.seconds
+                                    duration.seconds -
+                                    previous_duration.seconds
                                     )
                                 ) * 3.6
                         except Exception:
@@ -272,15 +273,19 @@ def update_track(
     totaldescent = 0
     previous_elevation = points_info[0][9]
 
-    PointIndex = 0
-    while PointIndex < len(points_info):
+    trkBest20 = trkAvgspeed
+    trkBest30 = trkAvgspeed
+    trkBest60 = trkAvgspeed
+    PointIndex1 = 0
+
+    while PointIndex1 < len(points_info)-1:
         avgMaxSpeed = 0
         try:
             avgMaxSpeed = (
                 (
-                    points_info[PointIndex][4] +
-                    points_info[PointIndex+1][4] +
-                    points_info[PointIndex+2][4]
+                    points_info[PointIndex1][4] +
+                    points_info[PointIndex1+1][4] +
+                    points_info[PointIndex1+2][4]
                 ) / 3
             )
         except Exception:
@@ -293,7 +298,65 @@ def update_track(
             trkMaxspeed3 = avgMaxSpeed
         elif avgMaxSpeed > trkMaxspeed4:
             trkMaxspeed4 = avgMaxSpeed
-        PointIndex = PointIndex + 1
+
+        if points_info[PointIndex1][5]:
+            if points_info[PointIndex1][5] > trkMaxheartrate:
+                trkMaxheartrate = points_info[PointIndex1][5]
+            if points_info[PointIndex1][5] < trkMinheartrate:
+                trkMinheartrate = points_info[PointIndex1][5]
+        if points_info[PointIndex1][7] > trkMaxcadence:
+            trkMaxcadence = points_info[PointIndex1][7]
+        if (
+            abs(points_info[PointIndex1][9] - previous_elevation)
+            > elevationthreshold
+        ):
+            if points_info[PointIndex1][9] > previous_elevation:
+                totalascent = totalascent + (
+                    points_info[PointIndex1][9] - previous_elevation
+                    )
+            if points_info[PointIndex1][9] < previous_elevation:
+                totaldescent = totaldescent + (
+                    previous_elevation - points_info[PointIndex1][9]
+                    )
+            previous_elevation = points_info[PointIndex1][9]
+        PointIndex2 = PointIndex1 + 1
+        best20_done = False
+        best30_done = False
+        best60_done = False
+        distance_0 = points_info[PointIndex1][1]
+        time_0 = points_info[PointIndex1][3].seconds
+        while PointIndex2 < len(points_info)-1:
+            distance_t = points_info[PointIndex2][1] - distance_0
+            time_t = points_info[PointIndex2][3].seconds - time_0
+            if not best20_done:
+                if time_t >= 1200:
+                    best20_done = True
+                    try:
+                        Best20 = float((distance_t / time_t) * 3.6)
+                        if Best20 > trkBest20:
+                            trkBest20 = Best20
+                    except Exception:
+                        pass
+            if not best30_done:
+                if time_t >= 1800:
+                    best30_done = True
+                    try:
+                        Best30 = float((distance_t / time_t) * 3.6)
+                        if Best30 > trkBest30:
+                            trkBest30 = Best30
+                    except Exception:
+                        pass
+            if not best60_done:
+                if time_t >= 3600:
+                    best60_done = True
+                    try:
+                        Best60 = float((distance_t / time_t) * 3.6)
+                        if Best60 > trkBest60:
+                            trkBest60 = Best60
+                    except Exception:
+                        pass
+            PointIndex2 += 1
+        PointIndex1 += 1
 
     if trkMaxspeed1 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed1
@@ -303,71 +366,6 @@ def update_track(
         trkMaxspeed = trkMaxspeed3
     else:
         trkMaxspeed = trkMaxspeed4
-
-    trkBest20 = trkAvgspeed
-    trkBest30 = trkAvgspeed
-    trkBest60 = trkAvgspeed
-    PointIndex_0 = 0
-
-    for point in points_info:
-        if point[5]:
-            if point[5] > trkMaxheartrate:
-                trkMaxheartrate = point[5]
-            if point[5] < trkMinheartrate:
-                trkMinheartrate = point[5]
-        if point[7] > trkMaxcadence:
-            trkMaxcadence = point[7]
-        if abs(point[9] - previous_elevation) > elevationthreshold:
-            if point[9] > previous_elevation:
-                totalascent = totalascent + (point[9] - previous_elevation)
-            if point[9] < previous_elevation:
-                totaldescent = totaldescent + (previous_elevation - point[9])
-            previous_elevation = point[9]
-        PointIndex = PointIndex_0 + 1
-        best20_done = False
-        best30_done = False
-        best60_done = False
-        distance_0 = point[1]
-        time_0 = point[3].seconds
-        while PointIndex < len(points_info)-1:
-            if not best20_done:
-                if points_info[PointIndex][3].seconds >= time_0 + 1200:
-                    best20_done = True
-                    try:
-                        Best20 = float(
-                            ((points_info[PointIndex][1] - distance_0) /
-                            (points_info[PointIndex][3].seconds - time_0)) * 3.6
-                            )
-                        if Best20 > trkBest20:
-                            trkBest20 = Best20
-                    except Exception:
-                        pass
-            if not best30_done:
-                if points_info[PointIndex][3].seconds >= time_0 + 1800:
-                    best30_done = True
-                    try:
-                        Best30 = float(
-                            ((points_info[PointIndex][1] - distance_0) /
-                            (points_info[PointIndex][3].seconds - time_0)) * 3.6
-                            )
-                        if Best30 > trkBest30:
-                            trkBest30 = Best30
-                    except Exception:
-                        pass
-            if not best60_done:
-                if points_info[PointIndex][3].seconds >= time_0 + 3600:
-                    best60_done = True
-                    try:
-                        Best60 = float(
-                            ((points_info[PointIndex][1] - distance_0) /
-                            (points_info[PointIndex][3].seconds - time_0)) * 3.6
-                            )
-                        if Best60 > trkBest60:
-                            trkBest60 = Best60
-                    except Exception:
-                        pass
-            PointIndex += 1
-        PointIndex_0 += 1
 
     getcontext().prec = 2
 

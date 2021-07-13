@@ -811,7 +811,7 @@ def process_preferences(request):
                     speedthreshold=speedthreshold,
                     elevationthreshold=elevationthreshold,
                     maxspeedcappingfactor=maxspeedcappingfactor,
-                    force_recalculate = force_recalculate,
+                    force_recalculate=force_recalculate,
                     show_avgspeed=show_avgspeed,
                     show_maxspeed=show_maxspeed,
                     show_totalascent=show_totalascent,
