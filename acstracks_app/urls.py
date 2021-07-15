@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from . import views
@@ -17,5 +17,9 @@ urlpatterns = [
         name='publictrack_detail'
         ),
     url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
+    url(r'^password/$', auth_views.PasswordChangeView.as_view(
+        success_url=reverse_lazy('track_list'),
+        template_name='registration/password.html'
+        ), name='password'),
     url(r'^logout/$', views.logout_view, name='logout'),
 ]
