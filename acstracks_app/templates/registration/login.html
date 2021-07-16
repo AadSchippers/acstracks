@@ -3,12 +3,61 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
+<script>
+  function showPassword(id) {
+      if (document.getElementById(id).type == "password") {
+        document.getElementById(id).type = "text";
+        } 
+      else {
+        document.getElementById(id).type = "password";
+        }
+  }
+</script>
+
 <h2 style="font-size: 1.6vw; font-weight: 500;">Login</h2>
 <div>
     <form method="post" autocomplete="off">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Login</button>
+      {{ form.non_field_errors }}
+      <br>
+      <table>
+        <tr>
+          <td>
+            {{ form.username.label_tag }}
+          </td>
+          <td>
+            {{ form.username }}
+          </td>
+        </tr>
+      </table>
+      <br>
+      <table>
+        <tr>
+          <td>
+            {{ form.password.label_tag }}
+          </td>
+          <td>
+            {{ form.password }}
+          </td>
+          <td>
+            <label class="checkcontainer">Show password
+              <input type="checkbox"
+                  name="show_password" 
+                  id="id_show_password"
+                  onchange=showPassword("id_password")>
+              <span class="checkmark"></span> 
+            </label>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <table>
+        <tr>
+          <td>
+            <button type="submit">Login</button>
+          </td>
+        </tr>
+      </table>
     </form>
   </div>
 {% endblock %}

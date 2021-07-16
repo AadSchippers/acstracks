@@ -12,6 +12,15 @@
 
     </head>
     <body>
+    <script>
+        function showUserMenu() {
+            document.getElementById("id_user_menu").style.display = "block";
+        }
+        
+        function hideUserMenu() {
+            document.getElementById("id_user_menu").style.visibility = "hidden";
+        }
+    </script>
 
     <div class="detail scalefont">     
         <table style="width:100%" class="scalefont">
@@ -37,10 +46,22 @@
                         <a href="/admin/" onclick=processFiles()><b>Admin panel</b></a>
                     {% endif %}    
                 </td>
-                <td style="width: 10%; text-align: right;" class="menubar scalefont">
+                <td style="width: 10%; text-align: right;" class="menubar scalefont" onclick="showUserMenu">
                     {% if request.user.username %}                  
-                        <a href="/logout/" onclick=processFiles()><b>Logout user {{ request.user.username }}</b></a>
+                        <a><b>User {{ request.user.username }}</b></a>
                     {% endif %}    
+                </td>
+            </tr>
+        </table>
+        <table style="width:10%; position: fixed; right: 30px; visibility: hidden" class="scalefont" id="id_user_menu"  onmouseout="hideUserMenu">
+            <tr>
+                <td style="text-align: right;" class="menubar scalefont">
+                    <a href="/password/" onclick=processFiles()><b>Change password</b></a>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right;" class="menubar scalefont">
+                    <a href="/logout/" onclick=processFiles()><b>Logout</b></a>
                 </td>
             </tr>
         </table>
@@ -49,7 +70,7 @@
                 {% if  page_name %}
                     <h1>AcsTracks - {{ page_name }}</h1>
                 {% else %}
-                    <h1>AcsTracks - Preferences</h1>
+                    <h1>AcsTracks</h1>
                 {% endif %}
             </div>
             <div class="col-2">
