@@ -10,6 +10,9 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{% static 'css/acstracks.css' %}">
 
+        <!-- Load font awesome icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     </head>
     <body>
     <script>
@@ -25,46 +28,48 @@
     <div class="detail scalefont">     
         <table style="width:100%" class="scalefont">
             <tr>
-                <td style="width: 10%; text-align: left;" class="menubar scalefont">
+                <td style="width: 10%; text-align: left;" class="menubar">
                     <a href="{% url 'track_list'%}" onclick=processFiles()><b>Home</b></a>
                 </td>
-                <td style="width: 10%; text-align: left;" class="menubar scalefont">
+                <td style="width: 10%; text-align: left;" class="menubar">
                     {% if request.user.username %}                  
                         <a href="{% url 'show_statistics'%}" onclick=processFiles()><b>Statistics</b></a>
                     {% endif %}    
-                <td style="width: 10%; text-align: left;" class="menubar scalefont">
+                <td style="width: 10%; text-align: left;" class="menubar">
                     {% if request.user.username %}                  
                         <a href="{% url 'heatmap'%}" onclick=processFiles()><b>Heatmap</b></a>
                     {% endif %}    
-                <td style="width: 10%; text-align: left;" class="menubar scalefont">
+                <td style="width: 10%; text-align: left;" class="menubar">
                     {% if request.user.username %}                  
                         <a href="{% url 'preference'%}" onclick=processFiles()><b>Preferences</b></a>
                     {% endif %}    
                 </td>
-                <td style="width: 10%; text-align: left;" class="menubar scalefont">
+                <td style="width: 10%; text-align: left;" class="menubar">
                     {% if request.user.is_superuser %}                  
                         <a href="/admin/" onclick=processFiles()><b>Admin panel</b></a>
                     {% endif %}    
                 </td>
-                <td style="width: 10%; text-align: right;" class="menubar scalefont" onclick="showUserMenu">
+                <td style="width: 10%; text-align: right;" class="usermenu">
                     {% if request.user.username %}                  
-                        <a><b>User {{ request.user.username }}</b></a>
+                        <a><b>User {{ request.user.username }} </b><i class="fa fa-caret-down"></i></a>
                     {% endif %}    
                 </td>
             </tr>
         </table>
-        <table style="width:10%; position: fixed; right: 30px; visibility: hidden" class="scalefont" id="id_user_menu"  onmouseout="hideUserMenu">
-            <tr>
-                <td style="text-align: right;" class="menubar scalefont">
-                    <a href="/password/" onclick=processFiles()><b>Change password</b></a>
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: right;" class="menubar scalefont">
-                    <a href="/logout/" onclick=processFiles()><b>Logout</b></a>
-                </td>
-            </tr>
-        </table>
+        {% if request.user.username %}                  
+            <table style="width:10%; position: fixed; right: 30px;" id="id_user_menu">
+                <tr>
+                    <td style="text-align: right;" class="scalefont">
+                        <a href="/password/" onclick=processFiles()><b>Change password</b></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right;" class="scalefont">
+                        <a href="/logout/" onclick=processFiles()><b>Logout</b></a>
+                    </td>
+                </tr>
+            </table>
+        {% endif %}    
         <div class="row">
             <div class="col-4">
                 {% if  page_name %}

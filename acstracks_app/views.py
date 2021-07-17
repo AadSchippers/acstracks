@@ -370,7 +370,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'atrack': atrack,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
-        'page_name': "Shared link",
+        'page_name': "Shared track",
         }
     )
 

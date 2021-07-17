@@ -274,3 +274,33 @@ a, a:active, a:visited, a:hover, a:link {
   .menubar:hover a, .menubar:hover a:active, .menubar:hover a:visited, .menubar:hover a:hover, .menubar:hover a:link {
     color: #700394;  
     }
+  
+  /* When you move the mouse over the subnav container, open the subnav content */
+  .usermenu {
+    background-color: #700394;
+  }
+
+  .usermenu a, .usermenu a:active, .usermenu a:visited, .usermenu a:hover, .usermenu a:link {
+    color: pink;  
+    }
+
+  /* When you move the mouse over the subnav container, open the subnav content */
+  .usermenu:hover .usermenu-content {
+    display: block;
+  }
+
+  .usermenu:hover {
+    background-color: #fb89ec;
+  }
+
+  .usermenu:hover a, .usermenu:hover a:active, .usermenu:hover a:visited, .usermenu:hover a:hover, .usermenu:hover a:link {
+    color: #700394;  
+    }
+
+  /* Style the subnav content - positioned absolute */
+  .usermenu-content {
+    visibility: visible;
+    position: absolute;
+    background-color: #700394;
+    width: 100%;
+  }
