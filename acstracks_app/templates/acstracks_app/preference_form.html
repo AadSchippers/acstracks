@@ -96,7 +96,7 @@
                                 <h3>Optional columns</h3>
                             </td>
                             <td style="width: 500px;">
-                                <h3>Exported GPX file also contains</h3>
+                                <h3>Shared tracks</h3>
                             </td>
                         </tr>
                         <tr>
@@ -112,13 +112,13 @@
                                 </label>
                             </td>
                             <td>       
-                                <label class="checkcontainer">Heartrate
+                                <label class="checkcontainer">Show intermediate points
                                     <input type="checkbox"
-                                        name="gpx_contains_heartrate" 
-                                        {% if form.gpx_contains_heartrate.value %}
+                                        name="show_intermediate_points" 
+                                        {% if form.show_intermediate_points.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="gpx_contains_heartrate">
+                                        id="show_intermediate_points">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -136,13 +136,13 @@
                                 </label>
                             </td>
                             <td>       
-                                <label class="checkcontainer">Cadence
+                                <label class="checkcontainer">Show download GPX track
                                     <input type="checkbox"
-                                        name="gpx_contains_cadence" 
-                                        {% if form.gpx_contains_cadence.value %}
+                                        name="show_download_gpx" 
+                                        {% if form.show_download_gpx.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="gpx_contains_cadence">
+                                        id="show_download_gpx">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -159,7 +159,18 @@
                                 <span class="checkmark"></span> 
                             </label>
                             </td>
-                        </tr>
+                            <td>       
+                                <label class="checkcontainer">Include heartrate on GPX track
+                                    <input type="checkbox"
+                                        name="gpx_contains_heartrate" 
+                                        {% if form.gpx_contains_heartrate.value %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="gpx_contains_heartrate">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                       </tr>
                         <tr>
                             <td>
                                 <label class="checkcontainer">Total descent
@@ -172,8 +183,19 @@
                                 <span class="checkmark"></span> 
                             </label>
                             </td>
-                        </tr>
-                        <tr>
+                        <td>       
+                            <label class="checkcontainer">Include cadence on GPX track
+                                <input type="checkbox"
+                                    name="gpx_contains_cadence" 
+                                    {% if form.gpx_contains_cadence.value %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="gpx_contains_cadence">
+                                <span class="checkmark"></span> 
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
                             <td>
                                 <label class="checkcontainer">Average cadence
                                 <input type="checkbox" 

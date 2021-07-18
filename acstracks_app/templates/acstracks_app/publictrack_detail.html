@@ -7,38 +7,40 @@
         <div class="col-3">
             <table class="scalefont">
                 <tr>
-                    <td valign="Top"><b>Intermediate points</b></td>
-                    <td valign="Bottom" style="text-align:right">
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
-                                {% if intermediate_points_selected == 0 %}
-                                    <option value=0 selected="selected">none</option>
-                                {% else %}
-                                    <option value=0>none</option>
-                                {% endif %}
-                                {% if intermediate_points_selected == 1000 %}
-                                    <option value=1000 selected="selected">every 1 km</option>
-                                {% else %}
-                                    <option value=1000>every 1 km</option>
-                                {% endif %}
-                                {% if intermediate_points_selected == 3000 %}
-                                    <option value=3000 selected="selected">every 3 km</option>
-                                {% else %}
-                                    <option value=3000>every 3 km</option>
-                                {% endif %}
-                                {% if intermediate_points_selected == 5000 %}
-                                    <option value=5000 selected="selected">every 5 km</option>
-                                {% else %}
-                                    <option value=5000>every 5 km</option>
-                                {% endif %}
-                                {% if intermediate_points_selected == 10000 %}
-                                    <option value=10000 selected="selected">every 10 km</option>
-                                {% else %}
-                                    <option value=10000>every 10 km</option>
-                                {% endif %}
-                            </select>
-                        </form>   
+                    {% if preference.show_intermediate_points %}
+                        <td valign="Top"><b>Intermediate points</b></td>
+                        <td valign="Bottom" style="text-align:right">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
+                                    {% if intermediate_points_selected == 0 %}
+                                        <option value=0 selected="selected">none</option>
+                                    {% else %}
+                                        <option value=0>none</option>
+                                    {% endif %}
+                                    {% if intermediate_points_selected == 1000 %}
+                                        <option value=1000 selected="selected">every 1 km</option>
+                                    {% else %}
+                                        <option value=1000>every 1 km</option>
+                                    {% endif %}
+                                    {% if intermediate_points_selected == 3000 %}
+                                        <option value=3000 selected="selected">every 3 km</option>
+                                    {% else %}
+                                        <option value=3000>every 3 km</option>
+                                    {% endif %}
+                                    {% if intermediate_points_selected == 5000 %}
+                                        <option value=5000 selected="selected">every 5 km</option>
+                                    {% else %}
+                                        <option value=5000>every 5 km</option>
+                                    {% endif %}
+                                    {% if intermediate_points_selected == 10000 %}
+                                        <option value=10000 selected="selected">every 10 km</option>
+                                    {% else %}
+                                        <option value=10000>every 10 km</option>
+                                    {% endif %}
+                                </select>
+                            </form>   
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -120,12 +122,14 @@
             <table class="scalefont">
                 <tr>
                     <td>
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
-                            <input type="hidden" name="gpxdownload" value="True">
-                            <input type="submit" id="gpxdownload" value="Download .gpx file">
-                        </form>
+                        {% if preference.show_download_gpx   %}
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                                <input type="hidden" name="gpxdownload" value="True">
+                                <input type="submit" id="gpxdownload" value="Download .gpx file">
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
             </table>

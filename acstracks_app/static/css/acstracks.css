@@ -259,7 +259,7 @@ a, a:active, a:visited, a:hover, a:link {
     width: 50%;
   }
 
-  .usermenu:hover a, .usermenu:hover a:active, .usermenu:hover a:visited, .usermenu:hover a:hover, .usermenu:hover a:link {
-    color: hotpink;  
+  .usermenu:hover {
+    background-color: hotpink;  
     }
   

@@ -330,6 +330,13 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
     except Exception:
         return redirect('track_list')
 
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
     map_filename = (
         atrack.user.username+"_public.html"
     )
@@ -368,6 +375,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'atrack': atrack,
+        'preference': preference,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
         'page_name': "Shared track",
@@ -781,6 +789,8 @@ def process_preferences(request):
             show_totaldescent = data['show_totaldescent']
             show_avgcadence = data['show_avgcadence']
             show_avgheartrate = data['show_avgheartrate']
+            show_intermediate_points = data['show_intermediate_points']
+            show_download_gpx = data['show_download_gpx']
             gpx_contains_heartrate = data['gpx_contains_heartrate']
             gpx_contains_cadence = data['gpx_contains_cadence']
 
@@ -799,6 +809,8 @@ def process_preferences(request):
                 preference.show_totaldescent = show_totaldescent
                 preference.show_avgcadence = show_avgcadence
                 preference.show_avgheartrate = show_avgheartrate
+                preference.show_intermediate_points = show_intermediate_points
+                preference.show_download_gpx = show_download_gpx
                 preference.gpx_contains_heartrate = gpx_contains_heartrate
                 preference.gpx_contains_cadence = gpx_contains_cadence
                 preference.save()
@@ -818,6 +830,8 @@ def process_preferences(request):
                     show_totaldescent=show_totaldescent,
                     show_avgcadence=show_avgcadence,
                     show_avgheartrate=show_avgheartrate,
+                    show_intermediate_points=show_intermediate_points,
+                    show_download_gpx=show_download_gpx,
                     gpx_contains_heartrate=gpx_contains_heartrate,
                     gpx_contains_cadence=gpx_contains_cadence,
                 )
@@ -845,6 +859,9 @@ def process_preferences(request):
                 'show_totaldescent': preference.show_totaldescent,
                 'show_avgcadence': preference.show_avgcadence,
                 'show_avgheartrate': preference.show_avgheartrate,
+                'show_intermediate_points':
+                    preference.show_intermediate_points,
+                'show_download_gpx': preference.show_download_gpx,
                 'gpx_contains_heartrate': preference.gpx_contains_heartrate,
                 'gpx_contains_cadence': preference.gpx_contains_cadence,
             })
