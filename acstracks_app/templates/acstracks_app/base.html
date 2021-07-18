@@ -14,7 +14,7 @@
     </head>
     <body>
 
-    <nav class="navbar navbar-inverse" style="background-color: #700394;">
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #700394;">
         <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -22,6 +22,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
+            <a class="navbar-brand" style="color: white"><b>AcsTracks</b></a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
@@ -56,7 +57,7 @@
                 {% else %}                
                     <li class="dropdown disabled">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <span class="glyphicon glyphicon-user"></span><b> User {{ request.user.username }} </b>
+                            <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                         <li><a <a href="/password/" onclick=processFiles()>Change password</a></li>
@@ -68,15 +69,10 @@
         </div>
         </div>
     </nav>
-
+    <br>
     <div class="detail scalefont">     
         <div class="row">
             <div class="col-4">
-                {% if  page_name %}
-                    <h1>AcsTracks - {{ page_name }}</h1>
-                {% else %}
-                    <h1>AcsTracks</h1>
-                {% endif %}
             </div>
             <div class="col-2">
                 <p id="id-processing-p" style="text-align: left; display: none;">Processing...</p>
