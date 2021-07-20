@@ -2,14 +2,6 @@
 
 {% block content %}
     <script>
-        function mouseOver() {
-            document.getElementById("id_helptext").style.display = "block";
-        }
-        
-        function mouseOut() {
-            document.getElementById("id_helptext").style.visibility = "hidden";
-        }
-
         function processFiles() {
             document.getElementById("id-processing-p").style.display = "block";
             document.getElementById("id-processing-img").style.display = "block";
@@ -20,7 +12,10 @@
         <form method="POST" class="preference-form">
             {% csrf_token %}
             <h3>Thresholds</h3>
-            <div class="row">
+            <p id="id_helptext">
+                <i>Changing thresholds leads to recalculating all tracks, depending on the number of tracks this might take considerable time.</i>
+            </p>
+        <div class="row">
                 <div class="col-3">
                     <table class="scalefont">
                         <tr>
@@ -34,8 +29,6 @@
                                     max="10"
                                     id="id_speedthreshold" 
                                     style="text-align:right"
-                                    onmouseover="mouseOver()" 
-                                    onmouseout="mouseOut()">
                                 <br><br></td>
                         </tr>
                         <tr>
@@ -49,8 +42,6 @@
                                     max="10"
                                     id="id_elevationthreshold" 
                                     style="text-align:right"
-                                    onmouseover="mouseOver()" 
-                                    onmouseout="mouseOut()">
                             <br><br></td>
                         </tr>
                         <tr>
@@ -64,8 +55,6 @@
                                     max="10"
                                     id="maxspeedcappingfactor" 
                                     style="text-align:right"
-                                    onmouseover="mouseOver()" 
-                                    onmouseout="mouseOut()">
                             </td>
                         </tr>
                         <tr>
@@ -84,9 +73,6 @@
                     </table>
                 </div>
             </div>
-            <p id="id_helptext" style="visibility: hidden;">
-                <i>Changing thresholds leads to recalculating all tracks, depending on the number of tracks this might take considerable time.</i>
-            </p>
             <hr>
             <div class="row">
                 <div class="col-12">
