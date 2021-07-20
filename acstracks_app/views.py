@@ -923,13 +923,19 @@ def publish(request):
 
 
 def public_tracks(request, username):
-    user = User.objects.get(username=username)
-    tracks = Track.objects.filter(
-        user=user,
-        public_track=True,
-        )
+    try:
+        user = User.objects.get(username=username)
+        tracks = Track.objects.filter(
+            user=user,
+            public_track=True,
+            )
+    except Exception:
+        tracks = []
 
-    statistics = compute_statistics(tracks)
+    try:
+        statistics = compute_statistics(tracks)
+    except Exception:
+        statistics = {}
 
     full_map_filename = (
         "/static/maps/" +
