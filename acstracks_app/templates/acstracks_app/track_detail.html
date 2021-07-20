@@ -158,9 +158,27 @@
                 {% if atrack.maxheartrate  > 0 %}
                     <tr>
                         <td><b>Maximum&nbsp;heartrate</b></td>
-                        <td  style="text-align:right">{{ atrack.maxheartrate }}</td>
+                        <td style="text-align:right">{{ atrack.maxheartrate }}</td>
                     </tr>
                 {% endif %}
+                <form method="post"  id="form4" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="public_track_changed" value="True">
+                    <tr>
+                        <td><br><br>
+                            <label class="checkcontainer" style="font-weight: normal"><b>Public track</b>
+                                <input type="checkbox"
+                                    name="public_track" 
+                                    {% if atrack.public_track %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_public_track"
+                                    onchange=processFiles("form4")>
+                                <span class="checkmark"></span> 
+                            </label>
+                        </td>
+                    </tr>
+                </form>
             </table>
             <hr>
             <table class="scalefont">

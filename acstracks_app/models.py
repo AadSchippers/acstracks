@@ -29,6 +29,7 @@ class Track(models.Model):
     avgheartrate = models.IntegerField(null=True, blank=True, default=None)
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
+    public_track = models.BooleanField(default=False)
     publickey = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )
@@ -64,6 +65,7 @@ class Preference(models.Model):
     show_totaldescent = models.BooleanField(default=True)
     show_avgcadence = models.BooleanField(default=True)
     show_avgheartrate = models.BooleanField(default=True)
+    show_is_public_track = models.BooleanField(default=True)
     show_intermediate_points = models.BooleanField(default=False)
     show_download_gpx = models.BooleanField(default=False)
     gpx_contains_heartrate = models.BooleanField(default=False)

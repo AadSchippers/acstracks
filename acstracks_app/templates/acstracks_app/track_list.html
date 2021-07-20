@@ -242,6 +242,9 @@
         {% if preference.show_avgheartrate %}
             <th valign="Top" style="text-align:right">Average<br>heartrate</th>
         {% endif %}
+        {% if preference.show_is_public_track %}
+            <th valign="Top" style="text-align:right">Public<br>track</th>
+        {% endif %}
         {% for track in tracks %}
             <tr class="table-row" onclick=processFiles()>
                 <td><a href="{% url 'track_detail' pk=track.pk %}">{{ track.displayfilename }}</a></td>
@@ -278,6 +281,13 @@
                         <td  style="text-align:right">{{ track.avgheartrate }}</td>
                     {% else %}
                         <td  style="text-align:right">-</td>
+                    {% endif %}
+                {% endif %}
+                {% if preference.show_is_public_track %}
+                    {% if track.public_track == True %}
+                        <td style="text-align:right">Yes</td>
+                    {% else %}
+                        <td style="text-align:right"> </td>
                     {% endif %}
                 {% endif %}
                 </tr>

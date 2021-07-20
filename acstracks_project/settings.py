@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 
+# SECRET_KEY =
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = 
+# DEBUG =
 
 ALLOWED_HOSTS = []
 
@@ -135,8 +135,10 @@ MARKER_COLOR = 'purple'
 NOT_SELECTED_COLOR = 'gray'
 START_COLOR = "lightgray"
 END_COLOR = "gray"
-CONNECT_COLOR="darkred"
+CONNECT_COLOR = "darkred"
 HEATMAP_LINE_COLOR = "darkred"
+HEATMAP_OPACITY = 0.5
+NORMAL_OPACITY = 1
 
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}

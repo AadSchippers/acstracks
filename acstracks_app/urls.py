@@ -11,11 +11,13 @@ urlpatterns = [
     path('statistics/', views.show_statistics, name='show_statistics'),
     path('heatmap/<str:profile>,<str:year>', views.heatmap, name='heatmap'),
     path('heatmap/', views.heatmap, name='heatmap'),
+    path('publish/', views.publish, name='publish'),
     path(
         'publictrack/<str:publickey>',
         views.publictrack_detail,
         name='publictrack_detail'
         ),
+    path('public/<str:username>', views.public_tracks, name='public_tracks'),
     url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
     url(r'^password/$', auth_views.PasswordChangeView.as_view(
         success_url=reverse_lazy('track_list'),

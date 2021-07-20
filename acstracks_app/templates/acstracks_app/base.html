@@ -30,11 +30,13 @@
                 <li class="usermenu"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
                 <li class="usermenu"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
                 <li class="usermenu"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
+                <li class="usermenu"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
                 <li class="usermenu"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
             {% else %}
                 <li class="disabled"><a href="{% url 'track_list'%}" onclick=processFiles()"><b>Home</b></a></li>
                 <li class="disabled"><a href="{% url 'show_statistics'%}" onclick=processFiles()"><b>Statistics</b></a></li>
                 <li class="disabled"><a href="{% url 'heatmap'%}" onclick=processFiles()><b>Heatmap</b></a></li>
+                <li class="disabled"><a href="{% url 'publish'%}" onclick=processFiles()><b>Publish</b></a></li>
                 <li class="disabled"><a href="{% url 'preference'%}" onclick=processFiles()><b>Preferences</b></a></li>
             {% endif %}
             {% if request.user.is_superuser %}                  

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect
 from django import forms
@@ -254,6 +255,21 @@ def track_detail(request, pk):
                 }
             )
 
+        public_track_changed = request.POST.get('public_track_changed')
+        if public_track_changed:
+            public_track = request.POST.get('public_track')
+            atrack.public_track = (public_track == "on")
+            atrack.save()
+            return render(request, 'acstracks_app/track_detail.html', {
+                'atrack': atrack,
+                'map_filename': full_map_filename,
+                'preference': preference,
+                'bike_profiles': bike_profiles,
+                'public_url': public_url,
+                'page_name': "Track detail",
+                }
+            )
+
         csvsave = request.POST.get('csvsave')
 
         confirm_delete = request.POST.get('confirm_delete')
@@ -319,68 +335,6 @@ def deletefile(storagefilename):
         pass
 
     return
-
-
-def publictrack_detail(request, publickey, intermediate_points_selected=None):
-    if not intermediate_points_selected:
-        intermediate_points_selected = 0
-
-    try:
-        atrack = Track.objects.get(publickey=publickey)
-    except Exception:
-        return redirect('track_list')
-
-    try:
-        preference = Preference.objects.get(user=request.user)
-    except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
-
-    map_filename = (
-        atrack.user.username+"_public.html"
-    )
-
-    full_map_filename = (
-        "/static/maps/" +
-        atrack.user.username+"_public.html"
-    )
-
-    gpxdownload = None
-
-    if request.method == 'POST':
-        intermediate_points_selected = request.POST.get('Intermediate_points')
-        gpxdownload = request.POST.get('gpxdownload')
-
-    if gpxdownload == 'True':
-        return process_gpx_file(
-            request,
-            atrack.storagefilename,
-            intermediate_points_selected,
-            atrack,
-            None,
-            False,
-            True
-        )
-
-    process_gpx_file(
-        request,
-        atrack.storagefilename,
-        intermediate_points_selected,
-        None,
-        map_filename,
-        False,
-        False
-        )
-
-    return render(request, 'acstracks_app/publictrack_detail.html', {
-        'atrack': atrack,
-        'preference': preference,
-        'map_filename': full_map_filename,
-        'intermediate_points_selected': int(intermediate_points_selected),
-        'page_name': "Shared track",
-        }
-    )
 
 
 def parse_file(
@@ -630,12 +584,12 @@ def heatmap(request, profile=None, year=None):
     bike_profile_filters = get_bike_profile_filters(request)
 
     map_filename = (
-        request.user.username+".html"
+        request.user.username+"-heatmap.html"
     )
 
     full_map_filename = (
         "/static/maps/" +
-        request.user.username+".html"
+        request.user.username+"-heatmap.html"
     )
 
     all_tracks = []
@@ -789,6 +743,7 @@ def process_preferences(request):
             show_totaldescent = data['show_totaldescent']
             show_avgcadence = data['show_avgcadence']
             show_avgheartrate = data['show_avgheartrate']
+            show_is_public_track = data['show_is_public_track']
             show_intermediate_points = data['show_intermediate_points']
             show_download_gpx = data['show_download_gpx']
             gpx_contains_heartrate = data['gpx_contains_heartrate']
@@ -809,6 +764,7 @@ def process_preferences(request):
                 preference.show_totaldescent = show_totaldescent
                 preference.show_avgcadence = show_avgcadence
                 preference.show_avgheartrate = show_avgheartrate
+                preference.show_is_public_track = show_is_public_track
                 preference.show_intermediate_points = show_intermediate_points
                 preference.show_download_gpx = show_download_gpx
                 preference.gpx_contains_heartrate = gpx_contains_heartrate
@@ -830,6 +786,7 @@ def process_preferences(request):
                     show_totaldescent=show_totaldescent,
                     show_avgcadence=show_avgcadence,
                     show_avgheartrate=show_avgheartrate,
+                    show_is_public_track=show_is_public_track,
                     show_intermediate_points=show_intermediate_points,
                     show_download_gpx=show_download_gpx,
                     gpx_contains_heartrate=gpx_contains_heartrate,
@@ -859,6 +816,7 @@ def process_preferences(request):
                 'show_totaldescent': preference.show_totaldescent,
                 'show_avgcadence': preference.show_avgcadence,
                 'show_avgheartrate': preference.show_avgheartrate,
+                'show_is_public_track': preference.show_is_public_track,
                 'show_intermediate_points':
                     preference.show_intermediate_points,
                 'show_download_gpx': preference.show_download_gpx,
@@ -911,5 +869,144 @@ def cleanup(request):
     return render(request, 'acstracks_app/cleanup.html', {
         'obsolete_files': obsolete_files,
         'page_name': "Cleanup",
+        }
+    )
+
+
+@login_required(login_url='/login/')
+def publish(request):
+    tracks = Track.objects.filter(
+        user=request.user,
+        public_track=True,
+        )
+
+    statistics = compute_statistics(tracks)
+
+    public_url = (
+        request.scheme + "://" +
+        request.get_host() +
+        "/publictrack/"
+        )
+
+    map_filename = (
+        request.user.username+"_public.html"
+    )
+
+    full_map_filename = (
+        "/static/maps/" +
+        request.user.username+"_public.html"
+    )
+
+    basemap_filename = (
+        "/static/maps/" +
+        "public_base.html"
+    )
+    all_tracks = []
+    for atrack in tracks:
+        all_tracks.append(gather_heatmap_data(
+            request, atrack.storagefilename, map_filename
+            ))
+
+    make_heatmap(
+        request, all_tracks, map_filename,
+        settings.LINE_COLOR, settings.NORMAL_OPACITY
+        )
+
+    return render(request, 'acstracks_app/publictracks.html', {
+        'tracks': tracks,
+        'statistics': statistics,
+        'public_url': public_url,
+        'map_filename': full_map_filename,
+        'basemap_filename': basemap_filename,
+        }
+    )
+
+
+def public_tracks(request, username):
+    user = User.objects.get(username=username)
+    tracks = Track.objects.filter(
+        user=user,
+        public_track=True,
+        )
+
+    statistics = compute_statistics(tracks)
+
+    full_map_filename = (
+        "/static/maps/" +
+        username+"_public.html"
+    )
+
+    basemap_filename = (
+        "/static/maps/" +
+        "public_base.html"
+    )
+
+    return render(request, 'acstracks_app/publictracks.html', {
+        'tracks': tracks,
+        'statistics': statistics,
+        'map_filename': full_map_filename,
+        'basemap_filename': basemap_filename,
+        }
+    )
+
+
+def publictrack_detail(request, publickey, intermediate_points_selected=None):
+    if not intermediate_points_selected:
+        intermediate_points_selected = 0
+
+    try:
+        atrack = Track.objects.get(publickey=publickey)
+    except Exception:
+        return redirect('track_list')
+
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
+    map_filename = (
+        atrack.user.username+"-public.html"
+    )
+
+    full_map_filename = (
+        "/static/maps/" +
+        atrack.user.username+"-public.html"
+    )
+
+    gpxdownload = None
+
+    if request.method == 'POST':
+        intermediate_points_selected = request.POST.get('Intermediate_points')
+        gpxdownload = request.POST.get('gpxdownload')
+
+    if gpxdownload == 'True':
+        return process_gpx_file(
+            request,
+            atrack.storagefilename,
+            intermediate_points_selected,
+            atrack,
+            None,
+            False,
+            True
+        )
+
+    process_gpx_file(
+        request,
+        atrack.storagefilename,
+        intermediate_points_selected,
+        None,
+        map_filename,
+        False,
+        False
+        )
+
+    return render(request, 'acstracks_app/publictrack_detail.html', {
+        'atrack': atrack,
+        'preference': preference,
+        'map_filename': full_map_filename,
+        'intermediate_points_selected': int(intermediate_points_selected),
+        'page_name': "Shared track",
         }
     )
