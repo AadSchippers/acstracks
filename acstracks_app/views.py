@@ -930,6 +930,7 @@ def publish(request):
         'tracks': tracks,
         'statistics': statistics,
         'public_url': public_url,
+        'link_to_detail_page': preference.link_to_detail_page,
         'map_filename': full_map_filename,
         'link_to_detail_page': preference.link_to_detail_page,
         'basemap_filename': basemap_filename,
@@ -946,6 +947,12 @@ def public_tracks(request, username):
             )
     except Exception:
         tracks = []
+
+    try:
+        preference = Preference.objects.get(user=user)
+        link_to_detail_page = preference.link_to_detail_page
+    except Exception:
+        link_to_detail_page = False
 
     try:
         statistics = compute_statistics(tracks)
@@ -972,6 +979,7 @@ def public_tracks(request, username):
         'tracks': tracks,
         'statistics': statistics,
         'public_url': public_url,
+        'link_to_detail_page': link_to_detail_page,
         'map_filename': full_map_filename,
         'basemap_filename': basemap_filename,
         }
