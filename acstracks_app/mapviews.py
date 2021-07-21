@@ -798,7 +798,7 @@ def make_html_popup(
     return html_popup
 
 
-def gather_heatmap_data(request, filename, map_filename=None):
+def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
         filename
@@ -814,9 +814,9 @@ def gather_heatmap_data(request, filename, map_filename=None):
         timezone_info = timezone(settings.TIME_ZONE)
         previous_point = None
         distance = 0
-        trackname = ""
         for track in gpx.tracks:
-            trackname = track.name
+            if not trackname:
+                trackname = track.name
             for segment in track.segments:
                 for point in segment.points:
                     points.append(tuple([point.latitude,
@@ -841,7 +841,8 @@ def gather_heatmap_data(request, filename, map_filename=None):
 
 def make_heatmap(
         request, tracks, map_filename,
-        color=settings.HEATMAP_LINE_COLOR, opacity=settings.HEATMAP_OPACITY
+        color=settings.HEATMAP_LINE_COLOR, opacity=settings.HEATMAP_OPACITY,
+        show_markers=False
         ):
     ave_lats = []
     ave_lons = []
@@ -888,7 +889,7 @@ def make_heatmap(
             points.append(tuple([p[0], p[1]]))
 
     for track in tracks:
-        my_map = draw_heatmap(request, my_map, track, color, opacity)
+        my_map = draw_heatmap(request, my_map, track, color, opacity, show_markers)
 
     folium.LayerControl(collapsed=True).add_to(my_map)
 
@@ -902,12 +903,33 @@ def make_heatmap(
     return
 
 
-def draw_heatmap(request, my_map, track, color, opacity):
+def draw_heatmap(request, my_map, track, color, opacity, show_markers):
     points = []
     for p in track["points"]:
         points.append(tuple([p[0], p[1]]))
 
-    # add lines and markers
+    if show_markers:
+        # start marker
+        tooltip_text = 'Start ' + track["trackname"]
+        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+        folium.Marker(
+            points[0],
+            icon=folium.Icon(color=settings.START_COLOR),
+            tooltip=tooltip
+            ).add_to(my_map)
+
+        # finish marker
+        tooltip_text = 'Finish ' + track["trackname"]
+        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+        folium.Marker(
+            points[-1],
+            icon=folium.Icon(color=settings.END_COLOR),
+            tooltip=tooltip
+            ).add_to(my_map)
+
+    # add lines
     folium.PolyLine(
         points, color=color, weight=2.5, opacity=opacity
         ).add_to(my_map)

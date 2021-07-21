@@ -595,7 +595,7 @@ def heatmap(request, profile=None, year=None):
     all_tracks = []
     for atrack in tracks:
         all_tracks.append(gather_heatmap_data(
-            request, atrack.storagefilename, map_filename
+            request, atrack.storagefilename, atrack.name, map_filename
             ))
 
     make_heatmap(request, all_tracks, map_filename)
@@ -744,6 +744,7 @@ def process_preferences(request):
             show_avgcadence = data['show_avgcadence']
             show_avgheartrate = data['show_avgheartrate']
             show_is_public_track = data['show_is_public_track']
+            link_to_detail_page = data['link_to_detail_page']
             show_intermediate_points = data['show_intermediate_points']
             show_download_gpx = data['show_download_gpx']
             gpx_contains_heartrate = data['gpx_contains_heartrate']
@@ -765,6 +766,7 @@ def process_preferences(request):
                 preference.show_avgcadence = show_avgcadence
                 preference.show_avgheartrate = show_avgheartrate
                 preference.show_is_public_track = show_is_public_track
+                preference.link_to_detail_page = link_to_detail_page
                 preference.show_intermediate_points = show_intermediate_points
                 preference.show_download_gpx = show_download_gpx
                 preference.gpx_contains_heartrate = gpx_contains_heartrate
@@ -787,6 +789,7 @@ def process_preferences(request):
                     show_avgcadence=show_avgcadence,
                     show_avgheartrate=show_avgheartrate,
                     show_is_public_track=show_is_public_track,
+                    link_to_detail_page=link_to_detail_page,
                     show_intermediate_points=show_intermediate_points,
                     show_download_gpx=show_download_gpx,
                     gpx_contains_heartrate=gpx_contains_heartrate,
@@ -817,6 +820,7 @@ def process_preferences(request):
                 'show_avgcadence': preference.show_avgcadence,
                 'show_avgheartrate': preference.show_avgheartrate,
                 'show_is_public_track': preference.show_is_public_track,
+                'link_to_detail_page': preference.link_to_detail_page,
                 'show_intermediate_points':
                     preference.show_intermediate_points,
                 'show_download_gpx': preference.show_download_gpx,
@@ -880,7 +884,17 @@ def publish(request):
         public_track=True,
         )
 
-    statistics = compute_statistics(tracks)
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
+    try:
+        statistics = compute_statistics(tracks)
+    except Exception:
+        statistics = {}
 
     public_url = (
         request.scheme + "://" +
@@ -904,12 +918,12 @@ def publish(request):
     all_tracks = []
     for atrack in tracks:
         all_tracks.append(gather_heatmap_data(
-            request, atrack.storagefilename, map_filename
+            request, atrack.storagefilename, atrack.name, map_filename
             ))
 
     make_heatmap(
         request, all_tracks, map_filename,
-        settings.LINE_COLOR, settings.NORMAL_OPACITY
+        settings.LINE_COLOR, settings.NORMAL_OPACITY, True
         )
 
     return render(request, 'acstracks_app/publictracks.html', {
@@ -917,6 +931,7 @@ def publish(request):
         'statistics': statistics,
         'public_url': public_url,
         'map_filename': full_map_filename,
+        'link_to_detail_page': preference.link_to_detail_page,
         'basemap_filename': basemap_filename,
         }
     )
@@ -937,6 +952,12 @@ def public_tracks(request, username):
     except Exception:
         statistics = {}
 
+    public_url = (
+        request.scheme + "://" +
+        request.get_host() +
+        "/publictrack/"
+        )
+
     full_map_filename = (
         "/static/maps/" +
         username+"_public.html"
@@ -950,6 +971,7 @@ def public_tracks(request, username):
     return render(request, 'acstracks_app/publictracks.html', {
         'tracks': tracks,
         'statistics': statistics,
+        'public_url': public_url,
         'map_filename': full_map_filename,
         'basemap_filename': basemap_filename,
         }

@@ -21,12 +21,17 @@
                         </thead>
                         <tbody>
                             {% for track in tracks %}
-                                <tr class="table-row" onclick=processFiles()>
-                                    {% if track.displayfilename %}
-                                        <td><a href={{ public_url }}{{ track.publickey }}></a>{{ track.name }}</a></td>
-                                        <td style="text-align:right;">{{ track.length }}</td>
-                                        <td style="text-align:right;">{{ track.timelength|time:"H:i:s" }}</td>
+                                {% if track.displayfilename %}
+                                    {% if link_to_detail_page %}
+                                        <tr class="table-row" onclick=processFiles()>
+                                            <td><a href={{ public_url }}{{ track.publickey }}></a>{{ track.name }}</a></td>
+                                    {% else %}
+                                        <tr class="table-row">
+                                            <td>{{ track.name }}</td>
                                     {% endif %}
+                                    <td style="text-align:right;">{{ track.length }}</td>
+                                    <td style="text-align:right;">{{ track.timelength|time:"H:i:s" }}</td>
+                                {% endif %}
                                 </tr>
                             {% endfor %}
                             {% if tracks.1.displayfilename %}

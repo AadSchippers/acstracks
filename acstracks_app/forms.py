@@ -17,6 +17,7 @@ class PreferenceForm(forms.ModelForm):
             'show_totaldescent',
             'show_avgcadence',
             'show_avgheartrate',
+            'link_to_detail_page',
             'show_is_public_track',
             'show_intermediate_points',
             'show_download_gpx',

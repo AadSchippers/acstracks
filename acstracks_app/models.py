@@ -66,6 +66,7 @@ class Preference(models.Model):
     show_avgcadence = models.BooleanField(default=True)
     show_avgheartrate = models.BooleanField(default=True)
     show_is_public_track = models.BooleanField(default=True)
+    link_to_detail_page = models.BooleanField(default=False)
     show_intermediate_points = models.BooleanField(default=False)
     show_download_gpx = models.BooleanField(default=False)
     gpx_contains_heartrate = models.BooleanField(default=False)
