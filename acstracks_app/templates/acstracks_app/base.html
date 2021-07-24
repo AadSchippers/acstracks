@@ -28,12 +28,32 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
-                {% if request.user.username %}                  
-                    <li class="usermenu"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
-                    <li class="usermenu"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
-                    <li class="usermenu"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
-                    <li class="usermenu"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
-                    <li class="usermenu"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
+                {% if request.user.username %}
+                    {% if page_name == "Home" %}                  
+                        <li class="usermenu_selected"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
+                    {% else %}
+                        <li class="usermenu"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
+                    {% endif %}
+                    {% if page_name == "Statistics" %}                  
+                        <li class="usermenu_selected"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
+                    {% else %}
+                        <li class="usermenu"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
+                    {% endif %}
+                    {% if page_name == "Heatmap" %}                  
+                        <li class="usermenu_selected"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
+                    {% else %}
+                        <li class="usermenu"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
+                    {% endif %}
+                    {% if page_name == "Publish" %}                  
+                        <li class="usermenu_selected"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
+                    {% else %}
+                        <li class="usermenu"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
+                    {% endif %}
+                    {% if page_name == "Preferences" %}                  
+                        <li class="usermenu_selected"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
+                    {% else %}
+                        <li class="usermenu"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
+                    {% endif %}
                 {% else %}
                     <li class="disabled"><a href="{% url 'track_list'%}" onclick=processFiles()"><b>Home</b></a></li>
                     <li class="disabled"><a href="{% url 'show_statistics'%}" onclick=processFiles()"><b>Statistics</b></a></li>
@@ -48,16 +68,16 @@
                 {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    {% if request.user.username %}                  
-                    <li class="dropdown usermenu">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
-                            <span class="glyphicon glyphicon-user"></span><b> User {{ request.user.username }} </b>
-                            <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                        <li><a href="/password/" onclick=processFiles()>Change password</a></li>
-                        <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
-                        </ul>
-                    </li>
+                    {% if request.user.username %}
+                            <li class="dropdown usermenu">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
+                                <span class="glyphicon glyphicon-user"></span><b> User {{ request.user.username }} </b>
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                            <li><a href="/password/" onclick=processFiles()>Change password</a></li>
+                            <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                            </ul>
+                        </li>
                     {% else %}                
                         <li class="dropdown disabled">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">

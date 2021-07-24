@@ -253,6 +253,10 @@ a, a:active, a:visited, a:hover, a:link {
   }
 
   .usermenu:hover {
-    background-color: rgb(255, 105, 180);  
+    background-color: violet;  
     }
-  
+
+  .usermenu_selected {
+    background-color: darkviolet;  
+    }
+    

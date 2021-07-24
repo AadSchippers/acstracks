@@ -432,7 +432,7 @@ def get_bike_profiles(request):
     return listbike_profiles
 
 
-def get_bike_profile_filters(request):
+def get_bike_profile_filters(request, multiple_profiles=True):
     dictbike_profiles = Track.objects.values(
         'profile'
         ).distinct().filter(user=request.user)
@@ -447,7 +447,8 @@ def get_bike_profile_filters(request):
     listbike_profile_filters = []
     for lp in listbike_profiles:
         if lp:
-            listbike_profile_filters.append(lp)
+            if multiple_profiles:
+                listbike_profile_filters.append(lp)
             alist = lp.split('+')
             for l1 in alist:
                 listbike_profile_filters.append(l1)
@@ -600,7 +601,7 @@ def heatmap(request, profile=None, year=None):
 
     make_heatmap(request, all_tracks, map_filename)
 
-    return render(request, 'acstracks_app/show_heartmap.html', {
+    return render(request, 'acstracks_app/show_heatmap.html', {
         "profile_filter": profile,
         "bike_profile_filters": bike_profile_filters,
         "date_start": date_start,
@@ -831,7 +832,10 @@ def process_preferences(request):
             form = PreferenceForm()
 
     return render(
-        request, 'acstracks_app/preference_form.html', {'form': form}
+        request, 'acstracks_app/preference_form.html', {
+            'form': form,
+            'page_name': "Preferences",
+            }
         )
 
 
@@ -872,92 +876,89 @@ def cleanup(request):
 
     return render(request, 'acstracks_app/cleanup.html', {
         'obsolete_files': obsolete_files,
-        'page_name': "Cleanup",
+        'page_name': "Preferences",
         }
     )
 
 
 @login_required(login_url='/login/')
 def publish(request):
+    if request.method == "POST":
+        profile = request.POST.get('Profile')
+
+        if profile:
+            map_filename = (
+                request.user.username+"_"+profile+"_public.html"
+            )
+            tracks = Track.objects.filter(
+                user=request.user,
+                public_track=True,
+                profile__icontains=profile,
+                )
+
+            all_tracks = []
+            for atrack in tracks:
+                all_tracks.append(gather_heatmap_data(
+                    request, atrack.storagefilename, atrack.name, map_filename
+                    ))
+
+            make_heatmap(
+                request, all_tracks, map_filename,
+                settings.LINE_COLOR, settings.NORMAL_OPACITY, True
+                )
+
+            full_map_filename = (
+                "/static/maps/" +
+                map_filename
+            )
+
     tracks = Track.objects.filter(
         user=request.user,
         public_track=True,
         )
 
     try:
-        preference = Preference.objects.get(user=request.user)
-    except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
-
-    try:
         statistics = compute_statistics(tracks)
     except Exception:
         statistics = {}
 
-    public_url = (
-        request.scheme + "://" +
-        request.get_host() +
-        "/publictrack/"
-        )
+    bike_profile_filters = get_bike_profile_filters(request, False)
 
-    map_filename = (
-        request.user.username+"_public.html"
-    )
+    fs = FileSystemStorage(location='')
+    files = fs.listdir(settings.MAPS_ROOT)[1]
+    published_files = []
+    for f in files:
+        if f.startswith(request.user.username+"_"):
+            if f.endswith("_public.html"):
+                published_name = f.split(
+                    request.user.username+'_')[1].rsplit('_public.html'
+                    )[0]
+                published_url = (
+                    request.scheme + "://" +
+                    request.get_host() +
+                    "/public/" +
+                    request.user.username +
+                    "/" +
+                    published_name
+                    )
+                published_href = published_url.replace(' ', '%20')
 
-    full_map_filename = (
-        "/static/maps/" +
-        request.user.username+"_public.html"
-    )
+                published_files.append(tuple([published_name, published_url, published_href]))                  
 
-    basemap_filename = (
-        "/static/maps/" +
-        "public_base.html"
-    )
-    all_tracks = []
-    for atrack in tracks:
-        all_tracks.append(gather_heatmap_data(
-            request, atrack.storagefilename, atrack.name, map_filename
-            ))
-
-    make_heatmap(
-        request, all_tracks, map_filename,
-        settings.LINE_COLOR, settings.NORMAL_OPACITY, True
-        )
-
-    return render(request, 'acstracks_app/publictracks.html', {
+    return render(request, 'acstracks_app/publish.html', {
         'tracks': tracks,
         'statistics': statistics,
-        'public_url': public_url,
-        'link_to_detail_page': preference.link_to_detail_page,
-        'map_filename': full_map_filename,
-        'link_to_detail_page': preference.link_to_detail_page,
-        'basemap_filename': basemap_filename,
+        'bike_profile_filters': bike_profile_filters,
+        'published_files': published_files,
+        'page_name': "Publish",
         }
     )
 
 
-def public_tracks(request, username):
-    try:
-        user = User.objects.get(username=username)
-        tracks = Track.objects.filter(
-            user=user,
-            public_track=True,
-            )
-    except Exception:
-        tracks = []
-
-    try:
-        preference = Preference.objects.get(user=user)
-        link_to_detail_page = preference.link_to_detail_page
-    except Exception:
-        link_to_detail_page = False
-
-    try:
-        statistics = compute_statistics(tracks)
-    except Exception:
-        statistics = {}
+def public_tracks(request, username=None, profile=None):
+    tracks = []
+    statistics = {}
+    link_to_detail_page = False
 
     public_url = (
         request.scheme + "://" +
@@ -965,15 +966,39 @@ def public_tracks(request, username):
         "/publictrack/"
         )
 
-    full_map_filename = (
-        "/static/maps/" +
-        username+"_public.html"
-    )
-
     basemap_filename = (
         "/static/maps/" +
         "public_base.html"
     )
+
+    full_map_filename = basemap_filename
+
+    if username and profile:
+        try:
+            user = User.objects.get(username=username)
+            tracks = Track.objects.filter(
+                user=user,
+                public_track=True,
+                profile__icontains=profile,
+                )
+        except Exception:
+            tracks = []
+
+        try:
+            preference = Preference.objects.get(user=user)
+            link_to_detail_page = preference.link_to_detail_page
+        except Exception:
+            link_to_detail_page = False
+
+        try:
+            statistics = compute_statistics(tracks)
+        except Exception:
+            statistics = {}
+
+        full_map_filename = (
+            "/static/maps/" +
+            username+"_"+profile.replace(' ', '%20')+"_public.html"
+        )
 
     return render(request, 'acstracks_app/publictracks.html', {
         'tracks': tracks,
@@ -1043,6 +1068,6 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'preference': preference,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
-        'page_name': "Shared track",
+        'page_name': "Publish",
         }
     )

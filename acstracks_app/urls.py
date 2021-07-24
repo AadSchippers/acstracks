@@ -17,7 +17,13 @@ urlpatterns = [
         views.publictrack_detail,
         name='publictrack_detail'
         ),
+    path(
+        'public/<str:username>/<str:profile>',
+        views.public_tracks,
+        name='public_tracks'
+        ),
     path('public/<str:username>', views.public_tracks, name='public_tracks'),
+    path('public', views.public_tracks, name='public_tracks'),
     url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
     url(r'^password/$', auth_views.PasswordChangeView.as_view(
         success_url=reverse_lazy('track_list'),
