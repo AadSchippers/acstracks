@@ -585,12 +585,12 @@ def heatmap(request, profile=None, year=None):
     bike_profile_filters = get_bike_profile_filters(request)
 
     map_filename = (
-        request.user.username+"-heatmap.html"
+        request.user.username+"_heatmap.html"
     )
 
     full_map_filename = (
         "/static/maps/" +
-        request.user.username+"-heatmap.html"
+        request.user.username+"_heatmap.html"
     )
 
     all_tracks = []
