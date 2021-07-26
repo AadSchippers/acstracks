@@ -69,25 +69,37 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if request.user.username %}
-                            <li class="dropdown usermenu">
+                        {% if page_name == "User" %}                  
+                            <li class="dropdown usermenu_selected">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
                                 <span class="glyphicon glyphicon-user"></span><b> User {{ request.user.username }} </b>
                                 <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/password/" onclick=processFiles()>Change password</a></li>
+                                    <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                        <li class="dropdown usermenu">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
+                            <span class="glyphicon glyphicon-user"></span><b> User {{ request.user.username }} </b>
+                            <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                            <li><a href="/password/" onclick=processFiles()>Change password</a></li>
-                            <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                                <li><a href="/password/" onclick=processFiles()>Change password</a></li>
+                                <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
                             </ul>
                         </li>
+                    {% endif %}
                     {% else %}                
                         <li class="dropdown disabled">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                 <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
                                 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                            <li><a href="/password/" onclick=processFiles()>Change password</a></li>
-                            <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
-                            </ul>
-                        </li>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/password/" onclick=processFiles()>Change password</a></li>
+                                    <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                                </ul>
+                            </li>
                     {% endif %}                
                 </ul>
             </div>

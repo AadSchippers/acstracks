@@ -1,7 +1,6 @@
 from django.urls import path, reverse_lazy
 from django.conf.urls import url
-from django.contrib.auth import views as auth_views
-from . import views
+from . import classviews, views
 
 urlpatterns = [
     path('', views.track_list, name='track_list'),
@@ -24,8 +23,8 @@ urlpatterns = [
         ),
     path('public/<str:username>', views.public_tracks, name='public_tracks'),
     path('public', views.public_tracks, name='public_tracks'),
-    url(r'^login/$', auth_views.LoginView.as_view(), name='login'),
-    url(r'^password/$', auth_views.PasswordChangeView.as_view(
+    url(r'^login/$', classviews.MyLoginView.as_view(), name='login'),
+    url(r'^password/$', classviews.MyPasswordChangeView.as_view(
         success_url=reverse_lazy('track_list'),
         template_name='registration/password.html'
         ), name='password'),
