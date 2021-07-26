@@ -890,11 +890,17 @@ def publish(request):
             map_filename = (
                 request.user.username+"_"+profile+"_public.html"
             )
-            tracks = Track.objects.filter(
-                user=request.user,
-                public_track=True,
-                profile__icontains=profile,
-                )
+            if profile == "All":
+                tracks = Track.objects.filter(
+                    user=request.user,
+                    public_track=True,
+                    )
+            else:
+                tracks = Track.objects.filter(
+                    user=request.user,
+                    public_track=True,
+                    profile__icontains=profile,
+                    )
 
             all_tracks = []
             for atrack in tracks:
@@ -906,11 +912,6 @@ def publish(request):
                 request, all_tracks, map_filename,
                 settings.LINE_COLOR, settings.NORMAL_OPACITY, True
                 )
-
-            full_map_filename = (
-                "/static/maps/" +
-                map_filename
-            )
 
     tracks = Track.objects.filter(
         user=request.user,
@@ -943,7 +944,9 @@ def publish(request):
                     )
                 published_href = published_url.replace(' ', '%20')
 
-                published_files.append(tuple([published_name, published_url, published_href]))                  
+                published_files.append(tuple(
+                    [published_name, published_url, published_href]
+                    ))
 
     return render(request, 'acstracks_app/publish.html', {
         'tracks': tracks,
@@ -976,11 +979,17 @@ def public_tracks(request, username=None, profile=None):
     if username and profile:
         try:
             user = User.objects.get(username=username)
-            tracks = Track.objects.filter(
-                user=user,
-                public_track=True,
-                profile__icontains=profile,
-                )
+            if profile == "All":
+                tracks = Track.objects.filter(
+                    user=user,
+                    public_track=True,
+                    )
+            else:
+                tracks = Track.objects.filter(
+                    user=user,
+                    public_track=True,
+                    profile__icontains=profile,
+                    )
         except Exception:
             tracks = []
 
