@@ -68,7 +68,7 @@
             <div class="col-2"></div>
             <div class="col-4">
                 <h3>Published profiles</h3>
-                <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+                <table id="a-table" style="overflow-x:auto;" class="table-hover scalefont">
                     <thead>
                         <th>Profile</th>
                         <th>URL</th>
@@ -77,7 +77,8 @@
                 {% for name, url, href in published_files %}
                     <tr>
                         <td><a href={{ href }}>{{ name }}</a></td>
-                        <td>{{ url }}</td>
+                        <td><a href={{ href }}>{{ url }}</a></td>
+                        <td><a href="{% url 'unpublish' profile=name %}"><i class="glyphicon glyphicon-trash"></i></a></td>
                     </tr>
                 {% endfor %}
                 </table>

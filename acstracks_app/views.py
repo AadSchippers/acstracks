@@ -958,6 +958,25 @@ def publish(request):
     )
 
 
+@login_required(login_url='/login/')
+def unpublish(request, profile=None):
+    fs = FileSystemStorage(location='')
+    map_filename = (
+        settings.MAPS_ROOT +
+        "/" +
+        request.user.username +
+        "_" +
+        profile+"_public.html"
+    )
+    if fs.exists(map_filename):
+        try:
+            fs.delete(map_filename)
+        except Exception:
+            pass
+
+    return redirect('publish')
+
+
 def public_tracks(request, username=None, profile=None):
     tracks = []
     statistics = {}

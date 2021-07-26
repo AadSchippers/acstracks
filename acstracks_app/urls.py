@@ -11,6 +11,7 @@ urlpatterns = [
     path('heatmap/<str:profile>,<str:year>', views.heatmap, name='heatmap'),
     path('heatmap/', views.heatmap, name='heatmap'),
     path('publish/', views.publish, name='publish'),
+    path('unpublish/<str:profile>', views.unpublish, name='unpublish'),
     path(
         'publictrack/<str:publickey>',
         views.publictrack_detail,
