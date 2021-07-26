@@ -977,37 +977,47 @@ def public_tracks(request, username=None, profile=None):
     full_map_filename = basemap_filename
 
     if username and profile:
-        try:
-            user = User.objects.get(username=username)
-            if profile == "All":
-                tracks = Track.objects.filter(
-                    user=user,
-                    public_track=True,
-                    )
-            else:
-                tracks = Track.objects.filter(
-                    user=user,
-                    public_track=True,
-                    profile__icontains=profile,
-                    )
-        except Exception:
+        fs = FileSystemStorage(location='')
+        map_filename = username+"_"+profile+"_public.html"
+        if fs.exists(settings.MAPS_ROOT+"/"+map_filename):
+            try:
+                user = User.objects.get(username=username)
+                if profile == "All":
+                    tracks = Track.objects.filter(
+                        user=user,
+                        public_track=True,
+                        )
+                else:
+                    tracks = Track.objects.filter(
+                        user=user,
+                        public_track=True,
+                        profile__icontains=profile,
+                        )
+            except Exception:
+                tracks = []
+
+            try:
+                preference = Preference.objects.get(user=user)
+                link_to_detail_page = preference.link_to_detail_page
+            except Exception:
+                link_to_detail_page = False
+
+            try:
+                statistics = compute_statistics(tracks)
+            except Exception:
+                statistics = {}
+
+            full_map_filename = (
+                "/static/maps/" +
+                map_filename.replace(' ', '%20')
+            )
+
+        else:
+            full_map_filename = basemap_filename
             tracks = []
-
-        try:
-            preference = Preference.objects.get(user=user)
-            link_to_detail_page = preference.link_to_detail_page
-        except Exception:
             link_to_detail_page = False
-
-        try:
-            statistics = compute_statistics(tracks)
-        except Exception:
             statistics = {}
 
-        full_map_filename = (
-            "/static/maps/" +
-            username+"_"+profile.replace(' ', '%20')+"_public.html"
-        )
 
     return render(request, 'acstracks_app/publictracks.html', {
         'tracks': tracks,
