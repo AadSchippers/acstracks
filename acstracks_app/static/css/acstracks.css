@@ -116,11 +116,16 @@ body {
 }
 
 div.detail {
-    background-color: transparent;
-    width: 100%;
-    height: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+div.row {
+  margin-right: 0px;
+  margin-left: -15px;
 }
 
 table, th, td {
