@@ -286,6 +286,7 @@ def track_detail(request, pk):
                 atrack,
                 None,
                 True,
+                True,
                 False
                 )
         )
@@ -295,6 +296,7 @@ def track_detail(request, pk):
             preference.intermediate_points_selected,
             atrack,
             map_filename,
+            True,
             False,
             False
             )
@@ -303,8 +305,9 @@ def track_detail(request, pk):
             request,
             atrack.storagefilename,
             preference.intermediate_points_selected,
-            None,
+            atrack,
             map_filename,
+            False,
             False,
             False
             )
@@ -398,7 +401,8 @@ def parse_file(
                 trk.storagefilename,
                 intermediate_points_selected,
                 trk,
-                False,
+                None,
+                True,
                 False,
                 False
                 )
@@ -843,7 +847,7 @@ def recalculate_tracks(request):
     tracks = Track.objects.filter(user=request.user)
     for track in tracks:
         process_gpx_file(
-            request, track.storagefilename, 0, track, False, False, False
+            request, track.storagefilename, 0, track, None, True, False, False
             )
 
     return
@@ -1087,6 +1091,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
             intermediate_points_selected,
             atrack,
             None,
+            True,
             False,
             True
         )
@@ -1095,8 +1100,9 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         request,
         atrack.storagefilename,
         intermediate_points_selected,
-        None,
+        atrack,
         map_filename,
+        False,
         False,
         False
         )

@@ -20,7 +20,8 @@ from .exceptions import *
 
 def process_gpx_file(
     request, filename, intermediate_points_selected,
-    atrack=None, map_filename=None, savecsv=False, downloadgpx=False
+    atrack=None, map_filename=None, updatetrack=False,
+    savecsv=False, downloadgpx=False
 ):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
@@ -210,14 +211,15 @@ def process_gpx_file(
             "points flagged {str(iFlagged)}"
             )
 
-    if atrack:
+    if updatetrack:
         update_track(
-            atrack, points_info, elevationthreshold, maxspeedcappingfactor
+            atrack, points, points_info, elevationthreshold, maxspeedcappingfactor
             )
 
     if map_filename:
         make_map(
             request,
+            atrack,
             points,
             points_info,
             filename,
@@ -235,7 +237,7 @@ def process_gpx_file(
 
 
 def update_track(
-    atrack, points_info, elevationthreshold, maxspeedcappingfactor
+    atrack, points, points_info, elevationthreshold, maxspeedcappingfactor
 ):
 
     last = len(points_info) - 1
@@ -266,6 +268,11 @@ def update_track(
     trkMaxspeed3 = 0
     trkMaxspeed4 = 0
     trkMaxcadence = 0
+    trkMaxspeedIndex = 0
+    trkMaxspeedIndex1 = 0
+    trkMaxspeedIndex2 = 0
+    trkMaxspeedIndex3 = 0
+    trkMaxspeedIndex4 = 0
     trkMinheartrate = 999
     trkMaxheartrate = 0
     trkMaxcadence = 0
@@ -276,6 +283,12 @@ def update_track(
     trkBest20 = trkAvgspeed
     trkBest30 = trkAvgspeed
     trkBest60 = trkAvgspeed
+    trkbest20_start_pointindex = 0
+    trkbest20_end_pointindex = 0
+    trkbest30_start_pointindex = 0
+    trkbest30_end_pointindex = 0
+    trkbest60_start_pointindex = 0
+    trkbest60_end_pointindex = 0
     PointIndex1 = 0
 
     while PointIndex1 < len(points_info)-1:
@@ -290,14 +303,19 @@ def update_track(
             )
         except Exception:
             pass
+
         if avgMaxSpeed > trkMaxspeed1:
             trkMaxspeed1 = avgMaxSpeed
+            trkMaxspeedIndex1 = PointIndex1
         elif avgMaxSpeed > trkMaxspeed2:
             trkMaxspeed2 = avgMaxSpeed
+            trkMaxspeedIndex2 = PointIndex1
         elif avgMaxSpeed > trkMaxspeed3:
             trkMaxspeed3 = avgMaxSpeed
+            trkMaxspeedIndex3 = PointIndex1
         elif avgMaxSpeed > trkMaxspeed4:
             trkMaxspeed4 = avgMaxSpeed
+            trkMaxspeedIndex4 = PointIndex1
 
         if points_info[PointIndex1][5]:
             if points_info[PointIndex1][5] > trkMaxheartrate:
@@ -335,6 +353,8 @@ def update_track(
                         Best20 = float((distance_t / time_t) * 3.6)
                         if Best20 > trkBest20:
                             trkBest20 = Best20
+                            trkbest20_start_pointindex = PointIndex1
+                            trkbest20_end_pointindex = PointIndex2
                     except Exception:
                         pass
             if not best30_done:
@@ -344,6 +364,8 @@ def update_track(
                         Best30 = float((distance_t / time_t) * 3.6)
                         if Best30 > trkBest30:
                             trkBest30 = Best30
+                            trkbest30_start_pointindex = PointIndex1
+                            trkbest30_end_pointindex = PointIndex2
                     except Exception:
                         pass
             if not best60_done:
@@ -353,6 +375,8 @@ def update_track(
                         Best60 = float((distance_t / time_t) * 3.6)
                         if Best60 > trkBest60:
                             trkBest60 = Best60
+                            trkbest60_start_pointindex = PointIndex1
+                            trkbest60_end_pointindex = PointIndex2
                     except Exception:
                         pass
             PointIndex2 += 1
@@ -360,12 +384,16 @@ def update_track(
 
     if trkMaxspeed1 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed1
+        trkMaxspeedIndex = trkMaxspeedIndex1
     elif trkMaxspeed2 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed2
+        trkMaxspeedIndex = trkMaxspeedIndex2
     elif trkMaxspeed3 <= trkMaxspeed4 * float(maxspeedcappingfactor):
         trkMaxspeed = trkMaxspeed3
+        trkMaxspeedIndex = trkMaxspeedIndex3
     else:
         trkMaxspeed = trkMaxspeed4
+        trkMaxspeedIndex = trkMaxspeedIndex4
 
     getcontext().prec = 2
 
@@ -374,9 +402,16 @@ def update_track(
     atrack.timelength = trkTimelength
     atrack.avgspeed = round(trkAvgspeed, 2)
     atrack.best20 = round(trkBest20, 2)
+    atrack.best20_start_pointindex = trkbest20_start_pointindex
+    atrack.best20_end_pointindex = trkbest20_end_pointindex
     atrack.best30 = round(trkBest30, 2)
+    atrack.best30_start_pointindex = trkbest30_start_pointindex
+    atrack.best30_end_pointindex = trkbest30_end_pointindex
     atrack.best60 = round(trkBest60, 2)
+    atrack.best60_start_pointindex = trkbest60_start_pointindex
+    atrack.best60_end_pointindex = trkbest60_end_pointindex
     atrack.maxspeed = round(trkMaxspeed, 2)
+    atrack.maxspeed_pointindex = trkMaxspeedIndex
     atrack.totalascent = round(totalascent, 0)
     atrack.totaldescent = round(totaldescent, 0)
     atrack.avgcadence = trkAvgcadence
@@ -391,7 +426,7 @@ def update_track(
 
 
 def make_map(
-    request, points, points_info, filename,
+    request, atrack, points, points_info, filename,
     intermediate_points_selected, map_filename
 ):
 
@@ -428,51 +463,38 @@ def make_map(
     if ip > 0:
         for x in range(len(points)):
             distance = float(points_info[x][1])
-            if distance < previous_marker_distance + ip:
-                continue
-            previous_marker_distance = distance
-            i = i + ip
-            time = points_info[x][0]
-            duration = points_info[x][2]
-            moving_duration = points_info[x][3]
-            speed = points_info[x][4]
-            try:
-                avgspeed = float(
-                    (points_info[x][1] / moving_duration.seconds) * 3.6
-                    )
-            except Exception:
-                avgspeed = 0
-            heartrate = points_info[x][5]
-            avgheartrate = points_info[x][6]
-            cadence = points_info[x][7]
-            avgcadence = points_info[x][8]
-            tooltip_text = (
-                'Intermediate point ' +
-                str(i/1000) + ' km, ' +
-                str(speed) + ' km/h'
-                )
-            tooltip_style = 'color: #700394; font-size: 0.85vw'
-            tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
 
-            html_popup = make_html_popup(
-                str(i),
-                time,
-                duration,
-                moving_duration,
-                distance,
-                speed,
-                avgspeed,
-                heartrate,
-                avgheartrate,
-                cadence,
-                avgcadence,
-                )
-            popup = folium.Popup(html_popup, max_width=400)
-            folium.Marker(
-                points[x],
-                icon=folium.Icon(color=settings.MARKER_COLOR),
-                tooltip=tooltip, popup=popup
-                ).add_to(my_map)
+            if ip <= 10000:
+                if distance < previous_marker_distance + ip:
+                    continue
+                previous_marker_distance = distance
+                i = i + ip
+                make_marker(my_map, points, points_info, x, distance, i, 'Intermediate point ')
+
+            if ip == 20000:
+                if x > 0: 
+                    if x == atrack.best20_start_pointindex:
+                        make_marker(my_map, points, points_info, x, distance, distance, 'Start best 20 minutes ')
+                    elif x == atrack.best20_end_pointindex:
+                        make_marker(my_map, points, points_info, x, distance, distance, 'End best 20 minutes ')
+
+            if ip == 30000:
+                if x > 0: 
+                    if x == atrack.best30_start_pointindex:
+                        make_marker(my_map, points, points_info, x, distance, distance, 'Start best 30 minutes ')
+                    elif x == atrack.best30_end_pointindex:
+                        make_marker(my_map, points, points_info, x, distance, distance, 'End best 30 minutes ')
+
+            if ip == 60000:
+                if x > 0: 
+                    if x == atrack.best60_start_pointindex:
+                        make_marker(my_map, points, points_info, x, distance, distance, 'Start best 60 minutes ')
+                    elif x == atrack.best60_end_pointindex:
+                        make_marker(my_map, points, points_info, x, distance, distance, 'End best 60 minutes ')
+
+            if ip == 99999:
+                if x > 0 and x == atrack.maxspeed_pointindex:
+                    make_marker(my_map, points, points_info, x, distance, distance, 'Maximum speed ')
 
     # start marker
     tooltip_text = 'Start, click for details'
@@ -543,6 +565,52 @@ def make_map(
             map_filename
         )
     my_map.save(mapfilename)
+
+    return
+
+
+def make_marker(my_map, points, points_info, x, distance, i, tooltip_text):
+    time = points_info[x][0]
+    duration = points_info[x][2]
+    moving_duration = points_info[x][3]
+    speed = points_info[x][4]
+    try:
+        avgspeed = float(
+            (points_info[x][1] / moving_duration.seconds) * 3.6
+            )
+    except Exception:
+        avgspeed = 0
+    heartrate = points_info[x][5]
+    avgheartrate = points_info[x][6]
+    cadence = points_info[x][7]
+    avgcadence = points_info[x][8]
+    tooltip_text = (
+        tooltip_text +
+        str(round(i/1000, 2)) + ' km, ' +
+        str(speed) + ' km/h'
+        )
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+
+    html_popup = make_html_popup(
+        str(round(i)),
+        time,
+        duration,
+        moving_duration,
+        distance,
+        speed,
+        avgspeed,
+        heartrate,
+        avgheartrate,
+        cadence,
+        avgcadence,
+        )
+    popup = folium.Popup(html_popup, max_width=400)
+    folium.Marker(
+        points[x],
+        icon=folium.Icon(color=settings.MARKER_COLOR),
+        tooltip=tooltip, popup=popup
+        ).add_to(my_map)
 
     return
 
@@ -728,7 +796,7 @@ def make_html_popup(
     line_title = (
         "<h3 style='color: #700394; font-weight: bold; " +
         "font-size: 1.5vw'>Intermediate point " +
-        str(int(intermediate_point)/1000)+" km</h3>"
+        str(round(int(intermediate_point)/1000, 2))+" km</h3>"
     )
     line_table_start = (
         "<table style='color: #700394; font-size: 0.85vw; width: 100%'>"

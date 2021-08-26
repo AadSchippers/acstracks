@@ -45,6 +45,26 @@
                                 {% else %}
                                     <option value=10000>every 10 km</option>
                                 {% endif %}
+                                {% if preference.intermediate_points_selected == 20000 %}
+                                    <option value=20000 selected="selected">best 20 minutes</option>
+                                {% else %}
+                                    <option value=20000>best 20 minutes</option>
+                                {% endif %}
+                                {% if preference.intermediate_points_selected == 30000 %}
+                                    <option value=30000 selected="selected">best 30 minutes</option>
+                                {% else %}
+                                    <option value=30000>best 30 minutes</option>
+                                {% endif %}
+                                {% if preference.intermediate_points_selected == 60000 %}
+                                    <option value=60000 selected="selected">best 60 minutes</option>
+                                {% else %}
+                                    <option value=60000>best 60 minutes</option>
+                                {% endif %}
+                                {% if preference.intermediate_points_selected == 99999 %}
+                                    <option value=99999 selected="selected">maximum speed</option>
+                                {% else %}
+                                    <option value=99999>maximum speed</option>
+                                {% endif %}
                             </select>
                         </form>   
                     </td>
