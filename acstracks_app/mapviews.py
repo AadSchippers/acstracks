@@ -494,7 +494,7 @@ def make_map(
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex:
-                    make_marker(my_map, points, points_info, x, distance, distance, 'Maximum speed ')
+                    make_marker(my_map, points, points_info, x, distance, distance, 'Maximum speed ', atrack.maxspeed)
 
     # start marker
     tooltip_text = 'Start, click for details'
@@ -569,11 +569,12 @@ def make_map(
     return
 
 
-def make_marker(my_map, points, points_info, x, distance, i, tooltip_text):
+def make_marker(my_map, points, points_info, x, distance, i, tooltip_text, speed=None):
     time = points_info[x][0]
     duration = points_info[x][2]
     moving_duration = points_info[x][3]
-    speed = points_info[x][4]
+    if not speed:
+        speed = points_info[x][4]
     try:
         avgspeed = float(
             (points_info[x][1] / moving_duration.seconds) * 3.6
@@ -584,6 +585,7 @@ def make_marker(my_map, points, points_info, x, distance, i, tooltip_text):
     avgheartrate = points_info[x][6]
     cadence = points_info[x][7]
     avgcadence = points_info[x][8]
+    popup_title_text = tooltip_text + 'at '
     tooltip_text = (
         tooltip_text +
         str(round(i/1000, 2)) + ' km, ' +
@@ -593,6 +595,7 @@ def make_marker(my_map, points, points_info, x, distance, i, tooltip_text):
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
 
     html_popup = make_html_popup(
+        popup_title_text,
         str(round(i)),
         time,
         duration,
@@ -781,6 +784,7 @@ def calculate_using_haversine(point, previous_point):
 
 
 def make_html_popup(
+        title_text,
         intermediate_point,
         time,
         duration,
@@ -795,7 +799,7 @@ def make_html_popup(
 ):
     line_title = (
         "<h3 style='color: #700394; font-weight: bold; " +
-        "font-size: 1.5vw'>Intermediate point " +
+        "font-size: 1.5vw'>" + title_text +
         str(round(int(intermediate_point)/1000, 2))+" km</h3>"
     )
     line_table_start = (
