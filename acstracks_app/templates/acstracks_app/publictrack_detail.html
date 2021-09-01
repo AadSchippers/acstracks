@@ -96,6 +96,30 @@
                     <td style="text-align:right">{{ atrack.avgspeed }}</td>
                 </tr>
                 <tr>
+                    <td><b>Best&nbsp;20&nbsp;minutes&nbsp;(km/h)</b></td>
+                    {% if atrack.best20 > 0 %}
+                        <td style="text-align:right">{{ atrack.best20 }}</td>
+                    {% else %}
+                        <td style="text-align:right">-</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td><b>Best&nbsp;30&nbsp;minutes&nbsp;(km/h)</b></td>
+                    {% if atrack.best30 > 0 %}
+                        <td style="text-align:right">{{ atrack.best30 }}</td>
+                    {% else %}
+                        <td style="text-align:right">-</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td><b>Best&nbsp;60&nbsp;minutes&nbsp;(km/h)</b></td>
+                    {% if atrack.best60 > 0 %}
+                        <td style="text-align:right">{{ atrack.best60 }}</td>
+                    {% else %}
+                        <td style="text-align:right">-</td>
+                    {% endif %}
+                </tr>
+                <tr>
                     <td><b>Maximum&nbsp;speed&nbsp;(km/h)</b></td>
                     <td style="text-align:right">{{ atrack.maxspeed }}</td>
                 </tr>

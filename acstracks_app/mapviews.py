@@ -280,9 +280,9 @@ def update_track(
     totaldescent = 0
     previous_elevation = points_info[0][9]
 
-    trkBest20 = trkAvgspeed
-    trkBest30 = trkAvgspeed
-    trkBest60 = trkAvgspeed
+    trkBest20 = 0
+    trkBest30 = 0
+    trkBest60 = 0
     trkbest20_start_pointindex = 0
     trkbest20_end_pointindex = 0
     trkbest30_start_pointindex = 0
@@ -472,21 +472,21 @@ def make_map(
                 make_marker(my_map, points, points_info, x, distance, i, 'Intermediate point ')
 
             if ip == 20000:
-                if x > 0: 
+                if x > 0:
                     if x == atrack.best20_start_pointindex:
                         make_marker(my_map, points, points_info, x, distance, distance, 'Start best 20 minutes ')
                     elif x == atrack.best20_end_pointindex:
                         make_marker(my_map, points, points_info, x, distance, distance, 'End best 20 minutes ')
 
             if ip == 30000:
-                if x > 0: 
+                if x > 0:
                     if x == atrack.best30_start_pointindex:
                         make_marker(my_map, points, points_info, x, distance, distance, 'Start best 30 minutes ')
                     elif x == atrack.best30_end_pointindex:
                         make_marker(my_map, points, points_info, x, distance, distance, 'End best 30 minutes ')
 
             if ip == 60000:
-                if x > 0: 
+                if x > 0:
                     if x == atrack.best60_start_pointindex:
                         make_marker(my_map, points, points_info, x, distance, distance, 'Start best 60 minutes ')
                     elif x == atrack.best60_end_pointindex:
