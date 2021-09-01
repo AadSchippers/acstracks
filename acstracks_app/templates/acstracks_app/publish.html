@@ -19,7 +19,7 @@
                             <th>Track name</th>
                             <th style="text-align:right;">Length (km)</th>
                             <th style="text-align:right;">Duration</th>
-                            <th>Profile</th>
+                            <th>Tag</th>
                         </thead>
                         <tbody>
                             {% for track in tracks %}
@@ -49,7 +49,7 @@
                     <hr>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <label for="Profile">Profile:</label>
+                        <label for="Profile">Tag:</label>
                         <select name="Profile" id="profile">
                         {% if bike_profile_filters %}
                             {% for profile in bike_profile_filters %}
@@ -67,10 +67,10 @@
             </div>
             <div class="col-2"></div>
             <div class="col-4">
-                <h3>Published profiles</h3>
+                <h3>Published tags</h3>
                 <table id="a-table" style="overflow-x:auto;" class="table-hover scalefont">
                     <thead>
-                        <th>Profile</th>
+                        <th>Tag</th>
                         <th>URL</th>
                     </thead>
                     <tbody>

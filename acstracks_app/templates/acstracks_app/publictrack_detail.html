@@ -8,7 +8,7 @@
             <table class="scalefont">
                 <tr>
                     {% if preference.show_intermediate_points %}
-                        <td valign="Top"><b>Intermediate points</b></td>
+                        <td valign="Top"><b>Markers</b></td>
                         <td valign="Bottom" style="text-align:right">
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
@@ -76,7 +76,7 @@
                     <td style="text-align:right">{{ atrack.name }}</td>
                 </tr>
                 <tr>
-                    <td><b>Profile</b></td>
+                    <td><b>Tag</b></td>
                     {% if atrack.profile %}
                         <td style="text-align:right">{{ atrack.profile }}</td>
                     {% else %}

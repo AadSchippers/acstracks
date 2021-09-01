@@ -480,7 +480,7 @@ def show_statistics(request):
         preference.save()
 
     annual_statistics = "Statistics per year"
-    profile_statistics = "Statistics per profile"
+    profile_statistics = "Statistics per tag"
 
     bike_profile_filters = get_bike_profile_filters(request)
 

@@ -208,7 +208,7 @@
         <th valign="Top">
             <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <label for="Profile">Profile:</label>
+            <label for="Profile">Tag:</label>
             <select name="Profile" id="profile" onchange=this.form.submit()>
             {% if bike_profile_filters %}
                 {% for profile in bike_profile_filters %}
