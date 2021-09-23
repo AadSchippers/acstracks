@@ -1009,13 +1009,13 @@ def public_tracks(request, username=None, profile=None):
                     tracks = Track.objects.filter(
                         user=user,
                         public_track=True,
-                        )
+                        ).order_by('created_date')
                 else:
                     tracks = Track.objects.filter(
                         user=user,
                         public_track=True,
                         profile__icontains=profile,
-                        )
+                        ).order_by('created_date')
             except Exception:
                 tracks = []
 
@@ -1041,9 +1041,10 @@ def public_tracks(request, username=None, profile=None):
             link_to_detail_page = False
             statistics = {}
 
-
     return render(request, 'acstracks_app/publictracks.html', {
         'tracks': tracks,
+        'username': username,
+        'profile': profile,
         'statistics': statistics,
         'public_url': public_url,
         'link_to_detail_page': link_to_detail_page,
@@ -1063,11 +1064,12 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         return redirect('track_list')
 
     try:
-        preference = Preference.objects.get(user=request.user)
+        preference = Preference.objects.get(user=atrack.user)
+        show_intermediate_points = preference.show_intermediate_points
+        show_download_gpx = preference.show_download_gpx
     except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
+        show_intermediate_points = False
+        show_download_gpx = False
 
     map_filename = (
         atrack.user.username+"-public.html"
@@ -1109,7 +1111,8 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'atrack': atrack,
-        'preference': preference,
+        'show_intermediate_points': show_intermediate_points,
+        'show_download_gpx': show_download_gpx,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
         'page_name': "Publish",

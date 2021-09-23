@@ -91,13 +91,12 @@
                         </li>
                     {% endif %}
                     {% else %}                
-                        <li class="dropdown disabled">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <li class="dropdown usermenu">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
                                 <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
                                 <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/password/" onclick=processFiles()>Change password</a></li>
-                                    <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                                    <li><a href="/login/?next=/" onclick=processFiles()>Login</a></li>
                                 </ul>
                             </li>
                     {% endif %}                
