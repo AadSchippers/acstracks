@@ -55,16 +55,16 @@
                         <li class="usermenu"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
                     {% endif %}
                 {% else %}
-                    <li class="disabled"><a href="{% url 'track_list'%}" onclick=processFiles()"><b>Home</b></a></li>
-                    <li class="disabled"><a href="{% url 'show_statistics'%}" onclick=processFiles()"><b>Statistics</b></a></li>
-                    <li class="disabled"><a href="{% url 'heatmap'%}" onclick=processFiles()><b>Heatmap</b></a></li>
-                    <li class="disabled"><a href="{% url 'publish'%}" onclick=processFiles()><b>Publish</b></a></li>
-                    <li class="disabled"><a href="{% url 'preference'%}" onclick=processFiles()><b>Preferences</b></a></li>
+                    <li class="disabled"><a href=""><b>Home</b></a></li>
+                    <li class="disabled"><a href=""><b>Statistics</b></a></li>
+                    <li class="disabled"><a href=""><b>Heatmap</b></a></li>
+                    <li class="disabled"><a href=""><b>Publish</b></a></li>
+                    <li class="disabled"><a href=""><b>Preferences</b></a></li>
                 {% endif %}
                 {% if request.user.is_superuser %}                  
                     <li class="usermenu"><a href="/admin/" onclick=processFiles() style="color: white"><b>Admin panel</b></a></li>
                 {% else %}
-                    <li class="disabled"><a href="/admin/" onclick=processFiles()><b>Admin panel</b></a></li>
+                    <li class="disabled"><a href=""><b>Admin panel</b></a></li>
                 {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
