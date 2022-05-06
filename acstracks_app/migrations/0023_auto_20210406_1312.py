@@ -12,12 +12,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='preference',
-            name='gpx_contains_cadence',
+            name='show_cadence',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
             model_name='preference',
-            name='gpx_contains_heartrate',
+            name='show_heartrate',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(

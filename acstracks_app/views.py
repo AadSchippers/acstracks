@@ -752,8 +752,8 @@ def process_preferences(request):
             link_to_detail_page = data['link_to_detail_page']
             show_intermediate_points = data['show_intermediate_points']
             show_download_gpx = data['show_download_gpx']
-            gpx_contains_heartrate = data['gpx_contains_heartrate']
-            gpx_contains_cadence = data['gpx_contains_cadence']
+            show_heartrate = data['show_heartrate']
+            show_cadence = data['show_cadence']
 
             try:
                 preference = Preference.objects.get(user=request.user)
@@ -774,8 +774,8 @@ def process_preferences(request):
                 preference.link_to_detail_page = link_to_detail_page
                 preference.show_intermediate_points = show_intermediate_points
                 preference.show_download_gpx = show_download_gpx
-                preference.gpx_contains_heartrate = gpx_contains_heartrate
-                preference.gpx_contains_cadence = gpx_contains_cadence
+                preference.show_heartrate = show_heartrate
+                preference.show_cadence = show_cadence
                 preference.save()
             except Exception:
                 old_speedthreshold = settings.SPEEDTHRESHOLD
@@ -797,8 +797,8 @@ def process_preferences(request):
                     link_to_detail_page=link_to_detail_page,
                     show_intermediate_points=show_intermediate_points,
                     show_download_gpx=show_download_gpx,
-                    gpx_contains_heartrate=gpx_contains_heartrate,
-                    gpx_contains_cadence=gpx_contains_cadence,
+                    show_heartrate=show_heartrate,
+                    show_cadence=show_cadence,
                 )
 
             if (
@@ -829,8 +829,8 @@ def process_preferences(request):
                 'show_intermediate_points':
                     preference.show_intermediate_points,
                 'show_download_gpx': preference.show_download_gpx,
-                'gpx_contains_heartrate': preference.gpx_contains_heartrate,
-                'gpx_contains_cadence': preference.gpx_contains_cadence,
+                'show_heartrate': preference.show_heartrate,
+                'show_cadence': preference.show_cadence,
             })
         except Exception:
             form = PreferenceForm()
@@ -1066,9 +1066,13 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
     try:
         preference = Preference.objects.get(user=atrack.user)
         show_intermediate_points = preference.show_intermediate_points
+        show_heartrate = preference.show_heartrate
+        show_cadence = preference.show_cadence
         show_download_gpx = preference.show_download_gpx
     except Exception:
         show_intermediate_points = False
+        show_heartrate = False
+        show_cadence = False
         show_download_gpx = False
 
     map_filename = (
@@ -1112,6 +1116,8 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'atrack': atrack,
         'show_intermediate_points': show_intermediate_points,
+        'show_heartrate': show_heartrate,
+        'show_cadence': show_cadence,
         'show_download_gpx': show_download_gpx,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),

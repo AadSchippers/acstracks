@@ -76,8 +76,8 @@ class Preference(models.Model):
     link_to_detail_page = models.BooleanField(default=False)
     show_intermediate_points = models.BooleanField(default=False)
     show_download_gpx = models.BooleanField(default=False)
-    gpx_contains_heartrate = models.BooleanField(default=False)
-    gpx_contains_cadence = models.BooleanField(default=False)
+    show_heartrate = models.BooleanField(default=False)
+    show_cadence = models.BooleanField(default=False)
     date_start = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )

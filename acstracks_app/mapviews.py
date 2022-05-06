@@ -694,13 +694,6 @@ def download_gpx(request, atrack, points, points_info):
 
     gpx_timezone_info = timezone(settings.GPX_TIME_ZONE)
 
-    try:
-        preference = Preference.objects.get(user=request.user)
-    except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
-
     writer = csv.writer(response)
 
     writer.writerow([str("<?xml version='1.0' encoding='UTF-8'?>")])
@@ -740,28 +733,27 @@ def download_gpx(request, atrack, points, points_info):
             writer.writerow([str(
                 "        <ele>"+str(round(points_info[row][9], 2))+"</ele>")]
                 )
-            writer.writerow([str(
-                "        <time>" +
-                make_aware(parse(
-                    points_info[row][0])
-                    ).astimezone(gpx_timezone_info).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                    ) + "</time>")]
-                )
-            writer.writerow([str("        <extensions>")])
-            if preference.gpx_contains_heartrate:
+            if request.user == atrack.user:
+                writer.writerow([str(
+                    "        <time>" +
+                    make_aware(parse(
+                        points_info[row][0])
+                        ).astimezone(gpx_timezone_info).strftime(
+                        "%Y-%m-%dT%H:%M:%SZ"
+                        ) + "</time>")]
+                    )
+                writer.writerow([str("        <extensions>")])
                 writer.writerow([str(
                     "          <heartrate>" +
                     str(points_info[row][5]) +
                     "</heartrate>")]
                     )
-            if preference.gpx_contains_cadence:
                 writer.writerow([str(
                     "          <cadence>" +
                     str(points_info[row][7]) +
                     "</cadence>")]
                     )
-            writer.writerow([str("        </extensions>")])
+                writer.writerow([str("        </extensions>")])
             writer.writerow([str("      </trkpt>")])
         row += 1
 
