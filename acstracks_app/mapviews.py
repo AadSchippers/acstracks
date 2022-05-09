@@ -662,7 +662,7 @@ def save_csv(request, atrack, points, points_info):
         'heartrate',
         'average heartrate',
         'cadence',
-        'mincadence',
+        'average cadence',
         ])
 
     row = 0
