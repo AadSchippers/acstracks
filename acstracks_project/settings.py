@@ -130,13 +130,13 @@ MAPS_URL = '/acstracks_app/static/maps/'
 MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
 
 # Folium map colours
-LINE_COLOR = "red"
+LINE_COLOR = "purple"
 MARKER_COLOR = 'purple'
 NOT_SELECTED_COLOR = 'gray'
 START_COLOR = "pink"
 END_COLOR = "darkpurple"
 CONNECT_COLOR = "darkred"
-HEATMAP_LINE_COLOR = "darkred"
+HEATMAP_LINE_COLOR = "purple"
 HEATMAP_OPACITY = 0.5
 NORMAL_OPACITY = 1
 
