@@ -138,6 +138,7 @@ END_COLOR = "darkpurple"
 CONNECT_COLOR = "darkred"
 HEATMAP_LINE_COLOR = "purple"
 HEATMAP_OPACITY = 0.5
+HEATMAP_LINE_WEIGHT = 3.5
 NORMAL_OPACITY = 1
 
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
