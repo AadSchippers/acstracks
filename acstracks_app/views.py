@@ -485,6 +485,8 @@ def show_statistics(request):
     bike_profile_filters = get_bike_profile_filters(request)
 
     first_year = int(get_first_date(request.user)[0:4])
+    last_year = datetime.now().year
+
 
     alltracks = []
     if preference.statistics_type == "annual":
@@ -512,6 +514,16 @@ def show_statistics(request):
         page_headline = profile_statistics
         for profile in bike_profile_filters:
             stats_collection = []
+            date_start = str(first_year) + "-01-01"
+            date_end = str(last_year) + "-12-31"
+            tracks = get_tracks(
+                request, date_start, date_end, None, profile
+                )
+            statistics = compute_statistics(tracks)
+            stats_collection.append({
+                "year": "Total",
+                "statistics": statistics,
+            })
             current_year = datetime.now().year
             while current_year >= first_year:
                 date_start = str(current_year) + "-01-01"
