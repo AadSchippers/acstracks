@@ -693,7 +693,8 @@ def compute_statistics(tracks):
     if total_length > 0:
         total_avgspeed = round((total_avgspeed / total_length), 2)
 
-    total_length = round((total_length), 2)
+    # total_length = round((total_length), 2)
+    total_length = "{:.2f}".format(total_length)
 
     total_duration = (
         str(int(t0 / 3600)) + ":" +
