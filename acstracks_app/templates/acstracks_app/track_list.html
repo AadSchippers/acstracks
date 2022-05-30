@@ -32,18 +32,20 @@
                                     </div>
                                 </td>
                                 <td align="right" style="width:80%">
-                                    <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <div class="btn scalefont">
                                             <button type="submit" name="csvexport" id="id_csvexport" value="True">Export all to a .csv file</button>
                                         </div>
-                                    </form>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="file-path-wrapper col-12">
+                                        <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ gpxfilenames }}">
+                                    </div>
                                 </td>
                             </tr>
                         </table>
-                        <div class="file-path-wrapper col-12">
-                            <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ gpxfilenames }}">
-                        </div>
                     </div>
                 </td>
 

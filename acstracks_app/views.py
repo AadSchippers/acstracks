@@ -1187,7 +1187,7 @@ def exporttracks(request):
         'public_track', 
         ])
 
-    AllTracks = Track.objects.all()
+    AllTracks = Track.objects.filter(user=request.user)
     for aTrack in AllTracks:
         writer.writerow([
             aTrack.displayfilename, 
