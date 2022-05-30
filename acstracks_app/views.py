@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.timezone import make_aware
@@ -134,37 +135,49 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
     date_start = make_aware(parse(date_start + " 00:00:00"))
     date_end = make_aware(parse(date_end + " 23:59:59"))
 
-    if profile_filter != "All":
-        tracks1 = Track.objects.filter(
-            user=request.user,
-            profile__startswith=profile_filter,
-            created_date__gte=date_start,
-            created_date__lte=date_end,
-            )
-        tracks2 = Track.objects.filter(
-            user=request.user,
-            profile__icontains='+' + profile_filter,
-            created_date__gte=date_start,
-            created_date__lte=date_end,
-            )
-        alltracks = tracks1 | tracks2
-        if order_by:
-            tracks = alltracks.distinct().order_by(order_by)
-        else:
-            tracks = alltracks.distinct()
-    else:
-        if order_by:
-            tracks = Track.objects.filter(
+    try:
+        if profile_filter != "All":
+            tracks1 = Track.objects.filter(
                 user=request.user,
+                profile__startswith=profile_filter,
                 created_date__gte=date_start,
                 created_date__lte=date_end,
-                ).order_by(order_by)
-        else:
-            tracks = Track.objects.filter(
-                user=request.user,
-                created_date__gte=date_start,
-                created_date__lte=date_end
                 )
+            tracks2 = Track.objects.filter(
+                user=request.user,
+                profile__icontains='+' + profile_filter,
+                created_date__gte=date_start,
+                created_date__lte=date_end,
+                )
+            alltracks = tracks1 | tracks2
+            if order_by:
+                tracks = alltracks.distinct().order_by(order_by)
+            else:
+                tracks = alltracks.distinct()
+        else:
+            if order_by:
+                tracks = Track.objects.filter(
+                    user=request.user,
+                    created_date__gte=date_start,
+                    created_date__lte=date_end,
+                    ).order_by(order_by)
+            else:
+                tracks = Track.objects.filter(
+                    user=request.user,
+                    created_date__gte=date_start,
+                    created_date__lte=date_end
+                    )
+    except Exception as e:
+        if len(e.args) > 0:
+            messagetext = e.args[0] + " "
+        else:
+            messagetext = type(e)
+        messages.error(
+            request,
+            "Error retrieving files: " +
+            messagetext
+            )
+        return
 
     return tracks
 
@@ -427,8 +440,27 @@ def parse_file(
                 " is not an activity file, " +
                 " file skipped.")
 
-    except Exception:
-        pass
+    except IntegrityError:
+        # error processing file, file skipped
+        messages.error(
+            request,
+            "Error processing " +
+            displayfilename +
+            ", file skipped because already present.")
+        return
+
+    except Exception as e:
+        # error processing file, file skipped
+        if len(e.args) > 0:
+            messagetext = e.args[0] + " "
+        else:
+            messagetext = "Error processing "
+        messages.error(
+            request,
+            messagetext +
+            displayfilename +
+            ", file skipped.")
+        return
 
     return
 
