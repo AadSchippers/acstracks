@@ -73,6 +73,10 @@ def track_list(request):
                 preference.profile_filter = request.POST.get('Profile')
             preference.save()
 
+        csvexport = request.POST.get('csvexport')
+        if csvexport: 
+            return exporttracks(request)
+
     bike_profile_filters = get_bike_profile_filters(request)
 
     tracks = get_tracks(
@@ -201,6 +205,10 @@ def track_detail(request, pk):
         atrack.user.username+".html"
     )
 
+    if len(atrack.displayfilename) > 28:
+        displayfilename = atrack.displayfilename[:25] + "..."
+    else:
+        displayfilename = atrack.displayfilename
     bike_profiles = get_bike_profiles(request)
 
     csvsave = None
@@ -229,6 +237,7 @@ def track_detail(request, pk):
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
+                'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
@@ -247,6 +256,7 @@ def track_detail(request, pk):
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
+                'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
@@ -262,6 +272,7 @@ def track_detail(request, pk):
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
+                'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
@@ -314,6 +325,7 @@ def track_detail(request, pk):
 
     return render(request, 'acstracks_app/track_detail.html', {
                 'atrack': atrack,
+                'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
@@ -1137,3 +1149,68 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'page_name': "Publish",
         }
     )
+
+@login_required(login_url='/login/')
+def exporttracks(request):
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        return
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    csvfilename = request.user.username+"_alltracks"+".csv"
+    response['Content-Disposition'] = 'attachment; filename="'+csvfilename+'"'
+
+    writer = csv.writer(response)
+
+    writer.writerow([
+        'displayfilename', 
+        'creator', 
+        'created_date', 
+        'name', 
+        'profile', 
+        'length', 
+        'timelength', 
+        'avgspeed', 
+        'best20', 
+        'best30', 
+        'best60', 
+        'maxspeed', 
+        'totalascent', 
+        'totaldescent', 
+        'avgcadence', 
+        'maxcadence', 
+        'avgheartrate', 
+        'minheartrate', 
+        'maxheartrate', 
+        'public_track', 
+        ])
+
+    AllTracks = Track.objects.all()
+    for aTrack in AllTracks:
+        writer.writerow([
+            aTrack.displayfilename, 
+            aTrack.creator, 
+            aTrack.created_date, 
+            aTrack.name, 
+            aTrack.profile, 
+            aTrack.length, 
+            aTrack.timelength, 
+            aTrack.avgspeed, 
+            aTrack.best20, 
+            aTrack.best30, 
+            aTrack.best60, 
+            aTrack.maxspeed, 
+            aTrack.totalascent, 
+            aTrack.totaldescent, 
+            aTrack.avgcadence, 
+            aTrack.maxcadence, 
+            aTrack.avgheartrate, 
+            aTrack.minheartrate, 
+            aTrack.maxheartrate, 
+            aTrack.public_track, 
+            ])
+
+    return response
+

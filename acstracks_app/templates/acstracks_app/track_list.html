@@ -17,21 +17,36 @@
         <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
             {% csrf_token %}
             <tr>
-                <td style="width:20%">
+                <td style="width:100%">
                     <div class="file-field">
-                        <label for="gpxfile" 
-                                id="gpxfilelabel" 
-                                class="gpxfilelabel save btn btn-default scalefont">
-                                <b>Select one or more GPX files to upload</b>
-                        </label>
-                        <div class="btn">
-                            <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
-                        </div>
+                        <table style="width:100%" class="scalefont" border="0">
+                            <tr>
+                                <td style="width:20%">
+                                    <label for="gpxfile" 
+                                        id="gpxfilelabel" 
+                                        class="gpxfilelabel save btn btn-default scalefont">
+                                        <b>Select one or more GPX files to upload</b>
+                                    </label>
+                                    <div class="btn">
+                                        <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
+                                    </div>
+                                </td>
+                                <td align="right" style="width:80%">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="btn scalefont">
+                                            <button type="submit" name="csvexport" id="id_csvexport" value="True">Export all to a .csv file</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
                         <div class="file-path-wrapper col-12">
                             <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ gpxfilenames }}">
                         </div>
                     </div>
                 </td>
+
             </tr>
             <tr>
                 <td style="width:20%">
