@@ -9,6 +9,7 @@ urlpatterns = [
     path('cleanup/', views.cleanup, name='cleanup'),
     path('statistics/', views.show_statistics, name='show_statistics'),
     path('heatmap/<str:profile>,<str:year>', views.heatmap, name='heatmap'),
+    path('heatmap/<str:profile>', views.heatmap, name='heatmap'),
     path('heatmap/', views.heatmap, name='heatmap'),
     path('publish/', views.publish, name='publish'),
     path('unpublish/<str:profile>', views.unpublish, name='unpublish'),

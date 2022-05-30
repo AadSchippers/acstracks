@@ -73,6 +73,8 @@
                         <tr>
                             {% if page_headline == annual_statistics %}
                                 <td><a href="{% url 'heatmap' profile=stats_collection.profile year=track.year %}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
+                            {% elif stats_collection.year == 'Total' %}
+                                <td><a href="{% url 'heatmap' profile=track.profile %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
                             {% else %}
                                 <td><a href="{% url 'heatmap' profile=track.profile year=stats_collection.year %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
                             {% endif %}
