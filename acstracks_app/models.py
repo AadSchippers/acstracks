@@ -36,6 +36,7 @@ class Track(models.Model):
     avgheartrate = models.IntegerField(null=True, blank=True, default=None)
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
+    trackeffort = models.IntegerField(null=True, blank=True, default=None)
     public_track = models.BooleanField(default=False)
     publickey = models.CharField(
         max_length=255, null=True, blank=True, default=None
@@ -78,6 +79,7 @@ class Preference(models.Model):
     show_download_gpx = models.BooleanField(default=False)
     show_heartrate = models.BooleanField(default=False)
     show_cadence = models.BooleanField(default=False)
+    show_trackeffort = models.BooleanField(default=False)
     date_start = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )

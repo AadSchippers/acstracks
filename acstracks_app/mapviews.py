@@ -243,8 +243,9 @@ def update_track(
     last = len(points_info) - 1
     created_date = points_info[0][0]
     trkLength = float(points_info[last][1]) / 1000
+    trkSeconds = int(points_info[last][3].seconds)
     trkTimelength = time.strftime(
-        '%H:%M:%S', time.gmtime(int(points_info[last][3].seconds))
+        '%H:%M:%S', time.gmtime(trkSeconds)
         )
 
     try:
@@ -419,6 +420,8 @@ def update_track(
     atrack.avgheartrate = trkAvgheartrate
     atrack.minheartrate = trkMinheartrate
     atrack.maxheartrate = trkMaxheartrate
+    if atrack.avgheartrate:
+        atrack.trackeffort = int(round((trkSeconds * atrack.avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
 
     atrack.save()
 

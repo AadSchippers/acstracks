@@ -23,4 +23,5 @@ class PreferenceForm(forms.ModelForm):
             'show_download_gpx',
             'show_heartrate',
             'show_cadence',
+            'show_trackeffort',
             )

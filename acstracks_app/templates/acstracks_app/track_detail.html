@@ -193,6 +193,12 @@
                         <td style="text-align:right">{{ atrack.maxheartrate }}</td>
                     </tr>
                 {% endif %}
+                {% if atrack.trackeffort  > 0 %}
+                    <tr>
+                        <td><b>Track&nbsp;effort</b></td>
+                        <td style="text-align:right">{{ atrack.trackeffort }}</td>
+                    </tr>
+                {% endif %}
                 <form method="post"  id="form4" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="public_track_changed" value="True">

@@ -210,6 +210,20 @@
                                             <option value="maxspeed_descending">Maximum speed (descending)</option>
                                         {% endif %}
                                     {% endif %}
+                                    {% if preference.show_trackeffort %}
+                                        {% if preference.order_selected == "trackeffort_ascending" %}
+                                            <option value="trackeffort_ascending" selected="selected">Track effort (ascending)</option>
+                                        {% else %}
+                                            <option value="trackeffort_ascending">Track effort (ascending)</option>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if preference.show_trackeffort %}
+                                        {% if preference.order_selected == "trackeffort_descending" %}
+                                            <option value="trackeffort_descending" selected="selected">Track effort (descending)</option>
+                                        {% else %}
+                                            <option value="trackeffort_descending">Track effort (descending)</option>
+                                        {% endif %}
+                                    {% endif %}
                                     </select>
                             </form>   
                         </td>
@@ -259,6 +273,9 @@
         {% if preference.show_avgheartrate %}
             <th valign="Top" style="text-align:right">Average<br>heartrate</th>
         {% endif %}
+        {% if preference.show_trackeffort %}
+            <th valign="Top" style="text-align:right">Track<br>effort</th>
+        {% endif %}
         {% if preference.show_is_public_track %}
             <th valign="Top" style="text-align:right">Public<br>track</th>
         {% endif %}
@@ -296,6 +313,13 @@
                 {% if preference.show_avgheartrate %}
                     {% if track.avgheartrate %}
                         <td  style="text-align:right">{{ track.avgheartrate }}</td>
+                    {% else %}
+                        <td  style="text-align:right">-</td>
+                    {% endif %}
+                {% endif %}
+                {% if preference.show_trackeffort %}
+                    {% if track.trackeffort %}
+                        <td  style="text-align:right">{{ track.trackeffort }}</td>
                     {% else %}
                         <td  style="text-align:right">-</td>
                     {% endif %}

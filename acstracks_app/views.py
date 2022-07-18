@@ -132,6 +132,12 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
     if order_selected == "maxspeed_descending":
         order_by = "-maxspeed"
 
+    if order_selected == "trackeffort_descending":
+        order_by = "-trackeffort"
+
+    if order_selected == "trackeffort_ascending":
+        order_by = "trackeffort"
+
     date_start = make_aware(parse(date_start + " 00:00:00"))
     date_end = make_aware(parse(date_end + " 23:59:59"))
 
@@ -811,6 +817,7 @@ def process_preferences(request):
             show_download_gpx = data['show_download_gpx']
             show_heartrate = data['show_heartrate']
             show_cadence = data['show_cadence']
+            show_trackeffort = data['show_trackeffort']
 
             try:
                 preference = Preference.objects.get(user=request.user)
@@ -833,6 +840,7 @@ def process_preferences(request):
                 preference.show_download_gpx = show_download_gpx
                 preference.show_heartrate = show_heartrate
                 preference.show_cadence = show_cadence
+                preference.show_trackeffort = show_trackeffort
                 preference.save()
             except Exception:
                 old_speedthreshold = settings.SPEEDTHRESHOLD
@@ -856,6 +864,7 @@ def process_preferences(request):
                     show_download_gpx=show_download_gpx,
                     show_heartrate=show_heartrate,
                     show_cadence=show_cadence,
+                    show_trackeffort=show_trackeffort,
                 )
 
             if (
@@ -888,6 +897,7 @@ def process_preferences(request):
                 'show_download_gpx': preference.show_download_gpx,
                 'show_heartrate': preference.show_heartrate,
                 'show_cadence': preference.show_cadence,
+                'show_trackeffort': preference.show_trackeffort,
             })
         except Exception:
             form = PreferenceForm()

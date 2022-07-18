@@ -220,14 +220,27 @@
                         </tr>
                         <tr>
                             <td>
+                                <label class="checkcontainer">Track effort
+                                <input type="checkbox"
+                                    name="show_trackeffort"
+                                    {% if form.show_trackeffort.value %}
+                                        checked="checked"
+                                    {% endif %}
+                                    id="show_trackeffort">
+                                <span class="checkmark"></span>
+                            </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <label class="checkcontainer">Public track indicator
-                                <input type="checkbox" 
-                                    name="show_is_public_track" 
+                                <input type="checkbox"
+                                    name="show_is_public_track"
                                     {% if form.show_is_public_track.value %}
-                                        checked="checked" 
+                                        checked="checked"
                                     {% endif %}
                                     id="show_is_public_track">
-                                <span class="checkmark"></span> 
+                                <span class="checkmark"></span>
                             </label>
                             </td>
                         </tr>
