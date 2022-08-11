@@ -662,6 +662,7 @@ def save_csv(request, atrack, points, points_info):
         'duration',
         'moving_duration',
         'speed (km/h)',
+        'average speed (km/h)'
         'heartrate',
         'average heartrate',
         'cadence',
@@ -670,6 +671,13 @@ def save_csv(request, atrack, points, points_info):
 
     row = 0
     while row < len(points):
+        moving_duration = points_info[row][3]
+        try:
+            avgspeed = float(
+                (points_info[row][1] / moving_duration.seconds) * 3.6
+                )
+        except Exception:
+            avgspeed = 0
         writer.writerow([
             points[row][0],
             points[row][1],
@@ -679,6 +687,7 @@ def save_csv(request, atrack, points, points_info):
             points_info[row][2],
             points_info[row][3],
             points_info[row][4],
+            round(avgspeed, 2),
             points_info[row][5],
             int(points_info[row][6]),
             points_info[row][7],
