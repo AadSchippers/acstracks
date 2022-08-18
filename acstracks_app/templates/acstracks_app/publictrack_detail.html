@@ -167,6 +167,16 @@
                         </tr>
                     {% endif %}
                 {% endif %}
+
+                {% if show_trackeffort_public %}
+                    {% if atrack.trackeffort > 0 %}
+                        <tr>
+                            <td><b>Track&nbsp;effort</b></td>
+                            <td style="text-align:right">{{ atrack.trackeffort }}</td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+
             </table>
             <hr>
             <table class="scalefont">

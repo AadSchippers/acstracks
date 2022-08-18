@@ -80,6 +80,7 @@ class Preference(models.Model):
     show_heartrate = models.BooleanField(default=False)
     show_cadence = models.BooleanField(default=False)
     show_trackeffort = models.BooleanField(default=False)
+    show_trackeffort_public = models.BooleanField(default=False)
     date_start = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )

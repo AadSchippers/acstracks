@@ -24,4 +24,5 @@ class PreferenceForm(forms.ModelForm):
             'show_heartrate',
             'show_cadence',
             'show_trackeffort',
+            'show_trackeffort_public',
             )

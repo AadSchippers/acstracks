@@ -818,6 +818,7 @@ def process_preferences(request):
             show_heartrate = data['show_heartrate']
             show_cadence = data['show_cadence']
             show_trackeffort = data['show_trackeffort']
+            show_trackeffort_public = data['show_trackeffort_public']
 
             try:
                 preference = Preference.objects.get(user=request.user)
@@ -841,6 +842,7 @@ def process_preferences(request):
                 preference.show_heartrate = show_heartrate
                 preference.show_cadence = show_cadence
                 preference.show_trackeffort = show_trackeffort
+                preference.show_trackeffort_public = show_trackeffort_public
                 preference.save()
             except Exception:
                 old_speedthreshold = settings.SPEEDTHRESHOLD
@@ -865,6 +867,7 @@ def process_preferences(request):
                     show_heartrate=show_heartrate,
                     show_cadence=show_cadence,
                     show_trackeffort=show_trackeffort,
+                    show_trackeffort_public=show_trackeffort_public,
                 )
 
             if (
@@ -898,6 +901,7 @@ def process_preferences(request):
                 'show_heartrate': preference.show_heartrate,
                 'show_cadence': preference.show_cadence,
                 'show_trackeffort': preference.show_trackeffort,
+                'show_trackeffort_public': preference.show_trackeffort_public,
             })
         except Exception:
             form = PreferenceForm()
@@ -1135,11 +1139,13 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         show_intermediate_points = preference.show_intermediate_points
         show_heartrate = preference.show_heartrate
         show_cadence = preference.show_cadence
+        show_trackeffort_public = preference.show_trackeffort_public
         show_download_gpx = preference.show_download_gpx
     except Exception:
         show_intermediate_points = False
         show_heartrate = False
         show_cadence = False
+        show_trackeffort_public = False
         show_download_gpx = False
 
     map_filename = (
@@ -1186,6 +1192,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'show_heartrate': show_heartrate,
         'show_cadence': show_cadence,
         'show_download_gpx': show_download_gpx,
+        'show_trackeffort_public': show_trackeffort_public,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
         'page_name': "Publish",

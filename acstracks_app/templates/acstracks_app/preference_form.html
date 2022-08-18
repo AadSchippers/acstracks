@@ -104,7 +104,7 @@
                                         {% if form.link_to_detail_page.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="link_to_detail_page">
+                                        id="id_link_to_detail_page">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -128,7 +128,7 @@
                                         {% if form.show_intermediate_points.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="show_intermediate_points">
+                                        id="id_show_intermediate_points">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -152,7 +152,7 @@
                                         {% if form.show_download_gpx.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="show_download_gpx">
+                                        id="id_show_download_gpx">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -165,7 +165,7 @@
                                     {% if form.show_totaldescent.value %}
                                         checked="checked" 
                                     {% endif %}
-                                    id="id_show_totaladecent">
+                                    id="id_show_totaldescent">
                                 <span class="checkmark"></span> 
                             </label>
                             </td>
@@ -176,7 +176,7 @@
                                         {% if form.show_heartrate.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="show_heartrate">
+                                        id="id_show_heartrate">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -200,7 +200,7 @@
                                         {% if form.show_cadence.value %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="show_cadence">
+                                        id="id_show_cadence">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -217,8 +217,19 @@
                                 <span class="checkmark"></span> 
                             </label>
                             </td>
-                        </tr>
-                        <tr>
+                        <td>
+                            <label class="checkcontainer">Show track effort
+                            <input type="checkbox"
+                                name="show_trackeffort_public"
+                                {% if form.show_trackeffort_public.value %}
+                                    checked="checked"
+                                {% endif %}
+                                id="id_show_trackeffort_public">
+                            <span class="checkmark"></span>
+                        </label>
+                        </td>
+                    </tr>
+                    <tr>
                             <td>
                                 <label class="checkcontainer">Track effort
                                 <input type="checkbox"
@@ -226,7 +237,7 @@
                                     {% if form.show_trackeffort.value %}
                                         checked="checked"
                                     {% endif %}
-                                    id="show_trackeffort">
+                                    id="id_show_trackeffort">
                                 <span class="checkmark"></span>
                             </label>
                             </td>
@@ -239,7 +250,7 @@
                                     {% if form.show_is_public_track.value %}
                                         checked="checked"
                                     {% endif %}
-                                    id="show_is_public_track">
+                                    id="id_show_is_public_track">
                                 <span class="checkmark"></span>
                             </label>
                             </td>
