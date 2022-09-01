@@ -150,7 +150,7 @@ CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension
 SPEEDTHRESHOLD = 3.60
 ELEVATIONTHRESHOLD = 0.25
 MAXSPEEDCAPPINGFACTOR = 1.25
-# effort at 2 hours(7200 sec) and average heartbeat of 150 = 100 (7200*150*150/1620000=100)
-TRACKEFFORTFACTOR = 1620000
+# effort at 2 hours(7200 sec) and avergae speed of 27 and average heartbeat of 150 = 100 (7200*27*150*150/43740000=100)
+TRACKEFFORTFACTOR = 43740000
 
 from .config import *   # noqa

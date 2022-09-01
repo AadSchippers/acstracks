@@ -421,7 +421,7 @@ def update_track(
     atrack.minheartrate = trkMinheartrate
     atrack.maxheartrate = trkMaxheartrate
     if atrack.avgheartrate:
-        atrack.trackeffort = int(round((trkSeconds * atrack.avgheartrate * atrack.avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
+        atrack.trackeffort = int(round((trkSeconds * atrack.avgspeed * atrack.avgheartrate * atrack.avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
 
     atrack.save()
 
