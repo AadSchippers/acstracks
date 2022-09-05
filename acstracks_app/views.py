@@ -1233,7 +1233,8 @@ def exporttracks(request):
         'avgheartrate', 
         'minheartrate', 
         'maxheartrate', 
-        'public_track', 
+        'trackeffort',
+        'public_track',
         ])
 
     AllTracks = Track.objects.filter(user=request.user)
@@ -1258,6 +1259,7 @@ def exporttracks(request):
             aTrack.avgheartrate, 
             aTrack.minheartrate, 
             aTrack.maxheartrate, 
+            aTrack.trackeffort, 
             aTrack.public_track, 
             ])
 

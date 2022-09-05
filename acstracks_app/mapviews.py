@@ -16,6 +16,7 @@ from .models import Preference
 import csv
 from django.http import HttpResponse
 from .exceptions import *
+import math
 
 
 def process_gpx_file(
@@ -421,7 +422,7 @@ def update_track(
     atrack.minheartrate = trkMinheartrate
     atrack.maxheartrate = trkMaxheartrate
     if atrack.avgheartrate:
-        atrack.trackeffort = int(round((trkSeconds * atrack.avgspeed * atrack.avgheartrate * atrack.avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
+        atrack.trackeffort = int(round((math.sqrt(trkSeconds) * atrack.avgheartrate * atrack.avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
 
     atrack.save()
 
