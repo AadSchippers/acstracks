@@ -131,6 +131,7 @@ MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
 
 # Folium map colours
 LINE_COLOR = "purple"
+MAP_LINE_WEIGHT = 2.5
 MARKER_COLOR = 'purple'
 NOT_SELECTED_COLOR = 'gray'
 START_COLOR = "pink"

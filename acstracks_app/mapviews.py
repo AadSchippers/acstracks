@@ -559,7 +559,7 @@ def make_map(
     folium.PolyLine(
         points,
         color=settings.LINE_COLOR,
-        weight=2.5,
+        weight=settings.MAP_LINE_WEIGHT,
         opacity=settings.NORMAL_OPACITY
         ).add_to(my_map)
 
@@ -920,7 +920,7 @@ def make_heatmap(
         request, tracks, map_filename,
         color=settings.HEATMAP_LINE_COLOR,
         opacity=settings.HEATMAP_OPACITY,
-        height=settings.HEATMAP_LINE_WEIGHT,
+        weight=settings.HEATMAP_LINE_WEIGHT,
         show_markers=False
         ):
     ave_lats = []
@@ -968,7 +968,7 @@ def make_heatmap(
             points.append(tuple([p[0], p[1]]))
 
     for track in tracks:
-        my_map = draw_heatmap(request, my_map, track, color, opacity, height, show_markers)
+        my_map = draw_heatmap(request, my_map, track, color, opacity, weight, show_markers)
 
     folium.LayerControl(collapsed=True).add_to(my_map)
 
@@ -982,7 +982,7 @@ def make_heatmap(
     return
 
 
-def draw_heatmap(request, my_map, track, color, opacity, height, show_markers):
+def draw_heatmap(request, my_map, track, color, opacity, weight, show_markers):
     points = []
     for p in track["points"]:
         points.append(tuple([p[0], p[1]]))
@@ -1010,7 +1010,7 @@ def draw_heatmap(request, my_map, track, color, opacity, height, show_markers):
 
     # add lines
     folium.PolyLine(
-        points, color=color, weight=height, opacity=opacity
+        points, color=color, weight=weight, opacity=opacity
         ).add_to(my_map)
 
     return my_map
