@@ -1,5 +1,4 @@
-from django.urls import path, reverse_lazy
-from django.conf.urls import url
+from django.urls import path, re_path, reverse_lazy
 from . import classviews, views
 
 urlpatterns = [
@@ -25,10 +24,10 @@ urlpatterns = [
         ),
     path('public/<str:username>', views.public_tracks, name='public_tracks'),
     path('public', views.public_tracks, name='public_tracks'),
-    url(r'^login/$', classviews.MyLoginView.as_view(), name='login'),
-    url(r'^password/$', classviews.MyPasswordChangeView.as_view(
+    re_path(r'^login/$', classviews.MyLoginView.as_view(), name='login'),
+    re_path(r'^password/$', classviews.MyPasswordChangeView.as_view(
         success_url=reverse_lazy('track_list'),
         template_name='registration/password.html'
         ), name='password'),
-    url(r'^logout/$', views.logout_view, name='logout'),
+    re_path(r'^logout/$', views.logout_view, name='logout'),
 ]
