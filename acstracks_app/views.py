@@ -1143,7 +1143,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         show_intermediate_points = preference.show_intermediate_points
         show_heartrate = preference.show_heartrate
         show_cadence = preference.show_cadence
-        show_trackeffort_public = False
+        show_trackeffort_public = preference.show_trackeffort_public
         show_download_gpx = preference.show_download_gpx
     except Exception:
         show_intermediate_points = False
