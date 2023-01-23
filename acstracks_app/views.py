@@ -886,7 +886,7 @@ def process_preferences(request):
                 'elevationthreshold': preference.elevationthreshold,
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
-                'force_recalculate': preference.force_recalculate,
+                'force_recalculate': False,
                 'show_avgspeed': preference.show_avgspeed,
                 'show_maxspeed': preference.show_maxspeed,
                 'show_totalascent': preference.show_totalascent,

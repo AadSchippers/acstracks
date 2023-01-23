@@ -73,13 +73,14 @@ class Preference(models.Model):
     show_totaldescent = models.BooleanField(default=True)
     show_avgcadence = models.BooleanField(default=True)
     show_avgheartrate = models.BooleanField(default=True)
+    show_trackeffort = models.BooleanField(default=True)
     show_is_public_track = models.BooleanField(default=True)
+    # Preferences for public page
     link_to_detail_page = models.BooleanField(default=False)
     show_intermediate_points = models.BooleanField(default=False)
     show_download_gpx = models.BooleanField(default=False)
     show_heartrate = models.BooleanField(default=False)
     show_cadence = models.BooleanField(default=False)
-    show_trackeffort = models.BooleanField(default=False)
     show_trackeffort_public = models.BooleanField(default=False)
     date_start = models.CharField(
         max_length=255, null=True, blank=True, default=None
