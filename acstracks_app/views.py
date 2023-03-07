@@ -49,7 +49,7 @@ def track_list(request):
                 '-' +
                 file.name
              )
-            fs = FileSystemStorage()
+            fs = FileSystemStorage(settings.MEDIA_ROOT + "/gpx")
             try:
                 fs.delete(storagefilename)
             except Exception:
@@ -379,7 +379,7 @@ def parse_file(
 ):
     try:
         path = os.path.join(
-            settings.MEDIA_ROOT,
+            settings.MEDIA_ROOT + "/gpx",
             storagefilename
         )
         gpxfile = ET.parse(path)
@@ -674,6 +674,7 @@ def heatmap(request, profile=None, year=None):
         "date_end": date_end,
         "statistics": statistics,
         'map_filename': full_map_filename,
+        'preference': preference,
         'page_name': "Heatmap",
         }
     )
@@ -798,13 +799,15 @@ def logout_view(request):
 def process_preferences(request):
     form = PreferenceForm()
     if request.method == "POST":
-        form = PreferenceForm(request.POST)
+        form = PreferenceForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
+            defaultvisuals = (request.POST.get("defaultvisuals") is not None)
             speedthreshold = data['speedthreshold']
             elevationthreshold = data['elevationthreshold']
             maxspeedcappingfactor = data['maxspeedcappingfactor']
             force_recalculate = data['force_recalculate']
+            backgroundimage = data['backgroundimage']
             show_avgspeed = data['show_avgspeed']
             show_maxspeed = data['show_maxspeed']
             show_totalascent = data['show_totalascent']
@@ -825,10 +828,15 @@ def process_preferences(request):
                 old_speedthreshold = preference.speedthreshold
                 old_elevationthreshold = preference.elevationthreshold
                 old_maxspeedcappingfactor = preference.maxspeedcappingfactor
+                old_backgroundimage = preference.backgroundimage
                 preference.speedthreshold = speedthreshold
                 preference.elevationthreshold = elevationthreshold
                 preference.maxspeedcappingfactor = maxspeedcappingfactor
                 preference.force_recalculate = force_recalculate
+                if backgroundimage:
+                    preference.backgroundimage = backgroundimage
+                if defaultvisuals:
+                    preference.backgroundimage = None
                 preference.show_avgspeed = show_avgspeed
                 preference.show_maxspeed = show_maxspeed
                 preference.show_totalascent = show_totalascent
@@ -848,12 +856,14 @@ def process_preferences(request):
                 old_speedthreshold = settings.SPEEDTHRESHOLD
                 old_elevationthreshold = settings.ELEVATIONTHRESHOLD
                 old_maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
+                old_backgroundimage = None
                 preference = Preference.objects.create(
                     user=request.user,
                     speedthreshold=speedthreshold,
                     elevationthreshold=elevationthreshold,
                     maxspeedcappingfactor=maxspeedcappingfactor,
                     force_recalculate=force_recalculate,
+                    backgroundimage = None,
                     show_avgspeed=show_avgspeed,
                     show_maxspeed=show_maxspeed,
                     show_totalascent=show_totalascent,
@@ -877,7 +887,8 @@ def process_preferences(request):
                 old_maxspeedcappingfactor != maxspeedcappingfactor
             ):
                 recalculate_tracks(request)
-            return redirect('track_list')
+            
+            return redirect('preference')
     else:
         try:
             preference = Preference.objects.get(user=request.user)
@@ -887,6 +898,7 @@ def process_preferences(request):
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
                 'force_recalculate': False,
+                'backgroundimage': preference.backgroundimage,
                 'show_avgspeed': preference.show_avgspeed,
                 'show_maxspeed': preference.show_maxspeed,
                 'show_totalascent': preference.show_totalascent,
@@ -1004,6 +1016,13 @@ def publish(request):
 
     bike_profile_filters = get_bike_profile_filters(request, False)
 
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
+
     fs = FileSystemStorage(location='')
     files = fs.listdir(settings.MAPS_ROOT)[1]
     published_files = []
@@ -1032,6 +1051,7 @@ def publish(request):
         'statistics': statistics,
         'bike_profile_filters': bike_profile_filters,
         'published_files': published_files,
+        'preference': preference,
         'page_name': "Publish",
         }
     )
@@ -1123,6 +1143,7 @@ def public_tracks(request, username=None, profile=None):
         'statistics': statistics,
         'public_url': public_url,
         'link_to_detail_page': link_to_detail_page,
+        'preference': preference,
         'map_filename': full_map_filename,
         'basemap_filename': basemap_filename,
         }
@@ -1197,6 +1218,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'show_cadence': show_cadence,
         'show_download_gpx': show_download_gpx,
         'show_trackeffort_public': show_trackeffort_public,
+        'preference': preference,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
         'page_name': "Publish",

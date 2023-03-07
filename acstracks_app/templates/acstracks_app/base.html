@@ -10,7 +10,19 @@
 
         <!-- Load font awesome icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+        {% if preference.backgroundimage %}
+            <style>
+                body {
+                background-image: url('/static/media/{{ preference.backgroundimage }}');
+                }
+            </style>
+        {% elif form.backgroundimage.value %}
+        <style>
+            body {
+            background-image: url('/static/media/{{ form.backgroundimage.value }}');
+            }
+        </style>
+    {% endif%}
     </head>
     <body>
 

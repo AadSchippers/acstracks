@@ -26,6 +26,7 @@ def process_gpx_file(
 ):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
+        "gpx",
         filename
     )
 
@@ -877,7 +878,7 @@ def make_html_popup(
 
 def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
     fullfilename = os.path.join(
-        settings.MEDIA_ROOT,
+        settings.MEDIA_ROOT + "/gpx",
         filename
     )
 

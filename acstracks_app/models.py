@@ -67,6 +67,9 @@ class Preference(models.Model):
         max_digits=6, decimal_places=2, default=1.25
         )
     force_recalculate = models.BooleanField(default=False)
+    backgroundimage = models.FileField(upload_to="img",
+        max_length=255, null=True, blank=True, default=None
+        )
     show_avgspeed = models.BooleanField(default=True)
     show_maxspeed = models.BooleanField(default=True)
     show_totalascent = models.BooleanField(default=True)
