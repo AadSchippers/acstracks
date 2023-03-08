@@ -49,7 +49,7 @@ def track_list(request):
                 '-' +
                 file.name
              )
-            fs = FileSystemStorage(settings.MEDIA_ROOT + "/gpx")
+            fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
             try:
                 fs.delete(storagefilename)
             except Exception:
@@ -362,7 +362,7 @@ def deletetrack(atrack):
 
 
 def deletefile(storagefilename):
-    fs = FileSystemStorage()
+    fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
     try:
         fs.delete(storagefilename)
     except Exception:
@@ -938,7 +938,7 @@ def recalculate_tracks(request):
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
 def cleanup(request):
-    fs = FileSystemStorage()
+    fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 
     if request.method == "POST":
         confirm_delete = request.POST.get('confirm_delete')
@@ -952,14 +952,21 @@ def cleanup(request):
             except Exception:
                 return redirect('track_list')
 
+    obsolete_files = []
     try:
-        files = fs.listdir(settings.MEDIA_ROOT)[1]
-        obsolete_files = []
+        files = fs.listdir(settings.MEDIA_ROOT + "/gpx")[1]
         for f in files:
             if len(Track.objects.filter(storagefilename=f)) == 0:
-                obsolete_files.append(tuple([f, int(((fs.size(f)/1024)+0.5))]))
+                obsolete_files.append(tuple(["./gpx/" + f, int(((fs.size("./gpx/"+ f)/1024)+0.5))]))
     except Exception:
-        return redirect('track_list')
+        pass
+    try:
+        files = fs.listdir(settings.MEDIA_ROOT + "/img")[1]
+        for f in files:
+            if len(Preference.objects.filter(backgroundimage="img/" + f)) == 0:
+                obsolete_files.append(tuple(["./img/" + f, int(((fs.size("./img/"+ f)/1024)+0.5))]))
+    except Exception:
+        pass
 
     return render(request, 'acstracks_app/cleanup.html', {
         'obsolete_files': obsolete_files,
@@ -1023,7 +1030,7 @@ def publish(request):
             user=request.user,
         )
 
-    fs = FileSystemStorage(location='')
+    fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
     files = fs.listdir(settings.MAPS_ROOT)[1]
     published_files = []
     for f in files:
@@ -1059,7 +1066,7 @@ def publish(request):
 
 @login_required(login_url='/login/')
 def unpublish(request, profile=None):
-    fs = FileSystemStorage(location='')
+    fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
     map_filename = (
         settings.MAPS_ROOT +
         "/" +
@@ -1095,7 +1102,7 @@ def public_tracks(request, username=None, profile=None):
     full_map_filename = basemap_filename
 
     if username and profile:
-        fs = FileSystemStorage(location='')
+        fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
         map_filename = username+"_"+profile+"_public.html"
         if fs.exists(settings.MAPS_ROOT+"/"+map_filename):
             try:
