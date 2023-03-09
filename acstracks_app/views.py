@@ -627,13 +627,6 @@ def heatmap(request, profile=None, year=None):
             if not date_end:
                 date_end = str(year) + "-12-31"
     else:
-        try:
-            preference = Preference.objects.get(user=request.user)
-        except Exception:
-            preference = Preference.objects.create(
-                user=request.user,
-            )
-
         if not date_start:
             date_start = preference.date_start
 
@@ -642,6 +635,13 @@ def heatmap(request, profile=None, year=None):
 
         if not profile:
             profile = preference.profile_filter
+
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
 
     tracks = get_tracks(
         request, date_start, date_end, None, profile
