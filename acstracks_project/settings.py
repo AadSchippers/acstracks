@@ -126,8 +126,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media')
 
-MAPS_URL = '/acstracks_app/static/maps/'
-MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media/gpx')
+MAPS_URL = '/static/media/maps/'
+MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media/maps')
 
 # Folium map colours
 LINE_COLOR = "purple"

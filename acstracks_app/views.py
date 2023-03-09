@@ -220,7 +220,7 @@ def track_detail(request, pk):
     )
 
     full_map_filename = (
-        "/static/maps/" +
+        settings.MAPS_URL +
         atrack.user.username+".html"
     )
 
@@ -655,7 +655,7 @@ def heatmap(request, profile=None, year=None):
     )
 
     full_map_filename = (
-        "/static/maps/" +
+        settings.MAPS_URL +
         request.user.username+"_heatmap.html"
     )
 
@@ -852,6 +852,14 @@ def process_preferences(request):
                 preference.show_trackeffort = show_trackeffort
                 preference.show_trackeffort_public = show_trackeffort_public
                 preference.save()
+                if old_backgroundimage:
+                    if old_backgroundimage.name != preference.backgroundimage.name:
+                        fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/img")
+                        try:
+                            fs.delete(old_backgroundimage.name[4:])
+                        except Exception:
+                            pass
+ 
             except Exception:
                 old_speedthreshold = settings.SPEEDTHRESHOLD
                 old_elevationthreshold = settings.ELEVATIONTHRESHOLD
@@ -1030,7 +1038,7 @@ def publish(request):
             user=request.user,
         )
 
-    fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
+    fs = FileSystemStorage(location=settings.MAPS_ROOT)
     files = fs.listdir(settings.MAPS_ROOT)[1]
     published_files = []
     for f in files:
@@ -1049,8 +1057,9 @@ def publish(request):
                     )
                 published_href = published_url.replace(' ', '%20')
 
-                published_files.append(tuple(
-                    [published_name, published_url, published_href]
+                if published_name != 'public.html':
+                    published_files.append(tuple(
+                        [published_name, published_url, published_href]
                     ))
 
     return render(request, 'acstracks_app/publish.html', {
@@ -1066,7 +1075,7 @@ def publish(request):
 
 @login_required(login_url='/login/')
 def unpublish(request, profile=None):
-    fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
+    fs = FileSystemStorage(location=settings.MAPS_ROOT)
     map_filename = (
         settings.MAPS_ROOT +
         "/" +
@@ -1095,14 +1104,14 @@ def public_tracks(request, username=None, profile=None):
         )
 
     basemap_filename = (
-        "/static/maps/" +
+        settings.MAPS_URL +
         "public_base.html"
     )
 
     full_map_filename = basemap_filename
 
     if username and profile:
-        fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/gpx")
+        fs = FileSystemStorage(location=settings.MAPS_ROOT)
         map_filename = username+"_"+profile+"_public.html"
         if fs.exists(settings.MAPS_ROOT+"/"+map_filename):
             try:
@@ -1133,7 +1142,7 @@ def public_tracks(request, username=None, profile=None):
                 statistics = {}
 
             full_map_filename = (
-                "/static/maps/" +
+                settings.MAPS_URL +
                 map_filename.replace(' ', '%20')
             )
 
@@ -1181,12 +1190,12 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         show_download_gpx = False
 
     map_filename = (
-        atrack.user.username+"-public.html"
+        atrack.user.username+"_public.html"
     )
 
     full_map_filename = (
-        "/static/maps/" +
-        atrack.user.username+"-public.html"
+        settings.MAPS_URL +
+        atrack.user.username+"_public.html"
     )
 
     gpxdownload = None
