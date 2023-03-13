@@ -8,5 +8,4 @@ db.sqlite3-journal
 /static
 .DS_Store
 /media
-/acstracks_app/static/maps/
-/acstracks_app/static/
+/acstracks_app/static/media/
