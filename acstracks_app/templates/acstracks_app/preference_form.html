@@ -17,7 +17,7 @@
             </p>
             <div class="row">
                 <div class="col-4">
-                    <table class="scalefont">
+                    <table class="scalefont {{form.colorscheme.value}}">
                         <tr>
                             <td valign="top" style="text-align:left"><b>Speed threshold (km/h):</b></td>
                             <td style="text-align:right">
@@ -75,15 +75,18 @@
             </div>
             <button type="submit" onclick=processFiles()>Apply and save</button>
             <hr>
-            <h3>Visuals</h3>
-            <div class="file-field">
-                <table>
-                    <tr>
+            <h3>Appearence</h3>
+            <table>
+                <tr>
+                    <div class="file-field">
+                        <td>
+                            <label>Background image:</label>
+                        </td>
                         <td>
                             <label for="backgroundimage" 
                                 id="backgroundimagelabel" 
-                                class="gpxfilelabel save btn btn-default scalefont">
-                                <b>Upload a custom background image</b>
+                                class="gpxfilelabel save btn btn-default scalefont {{form.colorscheme.value}}">
+                                <b>Upload</b>
                             </label>
                             <div class="btn">
                                 <input type="file" id="backgroundimage" name="backgroundimage" accept="image/jpeg,image/png" multiple style="display:none">
@@ -94,16 +97,33 @@
                                 <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ backgroundimagenames }}">
                             </div>
                         </td>
-                    </tr>
-                </table>
-            </div>
+                    </div>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="colorscheme">Colorscheme:</label>
+                    </td>
+                    <td>
+                        <select name="colorscheme" id="colorscheme">
+                            {% for a_colorscheme in allcolorschemes %}
+                                {% if a_colorscheme == form.colorscheme.value %}
+                                    <option value="{{ a_colorscheme }}" selected="selected">{{ a_colorscheme }}</option>
+                                {% else %}
+                                    <option value="{{ a_colorscheme }}">{{ a_colorscheme }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <br><br>
             <button type="submit" name="customvisuals" onclick=processFiles()>Apply and save</button>
             &nbsp;or&nbsp;
-            <button type="submit" name="defaultvisuals" onclick=processFiles()>Use default visuals</button>
+            <button type="submit" name="defaultappearence" onclick=processFiles()>Use default appearence</button>
             <hr>
             <div class="row">
                 <div class="col-12">
-                    <table class="scalefont">
+                    <table class="scalefont {{form.colorscheme.value}}">
                             <tr>
                                 <td style="width: 500px;">
                                     <h3>Optional columns</h3>
@@ -114,170 +134,170 @@
                             </tr>
                             <tr>
                                 <td>       
-                                    <label class="checkcontainer">Average speed
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Average speed
                                         <input type="checkbox"
                                             name="show_avgspeed" 
                                             {% if form.show_avgspeed.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_avgspeed">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                                 <td>       
-                                    <label class="checkcontainer">Link to detail page
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Link to detail page
                                         <input type="checkbox"
                                             name="link_to_detail_page" 
                                             {% if form.link_to_detail_page.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_link_to_detail_page">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Maximum speed
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Maximum speed
                                         <input type="checkbox" 
                                             name="show_maxspeed" 
                                             {% if form.show_maxspeed.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_maxspeed">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                                 <td>       
-                                    <label class="checkcontainer">Show markers
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Show markers
                                         <input type="checkbox"
                                             name="show_intermediate_points" 
                                             {% if form.show_intermediate_points.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_intermediate_points">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Total ascent
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Total ascent
                                     <input type="checkbox" 
                                         name="show_totalascent" 
                                         {% if form.show_totalascent.value %}
                                             checked="checked" 
                                         {% endif %}
                                         id="id_show_totalascent">
-                                    <span class="checkmark"></span> 
+                                    <span class="checkmark {{form.colorscheme.value}}"></span> 
                                 </label>
                                 </td>
                                 <td>       
-                                    <label class="checkcontainer">Show download GPX track
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Show download GPX track
                                         <input type="checkbox"
                                             name="show_download_gpx" 
                                             {% if form.show_download_gpx.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_download_gpx">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Total descent
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Total descent
                                     <input type="checkbox" 
                                         name="show_totaldescent" 
                                         {% if form.show_totaldescent.value %}
                                             checked="checked" 
                                         {% endif %}
                                         id="id_show_totaldescent">
-                                    <span class="checkmark"></span> 
+                                    <span class="checkmark {{form.colorscheme.value}}"></span> 
                                 </label>
                                 </td>
                                 <td>       
-                                    <label class="checkcontainer">Show heartrate
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Show heartrate
                                         <input type="checkbox"
                                             name="show_heartrate" 
                                             {% if form.show_heartrate.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_heartrate">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Average cadence
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Average cadence
                                         <input type="checkbox" 
                                             name="show_avgcadence" 
                                             {% if form.show_avgcadence.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_avgcadence">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                                 <td>       
-                                    <label class="checkcontainer">Show cadence
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Show cadence
                                         <input type="checkbox"
                                             name="show_cadence" 
                                             {% if form.show_cadence.value %}
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_cadence">
-                                        <span class="checkmark"></span> 
+                                        <span class="checkmark {{form.colorscheme.value}}"></span> 
                                     </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Average heartrate
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Average heartrate
                                     <input type="checkbox" 
                                         name="show_avgheartrate" 
                                         {% if form.show_avgheartrate.value %}
                                             checked="checked" 
                                         {% endif %}
                                         id="id_show_avgheartrate">
-                                    <span class="checkmark"></span> 
+                                    <span class="checkmark {{form.colorscheme.value}}"></span> 
                                 </label>
                                 </td>
                                 <td>
-                                    <label class="checkcontainer">Show track effort
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Show track effort
                                         <input type="checkbox"
                                             name="show_trackeffort_public"
                                             {% if form.show_trackeffort_public.value %}
                                                 checked="checked"
                                             {% endif %}
                                             id="id_show_trackeffort_public">
-                                        <span class="checkmark"></span>
+                                        <span class="checkmark {{form.colorscheme.value}}"></span>
                                     </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Track effort
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Track effort
                                         <input type="checkbox"
                                             name="show_trackeffort"
                                             {% if form.show_trackeffort.value %}
                                                 checked="checked"
                                             {% endif %}
                                             id="id_show_trackeffort">
-                                        <span class="checkmark"></span>
+                                        <span class="checkmark {{form.colorscheme.value}}"></span>
                                     </label>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label class="checkcontainer">Public track indicator
+                                    <label class="checkcontainer {{form.colorscheme.value}}">Public track indicator
                                         <input type="checkbox"
                                             name="show_is_public_track"
                                             {% if form.show_is_public_track.value %}
                                                 checked="checked"
                                             {% endif %}
                                             id="id_show_is_public_track">
-                                        <span class="checkmark"></span>
+                                        <span class="checkmark {{form.colorscheme.value}}"></span>
                                     </label>
                                 </td>
                             </tr>
@@ -292,7 +312,7 @@
     {% if request.user.is_superuser %}
     <div class="row">
         <div class="col-3">
-            <a href="{% url 'cleanup' %}"><button onclick=processFiles()>CleanUp</button></a>        
+            <a href="{% url 'cleanup' %}" class="{{form.colorscheme.value}}"><button onclick=processFiles()>CleanUp</button></a>        
         </div>
     </div>
     {% endif %}

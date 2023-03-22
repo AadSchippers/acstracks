@@ -13,18 +13,18 @@
         }
     </script>
 
-    <table style="width:100%" class="scalefont">
+    <table style="width:100%" class="scalefont {{preference.colorscheme}}">
         <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
             {% csrf_token %}
             <tr>
                 <td style="width:100%">
                     <div class="file-field">
-                        <table style="width:100%" class="scalefont" border="0">
+                        <table style="width:100%" class="scalefont {{preference.colorscheme}}" border="0">
                             <tr>
                                 <td style="width:20%">
                                     <label for="gpxfile" 
                                         id="gpxfilelabel" 
-                                        class="gpxfilelabel save btn btn-default scalefont">
+                                        class="gpxfilelabel save btn btn-default scalefont {{preference.colorscheme}}">
                                         <b>Upload one or more GPX files</b>
                                     </label>
                                     <div class="btn">
@@ -54,7 +54,7 @@
                 <td style="width:20%">
                     <label for="gpxload" 
                             id="id-gpxloadlabel" 
-                            class="gpxfilelabel save btn btn-default scalefont" 
+                            class="gpxfilelabel save btn btn-default scalefont {{preference.colorscheme}}" 
                             style="display:none" onclick=processFiles()>
                             <b>Upload the selected GPX file(s)</b>
                         </label>
@@ -64,10 +64,10 @@
         </form>
     </table>
     <br>
-    <table style="width: 100%;overflow-x: auto" class="scalefont">
+    <table style="width: 100%;overflow-x: auto" class="scalefont {{preference.colorscheme}}">
         <tr>
             <td>
-            <table class="scalefont">
+            <table class="scalefont {{preference.colorscheme}}">
                 <tr>
                     <td><b>Number&nbsp;of&nbsp;rides</b></td><td style="text-align:right">{{ statistics.number_of_tracks }}</td>
                 </tr>
@@ -119,7 +119,7 @@
             </table>
             </td>
             <td valign="Bottom">
-                <table style="width: 100%;overflow-x: auto" class="scalefont">
+                <table style="width: 100%;overflow-x: auto" class="scalefont {{preference.colorscheme}}">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <tr>
@@ -281,7 +281,7 @@
         {% endif %}
         {% for track in tracks %}
             <tr class="table-row" onclick=processFiles()>
-                <td><a href="{% url 'track_detail' pk=track.pk %}">{{ track.displayfilename }}</a></td>
+                <td><a href="{% url 'track_detail' pk=track.pk %}" class="{{preference.colorscheme}}">{{ track.displayfilename }}</a></td>
                 <td>{{ track.created_date|date:"d b Y" }}</td>
                 <td>{{ track.name }}</td>
                 {% if track.profile %}

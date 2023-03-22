@@ -802,12 +802,13 @@ def process_preferences(request):
         form = PreferenceForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
-            defaultvisuals = (request.POST.get("defaultvisuals") is not None)
+            defaultappearence = (request.POST.get("defaultappearence") is not None)
             speedthreshold = data['speedthreshold']
             elevationthreshold = data['elevationthreshold']
             maxspeedcappingfactor = data['maxspeedcappingfactor']
             force_recalculate = data['force_recalculate']
             backgroundimage = data['backgroundimage']
+            colorscheme = data['colorscheme']
             show_avgspeed = data['show_avgspeed']
             show_maxspeed = data['show_maxspeed']
             show_totalascent = data['show_totalascent']
@@ -835,8 +836,10 @@ def process_preferences(request):
                 preference.force_recalculate = force_recalculate
                 if backgroundimage:
                     preference.backgroundimage = backgroundimage
-                if defaultvisuals:
+                preference.colorscheme = colorscheme
+                if defaultappearence:
                     preference.backgroundimage = None
+                    preference.colorscheme = "giro"
                 preference.show_avgspeed = show_avgspeed
                 preference.show_maxspeed = show_maxspeed
                 preference.show_totalascent = show_totalascent
@@ -872,6 +875,7 @@ def process_preferences(request):
                     maxspeedcappingfactor=maxspeedcappingfactor,
                     force_recalculate=force_recalculate,
                     backgroundimage = None,
+                    colorscheme = 'giro',
                     show_avgspeed=show_avgspeed,
                     show_maxspeed=show_maxspeed,
                     show_totalascent=show_totalascent,
@@ -907,6 +911,7 @@ def process_preferences(request):
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
                 'force_recalculate': False,
                 'backgroundimage': preference.backgroundimage,
+                'colorscheme': preference.colorscheme,
                 'show_avgspeed': preference.show_avgspeed,
                 'show_maxspeed': preference.show_maxspeed,
                 'show_totalascent': preference.show_totalascent,
@@ -929,6 +934,7 @@ def process_preferences(request):
     return render(
         request, 'acstracks_app/preference_form.html', {
             'form': form,
+            'allcolorschemes': settings.COLORSCHEMES,            
             'page_name': "Preferences",
             }
         )

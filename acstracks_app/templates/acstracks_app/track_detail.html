@@ -13,7 +13,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">
-            <table class="scalefont">
+            <table class="scalefont {{preference.colorscheme}}">
                 <tr>
                     <td valign="Top"><b>Markers</b></td>
                     <td valign="Bottom" style="text-align:right">
@@ -204,7 +204,7 @@
                     <input type="hidden" name="public_track_changed" value="True">
                     <tr>
                         <td><br><br>
-                            <label class="checkcontainer" style="font-weight: normal"><b>Public track</b>
+                            <label class="checkcontainer {{preference.colorscheme}}" style="font-weight: normal"><b>Public track</b>
                                 <input type="checkbox"
                                     name="public_track" 
                                     {% if atrack.public_track %}
@@ -212,14 +212,14 @@
                                     {% endif %}
                                     id="id_public_track"
                                     onchange=processFiles("form4")>
-                                <span class="checkmark"></span> 
+                                <span class="checkmark {{preference.colorscheme}}"></span> 
                             </label>
                         </td>
                     </tr>
                 </form>
             </table>
             <hr>
-            <table class="scalefont">
+            <table class="scalefont {{preference.colorscheme}}">
                 <tr>
                     <td>
                         <form method="post" enctype="multipart/form-data">
@@ -230,7 +230,7 @@
                 </tr>
             </table>
             <hr>
-            <table class="scalefont">
+            <table class="scalefont {{preference.colorscheme}}">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <tr>
@@ -240,18 +240,18 @@
                 </tr>
                 <tr>
                     <td><br><br>
-                        <label class="checkcontainer" style="font-weight: normal;"><i>I understand that deleting this track is an action that cannot be undone</i>
+                        <label class="checkcontainer {{preference.colorscheme}}" style="font-weight: normal;"><i>I understand that deleting this track is an action that cannot be undone</i>
                             <input type="checkbox"
                                 name="confirm_delete" 
                                 id="id_confirm_delete">
-                            <span class="checkmark"></span> 
+                            <span class="checkmark {{preference.colorscheme}}"></span> 
                         </label>
                     </td>
                 </tr>
                 </form>
             </table>
             <hr>
-            <a href={{ public_url }} target="_blank"><b>Obtain a shareable link to this track</b></a>
+            <a href={{ public_url }} target="_blank" class="{{preference.colorscheme}}"><b>Obtain a shareable link to this track</b></a>
         </div>
         <div class="col-9">
                 <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>

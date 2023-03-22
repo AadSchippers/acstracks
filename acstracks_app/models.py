@@ -70,6 +70,9 @@ class Preference(models.Model):
     backgroundimage = models.FileField(upload_to="img",
         max_length=255, null=True, blank=True, default=None
         )
+    colorscheme = models.CharField(
+        max_length=12, null=False, blank=False, default="giro"
+        )
     show_avgspeed = models.BooleanField(default=True)
     show_maxspeed = models.BooleanField(default=True)
     show_totalascent = models.BooleanField(default=True)

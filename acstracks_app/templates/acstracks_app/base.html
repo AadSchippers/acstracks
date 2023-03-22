@@ -23,134 +23,142 @@
             background-image: url('/static/media/{{ form.backgroundimage.value }}');
             }
         </style>
-    {% endif%}
+        {% endif%}
     </head>
-    <body>
+        {% if preference.colorscheme %}
+            <body class="{{preference.colorscheme}}">
+        {% else %}
+            <body class="{{form.colorscheme.value}}">
+        {% endif%}
 
-    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #700394;">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" style="color: white"><b>AcsTracks</b></a>
-            </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav">
-                {% if request.user.username %}
-                    {% if page_name == "Home" %}                  
-                        <li class="usermenu_selected"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
-                    {% else %}
-                        <li class="usermenu"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
-                    {% endif %}
-                    {% if page_name == "Statistics" %}                  
-                        <li class="usermenu_selected"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
-                    {% else %}
-                        <li class="usermenu"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
-                    {% endif %}
-                    {% if page_name == "Heatmap" %}                  
-                        <li class="usermenu_selected"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
-                    {% else %}
-                        <li class="usermenu"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
-                    {% endif %}
-                    {% if page_name == "Publish" %}                  
-                        <li class="usermenu_selected"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
-                    {% else %}
-                        <li class="usermenu"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
-                    {% endif %}
-                    {% if page_name == "Preferences" %}                  
-                        <li class="usermenu_selected"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
-                    {% else %}
-                        <li class="usermenu"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
-                    {% endif %}
-                {% else %}
-                    <li class="disabled"><a href=""><b>Home</b></a></li>
-                    <li class="disabled"><a href=""><b>Statistics</b></a></li>
-                    <li class="disabled"><a href=""><b>Heatmap</b></a></li>
-                    <li class="disabled"><a href=""><b>Publish</b></a></li>
-                    <li class="disabled"><a href=""><b>Preferences</b></a></li>
-                {% endif %}
-                {% if request.user.is_superuser %}                  
-                    <li class="usermenu"><a href="/admin/" onclick=processFiles() style="color: white"><b>Admin panel</b></a></li>
-                {% else %}
-                    <li class="disabled"><a href=""><b>Admin panel</b></a></li>
-                {% endif %}
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if request.user.username %}
-                        {% if page_name == "User" %}                  
-                            <li class="dropdown usermenu_selected">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
-                                <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
-                                <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="/password/" onclick=processFiles()>Change password</a></li>
-                                    <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
-                                </ul>
-                            </li>
+        <div>
+
+            <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #700394;">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" style="color: white"><b>AcsTracks</b></a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="myNavbar">
+                        <ul class="nav navbar-nav">
+                        {% if request.user.username %}
+                            {% if page_name == "Home" %}                  
+                                <li class="usermenu_selected"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
+                            {% else %}
+                                <li class="usermenu"><a href="{% url 'track_list'%}" onclick=processFiles() style="color: white"><b>Home</b></a></li>
+                            {% endif %}
+                            {% if page_name == "Statistics" %}                  
+                                <li class="usermenu_selected"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
+                            {% else %}
+                                <li class="usermenu"><a href="{% url 'show_statistics'%}" onclick=processFiles() style="color: white"><b>Statistics</b></a></li>
+                            {% endif %}
+                            {% if page_name == "Heatmap" %}                  
+                                <li class="usermenu_selected"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
+                            {% else %}
+                                <li class="usermenu"><a href="{% url 'heatmap'%}" onclick=processFiles() style="color: white"><b>Heatmap</b></a></li>
+                            {% endif %}
+                            {% if page_name == "Publish" %}                  
+                                <li class="usermenu_selected"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
+                            {% else %}
+                                <li class="usermenu"><a href="{% url 'publish'%}" onclick=processFiles() style="color: white"><b>Publish</b></a></li>
+                            {% endif %}
+                            {% if page_name == "Preferences" %}                  
+                                <li class="usermenu_selected"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
+                            {% else %}
+                                <li class="usermenu"><a href="{% url 'preference'%}" onclick=processFiles() style="color: white"><b>Preferences</b></a></li>
+                            {% endif %}
                         {% else %}
-                        <li class="dropdown usermenu">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
-                            <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
-                            <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/password/" onclick=processFiles()>Change password</a></li>
-                                <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
-                            </ul>
-                        </li>
-                    {% endif %}
-                    {% else %}                
-                        <li class="dropdown usermenu">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
-                                <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
-                                <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="/login/?next=/" onclick=processFiles()>Login</a></li>
-                                </ul>
-                            </li>
-                    {% endif %}                
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <hr>
-    <div class="detail scalefont">     
-        <div class="row">
-            <div class="col-4">
-            </div>
-            <div class="col-2">
-                <p id="id-processing-p" style="text-align: left; display: none;">Processing...</p>
-                <img id="id-processing-img" style="float:left; width:135px; height:111px; display: none;" src="/static/img/acstracks-progress.gif">
-            </div>
-            <div class="col-5" id="id-messages">
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if "error" in message.tags %}
-                                <p style="color: pink; background-color: #700394;"><b><i>{{ message }}</i></b></p>
+                            <li class="disabled"><a href=""><b>Home</b></a></li>
+                            <li class="disabled"><a href=""><b>Statistics</b></a></li>
+                            <li class="disabled"><a href=""><b>Heatmap</b></a></li>
+                            <li class="disabled"><a href=""><b>Publish</b></a></li>
+                            <li class="disabled"><a href=""><b>Preferences</b></a></li>
                         {% endif %}
-                    {% endfor %}
-                {% endif %}
+                        {% if request.user.is_superuser %}                  
+                            <li class="usermenu"><a href="/admin/" onclick=processFiles() style="color: white"><b>Admin panel</b></a></li>
+                        {% else %}
+                            <li class="disabled"><a href=""><b>Admin panel</b></a></li>
+                        {% endif %}
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            {% if request.user.username %}
+                                {% if page_name == "User" %}                  
+                                    <li class="dropdown usermenu_selected">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
+                                        <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
+                                        <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/password/" onclick=processFiles()>Change password</a></li>
+                                            <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                                        </ul>
+                                    </li>
+                                {% else %}
+                                <li class="dropdown usermenu">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
+                                    <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
+                                    <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/password/" onclick=processFiles()>Change password</a></li>
+                                        <li><a href="/logout/" onclick=processFiles()>Logout</a></li>
+                                    </ul>
+                                </li>
+                            {% endif %}
+                            {% else %}                
+                                <li class="dropdown usermenu">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white">
+                                        <span class="glyphicon glyphicon-user"></span><b> {{ request.user.username }} </b>
+                                        <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/login/?next=/" onclick=processFiles()>Login</a></li>
+                                        </ul>
+                                    </li>
+                            {% endif %}                
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <hr>
+            <h1>Colorscheme: {{preference.colorscheme}} </h1>
+            <div class="detail scalefont">     
+                <div class="row">
+                    <div class="col-4">
+                    </div>
+                    <div class="col-2">
+                        <p id="id-processing-p" style="text-align: left; display: none;">Processing...</p>
+                        <img id="id-processing-img" style="float:left; width:135px; height:111px; display: none;" src="/static/img/acstracks-progress.gif">
+                    </div>
+                    <div class="col-5" id="id-messages">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if "error" in message.tags %}
+                                        <p style="color: pink; background-color: #700394;"><b><i>{{ message }}</i></b></p>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <br><br>
+
+                {% block content %}
+                {% endblock %}
             </div>
         </div>
-        <br><br>
+        <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 
-        {% block content %}
-        {% endblock %}
-    </div>
-    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        
+        <script src={% static 'js/acstracks.js' %}></script>
 
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-     
-    <script src={% static 'js/acstracks.js' %}></script>
-
-</body>
+    </body>
 </html>

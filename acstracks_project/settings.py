@@ -129,6 +129,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media')
 MAPS_URL = '/static/media/maps/'
 MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media/maps')
 
+COLORSCHEMES = ["giro", "nostalgia", "ocean", "summer"]
+
 # Folium map colours
 LINE_COLOR = "purple"
 MAP_LINE_WEIGHT = 2.5

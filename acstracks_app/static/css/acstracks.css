@@ -4,8 +4,11 @@
     padding: 20px 20px 30px 40px;
 }
 
+.giro {
+  color: #700394; 
+}  
+
 .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
-    color: #700394;
     font-size: 36pt;
     font-family: 'Oswald';
     margin-left: 8px;
@@ -27,10 +30,6 @@
     clear: both;
     display: table;
 }
-
-.scalefont {
-  color: #700394; 
-}  
 
 @media only screen and (max-width: 600px) {
   .scalefont {
@@ -75,10 +74,6 @@
   .scalefont h3{
     font-size: 1.5vw;
   }  
-}
-
-.scalefont:hover {
-  color: #700394;
 }
 
 @media only screen and (orientation: portrait) {
@@ -134,7 +129,6 @@ table, th, td {
   }
 
 .table-hover, th, td {
-    color: #700394;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -151,10 +145,9 @@ table, th, td {
     width: 100%;
     background-color: transparent;
     border-color: transparent;
-    color: #700394;
 }
 
-a, a:active, a:visited, a:hover, a:link {
+a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
     color: #700394;  
 }
 
@@ -206,7 +199,7 @@ a, a:active, a:visited, a:hover, a:link {
   }
   
   /* Create a custom checkbox */
-  .checkmark {
+  .checkmark.giro {
     position: absolute;
     top: 0;
     left: 0;
@@ -216,12 +209,12 @@ a, a:active, a:visited, a:hover, a:link {
   }
 
   /* On mouse-over, add a grey background color */
-  .checkcontainer:hover input ~ .checkmark {
+  .checkcontainer.giro:hover input ~ .checkmark.giro {
     background-color: #fa56e4;
   }
   
   /* When the checkbox is checked, add a blue background */
-  .checkcontainer input:checked ~ .checkmark {
+  .checkcontainer.giro input:checked ~ .checkmark.giro {
     background-color: #700394;
   }
   
@@ -238,7 +231,7 @@ a, a:active, a:visited, a:hover, a:link {
   }
   
   /* Style the checkmark/indicator */
-  .checkcontainer .checkmark:after {
+  .checkcontainer.giro .checkmark.giro:after {
     left: 5px;
     top: 2px;
     width: 5px;

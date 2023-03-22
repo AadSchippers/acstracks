@@ -9,12 +9,12 @@
     }
 </script>
 
-<table style="width: 100%;overflow-x: auto" class="scalefont">
+<table style="width: 100%;overflow-x: auto" class="scalefont {{preference.colorscheme}}">
     <tr>
         <td>
             <form method="post" enctype="multipart/form-data" id="uploadform">
                 {% csrf_token %}
-                <label class="checkcontainer"><b>{{ annual_statistics }}</b>
+                <label class="checkcontainer {{preference.colorscheme}}"><b>{{ annual_statistics }}</b>
                 <input type="checkbox"
                     name="annual_statistics"
                     {% if page_headline == annual_statistics %}
@@ -24,9 +24,9 @@
                         onchange=processFiles()
                     {% endif %}
                     id="id_annual_statistics">
-                <span class="checkmark"></span> 
+                <span class="checkmark {{preference.colorscheme}}"></span> 
                 </label>
-                <label class="checkcontainer"><b>{{ profile_statistics }}</b>
+                <label class="checkcontainer {{preference.colorscheme}}"><b>{{ profile_statistics }}</b>
                 <input type="checkbox"
                     name="profile_statistics"
                     {% if page_headline == profile_statistics %}
@@ -36,7 +36,7 @@
                         onchange=processFiles()
                     {% endif %}
                     id="id_profile_statistics">
-                    <span class="checkmark"></span> 
+                    <span class="checkmark {{preference.colorscheme}}"></span> 
                 </label>
             </td>
         </form>
@@ -45,12 +45,12 @@
     <tr>
         <td>
             {% if page_headline == annual_statistics %}
-                <a href="{% url 'heatmap'  profile='All' year=track.year %}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
+                <a href="{% url 'heatmap'  profile='All' year=track.year %}" class="{{preference.colorscheme}}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
             {% else %}
-                <a href="{% url 'heatmap' profile=track.profile year='0' %}" onclick=processFiles()><h3>{{ track.profile }}</h3>
+                <a href="{% url 'heatmap' profile=track.profile year='0' %}" class="{{preference.colorscheme}}" onclick=processFiles()><h3>{{ track.profile }}</h3>
             {% endif %}
             </td>
-        <table id="click-table" class="table-hover scalefont">
+        <table id="click-table" class="table-hover scalefont {{preference.colorscheme}}">
             <thead>
                 {% if page_headline == annual_statistics %}
                    <th>Year</th>
@@ -72,11 +72,11 @@
                     {% if stats_collection.statistics.number_of_tracks > 0 %}
                         <tr>
                             {% if page_headline == annual_statistics %}
-                                <td><a href="{% url 'heatmap' profile=stats_collection.profile year=track.year %}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
+                                <td><a href="{% url 'heatmap' profile=stats_collection.profile year=track.year %}" class="{{preference.colorscheme}}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
                             {% elif stats_collection.year == 'Total' %}
-                                <td><a href="{% url 'heatmap' profile=track.profile %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
+                                <td><a href="{% url 'heatmap' profile=track.profile %}" class="{{preference.colorscheme}}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
                             {% else %}
-                                <td><a href="{% url 'heatmap' profile=track.profile year=stats_collection.year %}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
+                                <td><a href="{% url 'heatmap' profile=track.profile year=stats_collection.year %}" class="{{preference.colorscheme}}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
                             {% endif %}
                             <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
                             <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>
