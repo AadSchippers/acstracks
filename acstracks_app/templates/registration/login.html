@@ -14,13 +14,13 @@
   }
 </script>
 
-<h2 style="font-size: 1.6vw; font-weight: 500;">Login</h2>
+<h2 class={{colorscheme}} style="font-size: 1.6vw; font-weight: 500;">Login</h2>
 <div>
     <form method="post" autocomplete="off">
       {% csrf_token %}
       {{ form.non_field_errors }}
       <br>
-      <table>
+      <table class='scalefont "giro"'>
         <tr>
           <td>
             {{ form.username.label_tag }}
@@ -40,12 +40,12 @@
             {{ form.password }}
           </td>
           <td>
-            <label class="checkcontainer">Show password
+            <label class='checkcontainer {{colorscheme}}'>Show password
               <input type="checkbox"
                   name="show_password" 
                   id="id_show_password"
                   onchange=showPassword("id_password")>
-              <span class="checkmark"></span> 
+              <span class='checkmark {{colorscheme}}'></span> 
             </label>
           </td>
         </tr>

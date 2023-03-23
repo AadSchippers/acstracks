@@ -5,7 +5,16 @@
 }
 
 .giro {
-  color: #700394; 
+  color: purple; 
+}  
+.nostalgia {
+  color: maroon; 
+}  
+.ocean {
+  color: darkblue; 
+}  
+.summer {
+  color: darkgreen; 
 }  
 
 .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
@@ -103,11 +112,22 @@ body {
     padding-left: 0px;
     padding-right: 0px;
     background-color: #F0F0F0;
-    background-image: url("/static/img/acstracksbg-blurred.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     max-width: 100%;
     height: 95%;
+}
+body.giro {
+  background-image: url("/static/img/acstracksgirobg.jpg");
+}
+body.nostalgia {
+  background-image: url("/static/img/acstracksnostalgiabg.jpg");
+}
+body.ocean {
+  background-image: url("/static/img/acstracksoceanbg.jpg");
+}
+body.summer {
+  background-image: url("/static/img/acstrackssummerbg.jpg");
 }
 
 div.detail {
@@ -149,11 +169,32 @@ table, th, td {
 
 p.giro {
   color: pink;
-  background-color: #700394;
+  background-color: purple;
+}
+p.nostalgia {
+  color: orange;
+  background-color: maroon;
+}
+p.ocean {
+  color: lightblue;
+  background-color: darkblue;
+}
+p.summer {
+  color: lightgreen;
+  background-color: darkgreen;
 }
 
 a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
-    color: #700394;  
+  color: purple;  
+}
+a.nostalgia, a.nostalgia:active, a.nostalgia:visited, a.nostalgia:hover, a.nostalgia:link {
+  color: maroon;  
+}
+a.ocean, a.ocean:active, a.ocean:visited, a.ocean:hover, a.ocean:link {
+  color: darkblue;  
+}
+a.summer, a.summer:active, a.summer:visited, a.summer:hover, a.summer:link {
+  color: darkgreen;  
 }
 
 .container {
@@ -215,15 +256,42 @@ a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
   .checkmark.giro {
     background-color: #fb89ec;
   }
+  .checkmark.nostalgia {
+    background-color: orange;
+  }
+  .checkmark.ocean {
+    background-color: lightblue;
+  }
+  .checkmark.summer {
+    background-color: lightgreen;
+  }
 
   /* On mouse-over, add a grey background color */
   .checkcontainer.giro:hover input ~ .checkmark.giro {
     background-color: #fa56e4;
   }
+  .checkcontainer.nostalgia:hover input ~ .checkmark.nostalgia {
+    background-color: orangered;
+  }
+  .checkcontainer.ocean:hover input ~ .checkmark.ocean {
+    background-color: blue;
+  }
+  .checkcontainer.summer:hover input ~ .checkmark.summer {
+    background-color: green;
+  }
   
   /* When the checkbox is checked, add a blue background */
   .checkcontainer.giro input:checked ~ .checkmark.giro {
-    background-color: #700394;
+    background-color: purple;
+  }
+  .checkcontainer.nostalgia input:checked ~ .checkmark.nostalgia {
+    background-color: maroon;
+  }
+  .checkcontainer.ocean input:checked ~ .checkmark.ocean {
+    background-color: darkblue;
+  }
+  .checkcontainer.summer input:checked ~ .checkmark.summer {
+    background-color: darkgreen;
   }
   
   /* Create the checkmark/indicator (hidden when not checked) */
@@ -253,6 +321,18 @@ a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
     border: solid pink;
     border-width: 0 3px 3px 0;
   }
+  .checkcontainer.nostalgia .checkmark.nostalgia:after {
+    border: solid orange;
+    border-width: 0 3px 3px 0;
+  }
+  .checkcontainer.ocean .checkmark.ocean:after {
+    border: solid lightblue;
+    border-width: 0 3px 3px 0;
+  }
+  .checkcontainer.summer .checkmark.summer:after {
+    border: solid lightgreen;
+    border-width: 0 3px 3px 0;
+  }
 
   .progress-img{
     display: block;
@@ -264,8 +344,26 @@ a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
   .usermenu.giro:hover {
     background-color: violet;  
     }
-
+  .usermenu.nostalgia:hover {
+    background-color: orange;  
+    }
+  .usermenu.ocean:hover {
+    background-color: lightblue;  
+    }
+  .usermenu.summer:hover {
+    background-color: lightgreen;  
+    }
+              
   .usermenu_selected.giro {
     background-color:  #c445ee;  
     }
-    
+  .usermenu_selected.nostalgia {
+    background-color:  orangered;  
+    }
+  .usermenu_selected.ocean {
+    background-color:  blue;  
+    }            
+  .usermenu_selected.summer {
+    background-color:  green;  
+    }
+  

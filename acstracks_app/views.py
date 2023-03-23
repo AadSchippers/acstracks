@@ -92,6 +92,7 @@ def track_list(request):
 
     return render(request, 'acstracks_app/track_list.html', {
         'colorscheme': preference.colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         'tracks': tracks,
         'preference': preference,
         'bike_profile_filters': bike_profile_filters,
@@ -257,6 +258,7 @@ def track_detail(request, pk):
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
+                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -277,6 +279,7 @@ def track_detail(request, pk):
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
+                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -294,6 +297,7 @@ def track_detail(request, pk):
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
+                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -348,6 +352,7 @@ def track_detail(request, pk):
 
     return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
+                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -610,6 +615,7 @@ def show_statistics(request):
 
     return render(request, 'acstracks_app/show_statistics.html', {
         'colorscheme': preference.colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         "page_headline": page_headline,
         "annual_statistics": annual_statistics,
         "profile_statistics": profile_statistics,
@@ -682,10 +688,11 @@ def heatmap(request, profile=None, year=None):
             request, atrack.storagefilename, atrack.name, map_filename
             ))
 
-    make_heatmap(request, all_tracks, map_filename)
+    make_heatmap(request, all_tracks, map_filename, preference.colorscheme)
 
     return render(request, 'acstracks_app/show_heatmap.html', {
         'colorscheme': preference.colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         "profile_filter": profile,
         "bike_profile_filters": bike_profile_filters,
         "date_start": date_start,
@@ -857,7 +864,7 @@ def process_preferences(request):
                 preference.colorscheme = colorscheme
                 if defaultappearence:
                     preference.backgroundimage = None
-                    preference.colorscheme = "giro"
+                    preference.colorscheme = settings.DEFAULT_COLORSCHEME
                 preference.show_avgspeed = show_avgspeed
                 preference.show_maxspeed = show_maxspeed
                 preference.show_totalascent = show_totalascent
@@ -953,6 +960,7 @@ def process_preferences(request):
         request, 'acstracks_app/preference_form.html', {
             'form': form,
             'colorscheme': preference.colorscheme,
+            'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
             'allcolorschemes': settings.COLORSCHEMES,            
             'page_name': "Preferences",
             }
@@ -1005,10 +1013,11 @@ def cleanup(request):
         preference = Preference.objects.get(user=request.user)
         colorscheme = preference.colorscheme
     except:
-        colorscheme = "giro"
+        colorscheme = settings.DEFAULT_COLORSCHEME
 
     return render(request, 'acstracks_app/cleanup.html', {
         'colorscheme': colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         'obsolete_files': obsolete_files,
         'page_name': "Preferences",
         }
@@ -1042,10 +1051,16 @@ def publish(request):
                     request, atrack.storagefilename, atrack.name, map_filename
                     ))
 
+            try:
+                preference = Preference.objects.get(user=request.user)
+                colorscheme = settings.PRIMARY_COLOR[preference.colorscheme]
+            except:
+                colorscheme = settings.DEFAULT_COLORSCHEME
+
             make_heatmap(
                 request, all_tracks,
                 map_filename,
-                settings.LINE_COLOR,
+                colorscheme,
                 settings.NORMAL_OPACITY,
                 settings.MAP_LINE_WEIGHT,
                 True
@@ -1096,6 +1111,7 @@ def publish(request):
 
     return render(request, 'acstracks_app/publish.html', {
         'colorscheme': preference.colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         'tracks': tracks,
         'statistics': statistics,
         'bike_profile_filters': bike_profile_filters,
@@ -1188,6 +1204,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'colorscheme': preference.colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         'atrack': atrack,
         'show_intermediate_points': show_intermediate_points,
         'show_heartrate': show_heartrate,

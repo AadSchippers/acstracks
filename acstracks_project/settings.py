@@ -130,16 +130,29 @@ MAPS_URL = '/static/media/maps/'
 MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media/maps')
 
 COLORSCHEMES = ["giro", "nostalgia", "ocean", "summer"]
+DEFAULT_COLORSCHEME = "giro"
 
 # Folium map colours
-LINE_COLOR = "purple"
+PRIMARY_COLOR = {
+    "giro": "purple",
+    "nostalgia": "maroon",
+    "ocean": "darkblue",
+    "summer": "darkgreen",
+}
+START_COLOR = {
+    "giro": "pink",
+    "nostalgia": "orange",
+    "ocean": "lightblue",
+    "summer": "lightgreen",
+    }
+END_COLOR = {
+    "giro": "darkpurple",
+    "nostalgia": "orangered",
+    "ocean": "blue",
+    "summer": "green",
+    }
+
 MAP_LINE_WEIGHT = 2.5
-MARKER_COLOR = 'purple'
-NOT_SELECTED_COLOR = 'gray'
-START_COLOR = "pink"
-END_COLOR = "darkpurple"
-CONNECT_COLOR = "darkred"
-HEATMAP_LINE_COLOR = "purple"
 HEATMAP_OPACITY = 0.5
 HEATMAP_LINE_WEIGHT = 3.5
 NORMAL_OPACITY = 1

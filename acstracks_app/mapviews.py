@@ -36,10 +36,12 @@ def process_gpx_file(
 
     try:
         preference = Preference.objects.get(user=request.user)
+        colorscheme = preference.colorscheme
         speedthreshold = preference.speedthreshold
         elevationthreshold = preference.elevationthreshold
         maxspeedcappingfactor = preference.maxspeedcappingfactor
     except Exception:
+        colorscheme = settings.DEFAULT_COLORSCHEME
         speedthreshold = settings.SPEEDTHRESHOLD
         elevationthreshold = settings.ELEVATIONTHRESHOLD
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
@@ -221,6 +223,7 @@ def process_gpx_file(
     if map_filename:
         make_map(
             request,
+            colorscheme,
             atrack,
             points,
             points_info,
@@ -431,9 +434,12 @@ def update_track(
 
 
 def make_map(
-    request, atrack, points, points_info, filename,
+    request, colorscheme, atrack, points, points_info, filename,
     intermediate_points_selected, map_filename
 ):
+    primary_color = settings.PRIMARY_COLOR[colorscheme]
+    start_color = settings.START_COLOR[colorscheme]
+    end_color = settings.END_COLOR[colorscheme]
 
     # print(points)
     ave_lat = sum(p[0] for p in points)/len(points)
@@ -474,40 +480,40 @@ def make_map(
                     continue
                 previous_marker_distance = distance
                 i = i + ip
-                make_marker(my_map, points, points_info, x, distance, i, 'Intermediate point ')
+                make_marker(my_map, colorscheme, points, points_info, x, distance, i, 'Intermediate point ')
 
             if ip == 20000:
                 if x > 0:
                     if x == atrack.best20_start_pointindex:
-                        make_marker(my_map, points, points_info, x, distance, distance, 'Start best 20 minutes ')
+                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Start best 20 minutes ')
                     elif x == atrack.best20_end_pointindex:
-                        make_marker(my_map, points, points_info, x, distance, distance, 'End best 20 minutes ')
+                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'End best 20 minutes ')
 
             if ip == 30000:
                 if x > 0:
                     if x == atrack.best30_start_pointindex:
-                        make_marker(my_map, points, points_info, x, distance, distance, 'Start best 30 minutes ')
+                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Start best 30 minutes ')
                     elif x == atrack.best30_end_pointindex:
-                        make_marker(my_map, points, points_info, x, distance, distance, 'End best 30 minutes ')
+                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'End best 30 minutes ')
 
             if ip == 60000:
                 if x > 0:
                     if x == atrack.best60_start_pointindex:
-                        make_marker(my_map, points, points_info, x, distance, distance, 'Start best 60 minutes ')
+                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Start best 60 minutes ')
                     elif x == atrack.best60_end_pointindex:
-                        make_marker(my_map, points, points_info, x, distance, distance, 'End best 60 minutes ')
+                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'End best 60 minutes ')
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex:
-                    make_marker(my_map, points, points_info, x, distance, distance, 'Maximum speed ', atrack.maxspeed)
+                    make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Maximum speed ', atrack.maxspeed)
 
     # start marker
-    tooltip_text = 'Start, click for details'
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip_text = "Start, click for details"
+    tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     html = (
-        "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>" +
-        "Start</h3><table style='color: #700394; width: 100%; " +
+        "<h3 style='color: " + primary_color + "; font-weight: bold; font-size: 1.5vw'>" +
+        "Start</h3><table style='color: " + primary_color + "; width: 100%; " +
         "font-size: 0.85vw'><tr><td><b>Time </b></td>" +
         "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
         "</table>"
@@ -515,14 +521,14 @@ def make_map(
     popup = folium.Popup(html, max_width=300)
     folium.Marker(
         points[0],
-        icon=folium.Icon(color=settings.START_COLOR),
+        icon=folium.Icon(color=start_color),
         tooltip=tooltip,
         popup=popup
         ).add_to(my_map)
 
     # finish marker
-    tooltip_text = 'Finish, click for details'
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip_text = "Finish, click for details"
+    tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     # tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
     # duration = tx - t0
@@ -532,8 +538,8 @@ def make_map(
     distance = float(points_info[-1][1]) / 1000
 
     html = (
-        "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>" +
-        "Finish</h3><table style='color: #700394; width: 100%; " +
+        "<h3 style='color: " + primary_color + "; font-weight: bold; font-size: 1.5vw'>" +
+        "Finish</h3><table style='color: " + primary_color + "; width: 100%; " +
         "font-size: 0.85vw'><tr><td><b>Time</b></td>" +
         "<td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
         "<tr><td><b>Distance</b></td><td style='text-align:right'>" +
@@ -549,7 +555,7 @@ def make_map(
     popup = folium.Popup(html, max_width=300)
     folium.Marker(
         points[-1],
-        icon=folium.Icon(color=settings.END_COLOR),
+        icon=folium.Icon(color=end_color),
         tooltip=tooltip,
         popup=popup
         ).add_to(my_map)
@@ -559,7 +565,7 @@ def make_map(
     # add lines
     folium.PolyLine(
         points,
-        color=settings.LINE_COLOR,
+        color=primary_color,
         weight=settings.MAP_LINE_WEIGHT,
         opacity=settings.NORMAL_OPACITY
         ).add_to(my_map)
@@ -574,7 +580,9 @@ def make_map(
     return
 
 
-def make_marker(my_map, points, points_info, x, distance, i, tooltip_text, speed=None):
+def make_marker(my_map, colorscheme, points, points_info, x, distance, i, tooltip_text, speed=None):
+    primary_color = settings.PRIMARY_COLOR[colorscheme]
+
     time = points_info[x][0]
     duration = points_info[x][2]
     moving_duration = points_info[x][3]
@@ -596,11 +604,16 @@ def make_marker(my_map, points, points_info, x, distance, i, tooltip_text, speed
         str(round(i/1000, 2)) + ' km, ' +
         str(speed) + ' km/h'
         )
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip_style = (
+        'color: ' +
+        primary_color +
+        '; font-size: 0.85vw'
+    )
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
 
     html_popup = make_html_popup(
         popup_title_text,
+        colorscheme,
         str(round(i)),
         time,
         duration,
@@ -616,7 +629,7 @@ def make_marker(my_map, points, points_info, x, distance, i, tooltip_text, speed
     popup = folium.Popup(html_popup, max_width=400)
     folium.Marker(
         points[x],
-        icon=folium.Icon(color=settings.MARKER_COLOR),
+        icon=folium.Icon(color=primary_color),
         tooltip=tooltip, popup=popup
         ).add_to(my_map)
 
@@ -791,6 +804,7 @@ def calculate_using_haversine(point, previous_point):
 
 def make_html_popup(
         title_text,
+        colorscheme,
         intermediate_point,
         time,
         duration,
@@ -803,13 +817,14 @@ def make_html_popup(
         cadence,
         avgcadence,
 ):
+    primary_color = settings.PRIMARY_COLOR[colorscheme]
     line_title = (
-        "<h3 style='color: #700394; font-weight: bold; " +
+        "<h3 style='color: " + primary_color + "; font-weight: bold; " +
         "font-size: 1.5vw'>" + title_text +
         str(round(int(intermediate_point)/1000, 2))+" km</h3>"
     )
     line_table_start = (
-        "<table style='color: #700394; font-size: 0.85vw; width: 100%'>"
+        "<table style='color: " + primary_color + "; font-size: 0.85vw; width: 100%'>"
     )
     line_table_end = "</table>"
     line_time_distance = (
@@ -919,11 +934,13 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
 
 def make_heatmap(
         request, tracks, map_filename,
-        color=settings.HEATMAP_LINE_COLOR,
+        colorscheme=settings.DEFAULT_COLORSCHEME,
         opacity=settings.HEATMAP_OPACITY,
         weight=settings.HEATMAP_LINE_WEIGHT,
         show_markers=False
         ):
+    primary_color = settings.PRIMARY_COLOR[colorscheme]
+
     ave_lats = []
     ave_lons = []
     try:
@@ -969,7 +986,7 @@ def make_heatmap(
             points.append(tuple([p[0], p[1]]))
 
     for track in tracks:
-        my_map = draw_heatmap(request, my_map, track, color, opacity, weight, show_markers)
+        my_map = draw_heatmap(request, my_map, track, colorscheme, opacity, weight, show_markers)
 
     folium.LayerControl(collapsed=True).add_to(my_map)
 
@@ -983,35 +1000,39 @@ def make_heatmap(
     return
 
 
-def draw_heatmap(request, my_map, track, color, opacity, weight, show_markers):
+def draw_heatmap(request, my_map, track, colorscheme, opacity, weight, show_markers):
+    primary_color = settings.PRIMARY_COLOR[colorscheme]
+    start_color = settings.START_COLOR[colorscheme]
+    end_color = settings.END_COLOR[colorscheme]
+
     points = []
     for p in track["points"]:
         points.append(tuple([p[0], p[1]]))
 
     if show_markers:
         # start marker
-        tooltip_text = 'Start ' + track["trackname"]
-        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip_text = "Start " + track["trackname"]
+        tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
         tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
         folium.Marker(
             points[0],
-            icon=folium.Icon(color=settings.START_COLOR),
+            icon=folium.Icon(color=start_color),
             tooltip=tooltip
             ).add_to(my_map)
 
         # finish marker
-        tooltip_text = 'Finish ' + track["trackname"]
-        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip_text = "Finish " + track["trackname"]
+        tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
         tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
         folium.Marker(
             points[-1],
-            icon=folium.Icon(color=settings.END_COLOR),
+            icon=folium.Icon(color=end_color),
             tooltip=tooltip
             ).add_to(my_map)
 
     # add lines
     folium.PolyLine(
-        points, color=color, weight=weight, opacity=opacity
+        points, color=primary_color, weight=weight, opacity=opacity
         ).add_to(my_map)
 
     return my_map
