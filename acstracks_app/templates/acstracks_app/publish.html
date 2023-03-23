@@ -68,7 +68,7 @@
             <div class="col-2"></div>
             <div class="col-4">
                 <h3>Published tags</h3>
-                <table id="a-table" style="overflow-x:auto;" class="table-hover scalefont {{preference.colorscheme}}">
+                <table id="a-table" style="overflow-x:auto;" class="table-hover scalefont {{colorscheme}}">
                     <thead>
                         <th>Tag</th>
                         <th>URL</th>
@@ -76,9 +76,9 @@
                     <tbody>
                 {% for name, url, href in published_files %}
                     <tr>
-                        <td><a href={{ href }} class="{{preference.colorscheme}}">{{ name }}</a></td>
-                        <td><a href={{ href }} class="{{preference.colorscheme}}">{{ url }}</a></td>
-                        <td><a href="{% url 'unpublish' profile=name %}" class="{{preference.colorscheme}}"><i class="glyphicon glyphicon-trash"></i></a></td>
+                        <td><a href={{ href }} class="{{colorscheme}}">{{ name }}</a></td>
+                        <td><a href={{ href }} class="{{colorscheme}}">{{ url }}</a></td>
+                        <td><a href="{% url 'unpublish' profile=name %}" class="{{colorscheme}}"><i class="glyphicon glyphicon-trash"></i></a></td>
                     </tr>
                 {% endfor %}
                 </table>

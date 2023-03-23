@@ -11,7 +11,7 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="hidden" name="obsolete_files" value="{{ obsolete_files }}">
-    <table class="scalefont">
+    <table class="scalefont {{colorscheme}}">
         <tr>
             <td>
                 <button type="submit" name="delete" id="delete" onclick="processFiles()">Delete these files</button>
@@ -19,21 +19,21 @@
         </tr>
         <tr>
             <td><br><br>
-                <label class="checkcontainer" style="font-weight: normal;"><i>I understand that deleting these files is an action that cannot be undone</i>
+                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal;"><i>I understand that deleting these files is an action that cannot be undone</i>
                     <input type="checkbox"
                         name="confirm_delete" 
                         id="id_confirm_delete">
-                    <span class="checkmark"></span> 
+                    <span class="checkmark {{colorscheme}}"></span> 
                 </label>
             </td>
         </tr>
     </table>
 </form>
-<hr>
-<h2>Obsolete files</h2>
 </table>
+<hr>
+<h2 class="scalefont {{colorscheme}}">Obsolete files</h2>
 
-<table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+<table id="click-table" style="overflow-x:auto;" class="table-hover scalefont {{colorscheme}}">
     <th valign="Top" width=400>Filename</th>
     <th valign="Top" style="text-align:right" width=200>Size (Kb)</th>
     {% for name, size in obsolete_files %}

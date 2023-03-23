@@ -147,6 +147,11 @@ table, th, td {
     border-color: transparent;
 }
 
+p.giro {
+  color: pink;
+  background-color: #700394;
+}
+
 a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
     color: #700394;  
 }
@@ -199,12 +204,15 @@ a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
   }
   
   /* Create a custom checkbox */
-  .checkmark.giro {
+  .checkmark {
     position: absolute;
     top: 0;
     left: 0;
     height: 15px;
     width: 15px;
+  }
+
+  .checkmark.giro {
     background-color: #fb89ec;
   }
 
@@ -231,16 +239,19 @@ a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
   }
   
   /* Style the checkmark/indicator */
-  .checkcontainer.giro .checkmark.giro:after {
+  .checkcontainer .checkmark:after {
     left: 5px;
     top: 2px;
     width: 5px;
     height: 10px;
-    border: solid pink;
-    border-width: 0 3px 3px 0;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
+  }
+
+  .checkcontainer.giro .checkmark.giro:after {
+    border: solid pink;
+    border-width: 0 3px 3px 0;
   }
 
   .progress-img{
@@ -250,11 +261,11 @@ a.giro, a.giro:active, a.giro:visited, a.giro:hover, a.giro:link {
     width: 50%;
   }
 
-  .usermenu:hover {
+  .usermenu.giro:hover {
     background-color: violet;  
     }
 
-  .usermenu_selected {
+  .usermenu_selected.giro {
     background-color:  #c445ee;  
     }
     

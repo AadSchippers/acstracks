@@ -91,6 +91,7 @@ def track_list(request):
     statistics = compute_statistics(tracks)
 
     return render(request, 'acstracks_app/track_list.html', {
+        'colorscheme': preference.colorscheme,
         'tracks': tracks,
         'preference': preference,
         'bike_profile_filters': bike_profile_filters,
@@ -255,6 +256,7 @@ def track_detail(request, pk):
             atrack.name = name
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
+                'colorscheme': preference.colorscheme,
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -274,6 +276,7 @@ def track_detail(request, pk):
             atrack.profile = profile
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
+                'colorscheme': preference.colorscheme,
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -290,6 +293,7 @@ def track_detail(request, pk):
             atrack.public_track = (public_track == "on")
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
+                'colorscheme': preference.colorscheme,
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -343,6 +347,7 @@ def track_detail(request, pk):
             )
 
     return render(request, 'acstracks_app/track_detail.html', {
+                'colorscheme': preference.colorscheme,
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -401,10 +406,20 @@ def parse_file(
         created_date = metadata.find('ns:time', namespace).text
     except Exception:
         created_date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-    gpxtrk = gpxroot.find('ns:trk', namespace)
-    name = gpxtrk.find('ns:name', namespace).text
+    try:
+        gpxtrk = gpxroot.find('ns:trk', namespace)
+        name = gpxtrk.find('ns:name', namespace).text
+        extensions = gpxtrk.find('ns:extensions', namespace)
+    except Exception:
+        # error processing file, file skipped
+        messagetext = "Error processing "
+        messages.error(
+            request,
+            messagetext +
+            displayfilename +
+            ", file skipped.")
+        return
 
-    extensions = gpxtrk.find('ns:extensions', namespace)
     if extensions:
         profile = extensions.find('ns:profile', namespace).text
         # ivm met naamwijziging
@@ -445,6 +460,7 @@ def parse_file(
                 displayfilename +
                 " is not an activity file, " +
                 " file skipped.")
+            return
 
     except IntegrityError:
         # error processing file, file skipped
@@ -593,6 +609,7 @@ def show_statistics(request):
                 })
 
     return render(request, 'acstracks_app/show_statistics.html', {
+        'colorscheme': preference.colorscheme,
         "page_headline": page_headline,
         "annual_statistics": annual_statistics,
         "profile_statistics": profile_statistics,
@@ -607,6 +624,13 @@ def show_statistics(request):
 def heatmap(request, profile=None, year=None):
     date_start = None
     date_end = None
+
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
 
     if request.method == 'POST':
         date_start = request.POST.get('Date_start')
@@ -636,13 +660,6 @@ def heatmap(request, profile=None, year=None):
         if not profile:
             profile = preference.profile_filter
 
-    try:
-        preference = Preference.objects.get(user=request.user)
-    except Exception:
-        preference = Preference.objects.create(
-            user=request.user,
-        )
-
     tracks = get_tracks(
         request, date_start, date_end, None, profile
         )
@@ -668,6 +685,7 @@ def heatmap(request, profile=None, year=None):
     make_heatmap(request, all_tracks, map_filename)
 
     return render(request, 'acstracks_app/show_heatmap.html', {
+        'colorscheme': preference.colorscheme,
         "profile_filter": profile,
         "bike_profile_filters": bike_profile_filters,
         "date_start": date_start,
@@ -934,6 +952,7 @@ def process_preferences(request):
     return render(
         request, 'acstracks_app/preference_form.html', {
             'form': form,
+            'colorscheme': preference.colorscheme,
             'allcolorschemes': settings.COLORSCHEMES,            
             'page_name': "Preferences",
             }
@@ -982,7 +1001,14 @@ def cleanup(request):
     except Exception:
         pass
 
+    try:
+        preference = Preference.objects.get(user=request.user)
+        colorscheme = preference.colorscheme
+    except:
+        colorscheme = "giro"
+
     return render(request, 'acstracks_app/cleanup.html', {
+        'colorscheme': colorscheme,
         'obsolete_files': obsolete_files,
         'page_name': "Preferences",
         }
@@ -1069,6 +1095,7 @@ def publish(request):
                     ))
 
     return render(request, 'acstracks_app/publish.html', {
+        'colorscheme': preference.colorscheme,
         'tracks': tracks,
         'statistics': statistics,
         'bike_profile_filters': bike_profile_filters,
@@ -1096,80 +1123,6 @@ def unpublish(request, profile=None):
             pass
 
     return redirect('publish')
-
-
-def public_tracks(request, username=None, profile=None):
-    tracks = []
-    statistics = {}
-    link_to_detail_page = False
-
-    public_url = (
-        request.scheme + "://" +
-        request.get_host() +
-        "/publictrack/"
-        )
-
-    basemap_filename = (
-        settings.MAPS_URL +
-        "public_base.html"
-    )
-
-    full_map_filename = basemap_filename
-
-    if username and profile:
-        fs = FileSystemStorage(location=settings.MAPS_ROOT)
-        map_filename = username+"_"+profile+"_public.html"
-        if fs.exists(settings.MAPS_ROOT+"/"+map_filename):
-            try:
-                user = User.objects.get(username=username)
-                if profile == "All":
-                    tracks = Track.objects.filter(
-                        user=user,
-                        public_track=True,
-                        ).order_by('created_date')
-                else:
-                    tracks = Track.objects.filter(
-                        user=user,
-                        public_track=True,
-                        profile__icontains=profile,
-                        ).order_by('created_date')
-            except Exception:
-                tracks = []
-
-            try:
-                preference = Preference.objects.get(user=user)
-                link_to_detail_page = preference.link_to_detail_page
-            except Exception:
-                link_to_detail_page = False
-
-            try:
-                statistics = compute_statistics(tracks)
-            except Exception:
-                statistics = {}
-
-            full_map_filename = (
-                settings.MAPS_URL +
-                map_filename.replace(' ', '%20')
-            )
-
-        else:
-            full_map_filename = basemap_filename
-            tracks = []
-            link_to_detail_page = False
-            statistics = {}
-
-    return render(request, 'acstracks_app/publictracks.html', {
-        'tracks': tracks,
-        'username': username,
-        'profile': profile,
-        'statistics': statistics,
-        'public_url': public_url,
-        'link_to_detail_page': link_to_detail_page,
-        'preference': preference,
-        'map_filename': full_map_filename,
-        'basemap_filename': basemap_filename,
-        }
-    )
 
 
 def publictrack_detail(request, publickey, intermediate_points_selected=None):
@@ -1234,6 +1187,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         )
 
     return render(request, 'acstracks_app/publictrack_detail.html', {
+        'colorscheme': preference.colorscheme,
         'atrack': atrack,
         'show_intermediate_points': show_intermediate_points,
         'show_heartrate': show_heartrate,
