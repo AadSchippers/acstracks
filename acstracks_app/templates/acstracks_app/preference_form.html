@@ -76,29 +76,33 @@
             <button type="submit" onclick=processFiles()>Apply and save</button>
             <hr>
             <h3>Appearence</h3>
+            <div class="file-field">
+                <table>
+                    <tr>
+                        <div class="file-field">
+                            <td>
+                                <label>Background image:</label>
+                            </td>
+                            <td>
+                                <label for="backgroundimage" 
+                                    id="backgroundimagelabel" 
+                                    class="gpxfilelabel save btn btn-default scalefont {{colorscheme}}">
+                                    <b>Upload</b>
+                                </label>
+                                <div class="btn">
+                                    <input type="file" id="backgroundimage" name="backgroundimage" accept="image/jpeg,image/png" multiple style="display:none">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="file-path-wrapper col-12">
+                                    <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ backgroundimagenames }}">
+                                </div>
+                            </td>
+                        </div>
+                    </tr>
+                </table>
+            </div>
             <table>
-                <tr>
-                    <div class="file-field">
-                        <td>
-                            <label>Background image:</label>
-                        </td>
-                        <td>
-                            <label for="backgroundimage" 
-                                id="backgroundimagelabel" 
-                                class="gpxfilelabel save btn btn-default scalefont {{colorscheme}}">
-                                <b>Upload</b>
-                            </label>
-                            <div class="btn">
-                                <input type="file" id="backgroundimage" name="backgroundimage" accept="image/jpeg,image/png" multiple style="display:none">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="file-path-wrapper col-12">
-                                <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ backgroundimagenames }}">
-                            </div>
-                        </td>
-                    </div>
-                </tr>
                 <tr>
                     <td>
                         <label for="colorscheme">Colorscheme:</label>
@@ -117,7 +121,7 @@
                 </tr>
             </table>
             <br><br>
-            <button type="submit" name="customvisuals" onclick=processFiles()>Apply and save</button>
+            <button type="submit" onclick=processFiles()>Apply and save</button>
             &nbsp;or&nbsp;
             <button type="submit" name="defaultappearence" onclick=processFiles()>Use default appearence</button>
             <hr>

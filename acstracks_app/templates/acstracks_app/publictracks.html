@@ -1,0 +1,58 @@
+{% extends 'acstracks_app/base.html' %}
+
+{% block content %}
+<script>
+    function processFiles(id) {
+        document.getElementById("id-processing-p").style.display = "block";
+        document.getElementById("id-processing-img").style.display = "block";
+        document.getElementById("id-messages").style.display = "none";
+        document.getElementById(id).submit();
+    }
+</script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                {% if tracks.0.displayfilename %}
+                    <h3>{{ profile }}</h3>
+                    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont {{colorscheme}}">
+                        <thead>
+                            <th>Track name</th>
+                            <th style="text-align:right;">Length (km)</th>
+                            <th style="text-align:right;">Duration</th>
+                        </thead>
+                        <tbody>
+                            {% for track in tracks %}
+                                {% if track.displayfilename %}
+                                    {% if link_to_detail_page %}
+                                        <tr class="table-row" onclick=processFiles()>
+                                            <td><a href={{ public_url }}{{ track.publickey }}></a>{{ track.name }}</a></td>
+                                    {% else %}
+                                        <tr class="table-row">
+                                            <td>{{ track.name }}</td>
+                                    {% endif %}
+                                    <td style="text-align:right;">{{ track.length }}</td>
+                                    <td style="text-align:right;">{{ track.timelength|time:"H:i:s" }}</td>
+                                {% endif %}
+                                </tr>
+                            {% endfor %}
+                            {% if tracks.1.displayfilename %}
+                                <tr>
+                                    <td><b>Total:</b></td>
+                                    <td style="text-align:right;"><b>{{ statistics.total_length }}</b></td>
+                                    <td style="text-align:right;"><b>{{ statistics.total_duration }}</b></td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+            <div class="col-8">
+                {% if tracks.0.displayfilename %}
+                    <iframe class="responsive-iframe" id="map_frame" src={{ map_filename }} title="Track map"></iframe>
+                {% else %}
+                    <iframe class="responsive-iframe" src={{ basemap_filename }} title="Track map"></iframe>
+                {% endif %}
+            </div>
+        </div>
+    </div>    
+{% endblock %}

@@ -93,6 +93,7 @@ def track_list(request):
     return render(request, 'acstracks_app/track_list.html', {
         'colorscheme': preference.colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
         'tracks': tracks,
         'preference': preference,
         'bike_profile_filters': bike_profile_filters,
@@ -259,6 +260,7 @@ def track_detail(request, pk):
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
                 'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+                'backgroundimage': set_backgroundimage(preference),
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -280,6 +282,7 @@ def track_detail(request, pk):
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
                 'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+                'backgroundimage': set_backgroundimage(preference),
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -298,6 +301,7 @@ def track_detail(request, pk):
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
                 'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+                'backgroundimage': set_backgroundimage(preference),
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -353,6 +357,7 @@ def track_detail(request, pk):
     return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
                 'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+                'backgroundimage': set_backgroundimage(preference),
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
@@ -616,6 +621,7 @@ def show_statistics(request):
     return render(request, 'acstracks_app/show_statistics.html', {
         'colorscheme': preference.colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
         "page_headline": page_headline,
         "annual_statistics": annual_statistics,
         "profile_statistics": profile_statistics,
@@ -693,6 +699,7 @@ def heatmap(request, profile=None, year=None):
     return render(request, 'acstracks_app/show_heatmap.html', {
         'colorscheme': preference.colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
         "profile_filter": profile,
         "bike_profile_filters": bike_profile_filters,
         "date_start": date_start,
@@ -807,6 +814,20 @@ def compute_statistics(tracks):
 
 
 def is_input_valid(input=None):
+    pattern = (r"^[A-z0-9\- +\ ]+$")
+    try:
+        return re.match(pattern, input) is not None
+    except Exception:
+        return None
+
+
+def set_backgroundimage(preference):
+    if preference.backgroundimage:
+        return "/static/media/" + preference.backgroundimage.name
+    
+    return "/static/img/acstracks" + preference.colorscheme + "bg.jpg"
+
+
     pattern = (r"^[A-z0-9\- +\ ]+$")
     try:
         return re.match(pattern, input) is not None
@@ -933,7 +954,6 @@ def process_preferences(request):
                 'speedthreshold': preference.speedthreshold,
                 'elevationthreshold': preference.elevationthreshold,
                 'maxspeedcappingfactor': preference.maxspeedcappingfactor,
-                'maxspeedcappingfactor': preference.maxspeedcappingfactor,
                 'force_recalculate': False,
                 'backgroundimage': preference.backgroundimage,
                 'colorscheme': preference.colorscheme,
@@ -961,6 +981,7 @@ def process_preferences(request):
             'form': form,
             'colorscheme': preference.colorscheme,
             'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+            'backgroundimage': set_backgroundimage(preference),
             'allcolorschemes': settings.COLORSCHEMES,            
             'page_name': "Preferences",
             }
@@ -1018,6 +1039,7 @@ def cleanup(request):
     return render(request, 'acstracks_app/cleanup.html', {
         'colorscheme': colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
         'obsolete_files': obsolete_files,
         'page_name': "Preferences",
         }
@@ -1053,7 +1075,7 @@ def publish(request):
 
             try:
                 preference = Preference.objects.get(user=request.user)
-                colorscheme = settings.PRIMARY_COLOR[preference.colorscheme]
+                colorscheme = preference.colorscheme
             except:
                 colorscheme = settings.DEFAULT_COLORSCHEME
 
@@ -1112,6 +1134,7 @@ def publish(request):
     return render(request, 'acstracks_app/publish.html', {
         'colorscheme': preference.colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
         'tracks': tracks,
         'statistics': statistics,
         'bike_profile_filters': bike_profile_filters,
@@ -1139,6 +1162,83 @@ def unpublish(request, profile=None):
             pass
 
     return redirect('publish')
+
+
+def public_tracks(request, username=None, profile=None):
+    tracks = []
+    statistics = {}
+    link_to_detail_page = False
+
+    public_url = (
+        request.scheme + "://" +
+        request.get_host() +
+        "/publictrack/"
+        )
+
+    basemap_filename = (
+        settings.MAPS_URL +
+        "public_base.html"
+    )
+
+    full_map_filename = basemap_filename
+
+    if username and profile:
+        fs = FileSystemStorage(location=settings.MAPS_ROOT)
+        map_filename = username+"_"+profile+"_public.html"
+        if fs.exists(settings.MAPS_ROOT+"/"+map_filename):
+            try:
+                user = User.objects.get(username=username)
+                if profile == "All":
+                    tracks = Track.objects.filter(
+                        user=user,
+                        public_track=True,
+                        ).order_by('created_date')
+                else:
+                    tracks = Track.objects.filter(
+                        user=user,
+                        public_track=True,
+                        profile__icontains=profile,
+                        ).order_by('created_date')
+            except Exception:
+                tracks = []
+
+            try:
+                preference = Preference.objects.get(user=user)
+                link_to_detail_page = preference.link_to_detail_page
+            except Exception:
+                link_to_detail_page = False
+
+            try:
+                statistics = compute_statistics(tracks)
+            except Exception:
+                statistics = {}
+
+            full_map_filename = (
+                settings.MAPS_URL +
+                map_filename.replace(' ', '%20')
+            )
+
+        else:
+            full_map_filename = basemap_filename
+            tracks = []
+            link_to_detail_page = False
+            statistics = {}
+
+    return render(request, 'acstracks_app/publictracks.html', {
+        'colorscheme': preference.colorscheme,
+        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
+        'tracks': tracks,
+        'username': username,
+        'profile': profile,
+        'statistics': statistics,
+        'public_url': public_url,
+        'link_to_detail_page': link_to_detail_page,
+        'preference': preference,
+        'map_filename': full_map_filename,
+        'basemap_filename': basemap_filename,
+        }
+    )
 
 
 def publictrack_detail(request, publickey, intermediate_points_selected=None):
@@ -1205,6 +1305,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'colorscheme': preference.colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+        'backgroundimage': set_backgroundimage(preference),
         'atrack': atrack,
         'show_intermediate_points': show_intermediate_points,
         'show_heartrate': show_heartrate,

@@ -117,18 +117,6 @@ body {
     max-width: 100%;
     height: 95%;
 }
-body.giro {
-  background-image: url("/static/img/acstracksgirobg.jpg");
-}
-body.nostalgia {
-  background-image: url("/static/img/acstracksnostalgiabg.jpg");
-}
-body.ocean {
-  background-image: url("/static/img/acstracksoceanbg.jpg");
-}
-body.summer {
-  background-image: url("/static/img/acstrackssummerbg.jpg");
-}
 
 div.detail {
   background-color: transparent;
