@@ -146,7 +146,20 @@ table, th, td {
 }
 
 .gpxfilelabel {
-    cursor:pointer;
+  cursor:pointer;
+}
+
+.gpxfilelabel.giro:hover {
+  color: purple;
+}
+.gpxfilelabel.nostalgia:hover {
+  color: maroon;
+}
+.gpxfilelabel.ocean:hover {
+  color: darkblue;
+}
+.gpxfilelabel.summer:hover {
+  color: darkgreen;
 }
 
 .gpxfilepath {

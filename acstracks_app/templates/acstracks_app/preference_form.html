@@ -12,11 +12,11 @@
         <form method="POST" class="preference-form" enctype="multipart/form-data">
             {% csrf_token %}
             <h3>Thresholds</h3>
-            <p id="id_helptext">
-                <i>Changing thresholds leads to recalculating all tracks, depending on the number of tracks this might take considerable time.</i>
+            <p>
+                <i>Changing thresholds only affects new tracks.</i>
             </p>
             <div class="row">
-                <div class="col-4">
+                <div class="col-5">
                     <table class="scalefont {{colorscheme}}">
                         <tr>
                             <td valign="top" style="text-align:left"><b>Speed threshold (km/h):</b></td>
@@ -58,69 +58,73 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><br>       
-                                <label class="checkcontainer">Recalculate all tracks
+                            <td>
+                                <br>       
+                                <label class="checkcontainer {{colorscheme}}">Recalculate all tracks
                                     <input type="checkbox"
                                         name="force_recalculate" 
                                         {% if form.force_recalculate.value %}
                                             checked="checked" 
                                         {% endif %}
                                         id="id_force_recalculate">
-                                    <span class="checkmark"></span> 
+                                    <span class="checkmark {{colorscheme}}"></span> 
                                 </label>
                             </td>
                         </tr>
                     </table>
+                    <p>
+                        <i>Depending on the number of tracks recalculating all tracks might take considerable time.</i>
+                    </p>
+                    <button type="submit" onclick=processFiles()>Apply and save</button>
                 </div>
             </div>
-            <button type="submit" onclick=processFiles()>Apply and save</button>
             <hr>
             <h3>Appearence</h3>
-            <div class="file-field">
-                <table>
-                    <tr>
-                        <div class="file-field">
-                            <td>
-                                <label>Background image:</label>
-                            </td>
-                            <td>
-                                <label for="backgroundimage" 
-                                    id="backgroundimagelabel" 
-                                    class="gpxfilelabel save btn btn-default scalefont {{colorscheme}}">
-                                    <b>Upload</b>
-                                </label>
-                                <div class="btn">
-                                    <input type="file" id="backgroundimage" name="backgroundimage" accept="image/jpeg,image/png" multiple style="display:none">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="file-path-wrapper col-12">
-                                    <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ backgroundimagenames }}">
-                                </div>
-                            </td>
-                        </div>
-                    </tr>
-                </table>
+            <div class="row">
+                <div class="col-6">
+                    <div class="file-field">
+                        <table class="scalefont {{colorscheme}}" width="100%">
+                            <tr>
+                                <td>
+                                    <label>Background image:</label>
+                                </td>
+                                <td style="text-align: left">
+                                    <label for="backgroundimage" 
+                                        id="backgroundimagelabel" 
+                                        class="gpxfilelabel save btn btn-default scalefont {{colorscheme}}">
+                                        <b>Upload</b>
+                                    </label>
+                                    <div class="btn">
+                                        <input type="file" id="backgroundimage" name="backgroundimage" accept="image/jpeg,image/png" style="display:none">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="file-path-wrapper">
+                                        <input class="gpxfilepath file-path validate" type="text" onchange=showUpload() value="{{ backgroundimagenames }}">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="colorscheme">Colorscheme:</label>
+                                </td>
+                                <td style="text-align: left">
+                                    <select name="colorscheme" id="colorscheme">
+                                        {% for a_colorscheme in allcolorschemes %}
+                                            {% if a_colorscheme == colorscheme %}
+                                                <option value="{{ a_colorscheme }}" selected="selected">{{ a_colorscheme }}</option>
+                                            {% else %}
+                                                <option value="{{ a_colorscheme }}">{{ a_colorscheme }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <table>
-                <tr>
-                    <td>
-                        <label for="colorscheme">Colorscheme:</label>
-                    </td>
-                    <td>
-                        <select name="colorscheme" id="colorscheme">
-                            {% for a_colorscheme in allcolorschemes %}
-                                {% if a_colorscheme == colorscheme %}
-                                    <option value="{{ a_colorscheme }}" selected="selected">{{ a_colorscheme }}</option>
-                                {% else %}
-                                    <option value="{{ a_colorscheme }}">{{ a_colorscheme }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            <br><br>
+            <br>
             <button type="submit" onclick=processFiles()>Apply and save</button>
             &nbsp;or&nbsp;
             <button type="submit" name="defaultappearence" onclick=processFiles()>Use default appearence</button>

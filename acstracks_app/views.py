@@ -822,17 +822,13 @@ def is_input_valid(input=None):
 
 
 def set_backgroundimage(preference):
+    if preference == None:
+        return "/static/img/acstracks" + settings.DEFAULT_COLORSCHEME + "bg.jpg"
+    
     if preference.backgroundimage:
         return "/static/media/" + preference.backgroundimage.name
     
     return "/static/img/acstracks" + preference.colorscheme + "bg.jpg"
-
-
-    pattern = (r"^[A-z0-9\- +\ ]+$")
-    try:
-        return re.match(pattern, input) is not None
-    except Exception:
-        return None
 
 
 def logout_view(request):
@@ -843,6 +839,12 @@ def logout_view(request):
 
 @login_required(login_url='/login/')
 def process_preferences(request):
+    try:
+        preference = Preference.objects.get(user=request.user)
+    except Exception:
+        preference = Preference.objects.create(
+            user=request.user,
+        )
     form = PreferenceForm()
     if request.method == "POST":
         form = PreferenceForm(request.POST, request.FILES)
@@ -870,111 +872,49 @@ def process_preferences(request):
             show_trackeffort = data['show_trackeffort']
             show_trackeffort_public = data['show_trackeffort_public']
 
-            try:
-                preference = Preference.objects.get(user=request.user)
-                old_speedthreshold = preference.speedthreshold
-                old_elevationthreshold = preference.elevationthreshold
-                old_maxspeedcappingfactor = preference.maxspeedcappingfactor
-                old_backgroundimage = preference.backgroundimage
-                preference.speedthreshold = speedthreshold
-                preference.elevationthreshold = elevationthreshold
-                preference.maxspeedcappingfactor = maxspeedcappingfactor
-                preference.force_recalculate = force_recalculate
-                if backgroundimage:
-                    preference.backgroundimage = backgroundimage
-                preference.colorscheme = colorscheme
-                if defaultappearence:
-                    preference.backgroundimage = None
-                    preference.colorscheme = settings.DEFAULT_COLORSCHEME
-                preference.show_avgspeed = show_avgspeed
-                preference.show_maxspeed = show_maxspeed
-                preference.show_totalascent = show_totalascent
-                preference.show_totaldescent = show_totaldescent
-                preference.show_avgcadence = show_avgcadence
-                preference.show_avgheartrate = show_avgheartrate
-                preference.show_is_public_track = show_is_public_track
-                preference.link_to_detail_page = link_to_detail_page
-                preference.show_intermediate_points = show_intermediate_points
-                preference.show_download_gpx = show_download_gpx
-                preference.show_heartrate = show_heartrate
-                preference.show_cadence = show_cadence
-                preference.show_trackeffort = show_trackeffort
-                preference.show_trackeffort_public = show_trackeffort_public
-                preference.save()
-                if old_backgroundimage:
-                    if old_backgroundimage.name != preference.backgroundimage.name:
-                        fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/img")
-                        try:
-                            fs.delete(old_backgroundimage.name[4:])
-                        except Exception:
-                            pass
+            old_backgroundimage = preference.backgroundimage
+            preference.speedthreshold = speedthreshold
+            preference.elevationthreshold = elevationthreshold
+            preference.maxspeedcappingfactor = maxspeedcappingfactor
+            preference.force_recalculate = force_recalculate
+            if backgroundimage:
+                preference.backgroundimage = backgroundimage
+            preference.colorscheme = colorscheme
+            if defaultappearence:
+                preference.backgroundimage = None
+                preference.colorscheme = settings.DEFAULT_COLORSCHEME
+            preference.show_avgspeed = show_avgspeed
+            preference.show_maxspeed = show_maxspeed
+            preference.show_totalascent = show_totalascent
+            preference.show_totaldescent = show_totaldescent
+            preference.show_avgcadence = show_avgcadence
+            preference.show_avgheartrate = show_avgheartrate
+            preference.show_is_public_track = show_is_public_track
+            preference.link_to_detail_page = link_to_detail_page
+            preference.show_intermediate_points = show_intermediate_points
+            preference.show_download_gpx = show_download_gpx
+            preference.show_heartrate = show_heartrate
+            preference.show_cadence = show_cadence
+            preference.show_trackeffort = show_trackeffort
+            preference.show_trackeffort_public = show_trackeffort_public
+            preference.save()
+            if old_backgroundimage:
+                if old_backgroundimage.name != preference.backgroundimage.name:
+                    fs = FileSystemStorage(location=settings.MEDIA_ROOT + "/img")
+                    try:
+                        fs.delete(old_backgroundimage.name[4:])
+                    except Exception:
+                        pass
  
-            except Exception:
-                old_speedthreshold = settings.SPEEDTHRESHOLD
-                old_elevationthreshold = settings.ELEVATIONTHRESHOLD
-                old_maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
-                old_backgroundimage = None
-                preference = Preference.objects.create(
-                    user=request.user,
-                    speedthreshold=speedthreshold,
-                    elevationthreshold=elevationthreshold,
-                    maxspeedcappingfactor=maxspeedcappingfactor,
-                    force_recalculate=force_recalculate,
-                    backgroundimage = None,
-                    colorscheme = 'giro',
-                    show_avgspeed=show_avgspeed,
-                    show_maxspeed=show_maxspeed,
-                    show_totalascent=show_totalascent,
-                    show_totaldescent=show_totaldescent,
-                    show_avgcadence=show_avgcadence,
-                    show_avgheartrate=show_avgheartrate,
-                    show_is_public_track=show_is_public_track,
-                    link_to_detail_page=link_to_detail_page,
-                    show_intermediate_points=show_intermediate_points,
-                    show_download_gpx=show_download_gpx,
-                    show_heartrate=show_heartrate,
-                    show_cadence=show_cadence,
-                    show_trackeffort=show_trackeffort,
-                    show_trackeffort_public=show_trackeffort_public,
-                )
 
-            if (
-                force_recalculate or
-                old_speedthreshold != speedthreshold or
-                old_elevationthreshold != elevationthreshold or
-                old_maxspeedcappingfactor != maxspeedcappingfactor
-            ):
+            if force_recalculate:
                 recalculate_tracks(request)
             
             return redirect('preference')
+        else:
+            form = get_preferenceform(request)
     else:
-        try:
-            preference = Preference.objects.get(user=request.user)
-            form = PreferenceForm(initial={
-                'speedthreshold': preference.speedthreshold,
-                'elevationthreshold': preference.elevationthreshold,
-                'maxspeedcappingfactor': preference.maxspeedcappingfactor,
-                'force_recalculate': False,
-                'backgroundimage': preference.backgroundimage,
-                'colorscheme': preference.colorscheme,
-                'show_avgspeed': preference.show_avgspeed,
-                'show_maxspeed': preference.show_maxspeed,
-                'show_totalascent': preference.show_totalascent,
-                'show_totaldescent': preference.show_totaldescent,
-                'show_avgcadence': preference.show_avgcadence,
-                'show_avgheartrate': preference.show_avgheartrate,
-                'show_is_public_track': preference.show_is_public_track,
-                'link_to_detail_page': preference.link_to_detail_page,
-                'show_intermediate_points':
-                    preference.show_intermediate_points,
-                'show_download_gpx': preference.show_download_gpx,
-                'show_heartrate': preference.show_heartrate,
-                'show_cadence': preference.show_cadence,
-                'show_trackeffort': preference.show_trackeffort,
-                'show_trackeffort_public': preference.show_trackeffort_public,
-            })
-        except Exception:
-            form = PreferenceForm()
+        form = get_preferenceform(request)
 
     return render(
         request, 'acstracks_app/preference_form.html', {
@@ -986,6 +926,38 @@ def process_preferences(request):
             'page_name': "Preferences",
             }
         )
+
+
+def get_preferenceform(request):
+    try:
+        preference = Preference.objects.get(user=request.user)
+        form = PreferenceForm(initial={
+            'speedthreshold': preference.speedthreshold,
+            'elevationthreshold': preference.elevationthreshold,
+            'maxspeedcappingfactor': preference.maxspeedcappingfactor,
+            'force_recalculate': False,
+            'backgroundimage': preference.backgroundimage,
+            'colorscheme': preference.colorscheme,
+            'show_avgspeed': preference.show_avgspeed,
+            'show_maxspeed': preference.show_maxspeed,
+            'show_totalascent': preference.show_totalascent,
+            'show_totaldescent': preference.show_totaldescent,
+            'show_avgcadence': preference.show_avgcadence,
+            'show_avgheartrate': preference.show_avgheartrate,
+            'show_is_public_track': preference.show_is_public_track,
+            'link_to_detail_page': preference.link_to_detail_page,
+            'show_intermediate_points':
+                preference.show_intermediate_points,
+            'show_download_gpx': preference.show_download_gpx,
+            'show_heartrate': preference.show_heartrate,
+            'show_cadence': preference.show_cadence,
+            'show_trackeffort': preference.show_trackeffort,
+            'show_trackeffort_public': preference.show_trackeffort_public,
+        })
+    except Exception:
+        form = PreferenceForm()
+
+    return form
 
 
 def recalculate_tracks(request):
