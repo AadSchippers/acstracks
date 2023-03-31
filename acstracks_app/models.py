@@ -57,6 +57,7 @@ class Track(models.Model):
 
 class Preference(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    # General preferences
     speedthreshold = models.DecimalField(
         max_digits=6, decimal_places=2, default=3.60
         )
@@ -73,6 +74,8 @@ class Preference(models.Model):
     colorscheme = models.CharField(
         max_length=12, null=False, blank=False, default="giro"
         )
+    show_backgroundimage = models.BooleanField(default=True)
+    # Preferences for home page
     show_avgspeed = models.BooleanField(default=True)
     show_maxspeed = models.BooleanField(default=True)
     show_totalascent = models.BooleanField(default=True)

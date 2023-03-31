@@ -825,6 +825,9 @@ def set_backgroundimage(preference):
     if preference == None:
         return "/static/img/acstracks" + settings.DEFAULT_COLORSCHEME + "bg.jpg"
     
+    if not preference.show_backgroundimage:
+        return None
+    
     if preference.backgroundimage:
         return "/static/media/" + preference.backgroundimage.name
     
@@ -857,6 +860,7 @@ def process_preferences(request):
             force_recalculate = data['force_recalculate']
             backgroundimage = data['backgroundimage']
             colorscheme = data['colorscheme']
+            show_backgroundimage = data['show_backgroundimage']
             show_avgspeed = data['show_avgspeed']
             show_maxspeed = data['show_maxspeed']
             show_totalascent = data['show_totalascent']
@@ -877,12 +881,15 @@ def process_preferences(request):
             preference.elevationthreshold = elevationthreshold
             preference.maxspeedcappingfactor = maxspeedcappingfactor
             preference.force_recalculate = force_recalculate
+            preference.show_backgroundimage = show_backgroundimage
             if backgroundimage:
+                preference.show_backgroundimage = True
                 preference.backgroundimage = backgroundimage
             preference.colorscheme = colorscheme
             if defaultappearence:
                 preference.backgroundimage = None
                 preference.colorscheme = settings.DEFAULT_COLORSCHEME
+                preference.show_backgroundimage = True
             preference.show_avgspeed = show_avgspeed
             preference.show_maxspeed = show_maxspeed
             preference.show_totalascent = show_totalascent
@@ -938,6 +945,7 @@ def get_preferenceform(request):
             'force_recalculate': False,
             'backgroundimage': preference.backgroundimage,
             'colorscheme': preference.colorscheme,
+            'show_backgroundimage': preference.show_backgroundimage,
             'show_avgspeed': preference.show_avgspeed,
             'show_maxspeed': preference.show_maxspeed,
             'show_totalascent': preference.show_totalascent,

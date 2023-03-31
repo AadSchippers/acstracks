@@ -13,6 +13,7 @@ class PreferenceForm(forms.ModelForm):
             'backgroundimage',
             'colorscheme',
             'force_recalculate',
+            'show_backgroundimage',
             'show_avgspeed',
             'show_maxspeed',
             'show_totalascent',

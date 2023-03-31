@@ -106,6 +106,18 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <label class="checkcontainer {{colorscheme}}">Show background image
+                                        <input type="checkbox"
+                                            name="show_backgroundimage" 
+                                            {% if form.show_backgroundimage.value %}
+                                                checked="checked" 
+                                            {% endif %}
+                                            id="id_show_backgroundimage">
+                                        <span class="checkmark {{colorscheme}}"></span> 
+                                    </label>
+                                </td>
+                            <tr>
+                                <td>
                                     <label for="colorscheme">Colorscheme:</label>
                                 </td>
                                 <td style="text-align: left">
