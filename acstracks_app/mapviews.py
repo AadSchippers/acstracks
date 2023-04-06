@@ -46,8 +46,7 @@ def process_gpx_file(
         elevationthreshold = settings.ELEVATIONTHRESHOLD
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
 
-    points = []
-    points_info = []
+    allpoints = []
     starting_distance = 0
     previous_distance = 0
     previous_speed = -1
@@ -95,7 +94,7 @@ def process_gpx_file(
                     speed = None
 
                 previous_point = point
-                x = len(points_info)
+                x = len(allpoints)
                 if x > 0:
                     if distance < previous_distance:
                         distance = previous_distance
@@ -105,7 +104,7 @@ def process_gpx_file(
                     else:
                         flagged = False
                     t0 = datetime.strptime(
-                        points_info[0][0], "%Y-%m-%d %H:%M:%S"
+                        allpoints[0]["created_date"], "%Y-%m-%d %H:%M:%S"
                         )
                     tx = datetime.strptime(point.time.astimezone(
                         timezone_info).strftime(
@@ -113,7 +112,7 @@ def process_gpx_file(
                         )
                     duration = tx - t0
                     txminus1 = datetime.strptime(
-                        points_info[x-1][0], "%Y-%m-%d %H:%M:%S"
+                        allpoints[x-1]["created_date"], "%Y-%m-%d %H:%M:%S"
                         )
                     previous_duration = txminus1 - t0
 
@@ -204,24 +203,25 @@ def process_gpx_file(
                     previous_avgcadence = cadence
                     flagged = False
 
-                points.append(tuple([point.latitude,
-                                    point.longitude]))
-
-                points_info.append(tuple([
-                    point.time.astimezone(timezone_info).strftime(
+                apoint = {
+                    "latitude": point.latitude,
+                    "longitude": point.longitude,
+                    "elevation": round(point.elevation, 2),
+                    "created_date": point.time.astimezone(timezone_info).strftime(
                         "%Y-%m-%d %H:%M:%S"
                         ),
-                    distance,
-                    duration,
-                    moving_duration,
-                    round(speed, 2),
-                    heartrate,
-                    avgheartrate,
-                    cadence,
-                    avgcadence,
-                    round(point.elevation, 2),
-                    flagged,
-                   ]))
+                    "distance": distance,
+                    "duration": duration,
+                    "moving_duration": moving_duration,
+                    "speed": round(speed, 2),
+                    "heartrate": heartrate,
+                    "avgheartrate": avgheartrate,
+                    "cadence": cadence,
+                    "avgcadence": avgcadence,
+                    "flagged": flagged,
+                }
+            
+                allpoints.append(apoint)
 
                 previous_distance = distance
                 previous_speed = speed
@@ -229,7 +229,7 @@ def process_gpx_file(
     if iFlagged > 0:
         print(
             f"Filename: {filename}," +
-            "number of points: {str(len(points))}," +
+            "number of points: {str(len(allpoints))}," +
             "points flagged {str(iFlagged)}"
             )
 
@@ -238,7 +238,7 @@ def process_gpx_file(
             (math.sqrt((tsec140 * 0.5) + (tsec150 * 1) + (tsec160 * 2)))
                 * (avgheartrate * avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
         update_track(
-            atrack, points, points_info, trackeffort, elevationthreshold, maxspeedcappingfactor
+            atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
             )
 
     if map_filename:
@@ -246,46 +246,45 @@ def process_gpx_file(
             request,
             colorscheme,
             atrack,
-            points,
-            points_info,
+            allpoints,
             filename,
             intermediate_points_selected,
             map_filename
             )
 
     if savecsv:
-        return save_csv(request, atrack, points, points_info)
+        return save_csv(request, atrack, allpoints)
 
     if downloadgpx:
-        return download_gpx(request, atrack, points, points_info)
+        return download_gpx(request, atrack, allpoints)
 
     return
 
 
 def update_track(
-    atrack, points, points_info, trackeffort, elevationthreshold, maxspeedcappingfactor
+    atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
 ):
 
-    last = len(points_info) - 1
-    created_date = points_info[0][0]
-    trkLength = float(points_info[last][1]) / 1000
-    trkSeconds = int(points_info[last][3].seconds)
+    last = len(allpoints) - 1
+    created_date = allpoints[0]["created_date"]
+    trkLength = float(allpoints[last]["distance"]) / 1000
+    trkSeconds = int(allpoints[last]["moving_duration"].seconds)
     trkTimelength = time.strftime(
         '%H:%M:%S', time.gmtime(trkSeconds)
         )
 
     try:
         trkAvgspeed = float(
-            (points_info[last][1] / points_info[last][3].seconds) * 3.6
+            (allpoints[last]["distance"] / allpoints[last]["moving_duration"].seconds) * 3.6
             )
     except Exception:
         trkAvgspeed = 0
     try:
-        trkAvgcadence = int(points_info[last][8])
+        trkAvgcadence = int(allpoints[last]["avgcadence"])
     except Exception:
         trkAvgcadence = None
     try:
-        trkAvgheartrate = int(points_info[last][6])
+        trkAvgheartrate = int(allpoints[last]["avgheartrate"])
     except Exception:
         trkAvgheartrate = None
 
@@ -305,7 +304,7 @@ def update_track(
     trkMaxcadence = 0
     totalascent = 0
     totaldescent = 0
-    previous_elevation = points_info[0][9]
+    previous_elevation = allpoints[0]["elevation"]
 
     trkBest20 = 0
     trkBest30 = 0
@@ -318,14 +317,14 @@ def update_track(
     trkbest60_end_pointindex = 0
     PointIndex1 = 0
 
-    while PointIndex1 < len(points_info)-1:
+    while PointIndex1 < len(allpoints)-1:
         avgMaxSpeed = 0
         try:
             avgMaxSpeed = (
                 (
-                    points_info[PointIndex1][4] +
-                    points_info[PointIndex1+1][4] +
-                    points_info[PointIndex1+2][4]
+                    allpoints[PointIndex1]["speed"] +
+                    allpoints[PointIndex1+1]["speed"] +
+                    allpoints[PointIndex1+2]["speed"]
                 ) / 3
             )
         except Exception:
@@ -344,35 +343,35 @@ def update_track(
             trkMaxspeed4 = avgMaxSpeed
             trkMaxspeedIndex4 = PointIndex1
 
-        if points_info[PointIndex1][5]:
-            if points_info[PointIndex1][5] > trkMaxheartrate:
-                trkMaxheartrate = points_info[PointIndex1][5]
-            if points_info[PointIndex1][5] < trkMinheartrate:
-                trkMinheartrate = points_info[PointIndex1][5]
-        if points_info[PointIndex1][7] > trkMaxcadence:
-            trkMaxcadence = points_info[PointIndex1][7]
+        if allpoints[PointIndex1]["heartrate"]:
+            if allpoints[PointIndex1]["heartrate"] > trkMaxheartrate:
+                trkMaxheartrate = allpoints[PointIndex1]["heartrate"]
+            if allpoints[PointIndex1]["heartrate"] < trkMinheartrate:
+                trkMinheartrate = allpoints[PointIndex1]["heartrate"]
+        if allpoints[PointIndex1]["cadence"] > trkMaxcadence:
+            trkMaxcadence = allpoints[PointIndex1]["cadence"]
         if (
-            abs(points_info[PointIndex1][9] - previous_elevation)
+            abs(allpoints[PointIndex1]["elevation"] - previous_elevation)
             > elevationthreshold
         ):
-            if points_info[PointIndex1][9] > previous_elevation:
+            if allpoints[PointIndex1]["elevation"] > previous_elevation:
                 totalascent = totalascent + (
-                    points_info[PointIndex1][9] - previous_elevation
+                    allpoints[PointIndex1]["elevation"] - previous_elevation
                     )
-            if points_info[PointIndex1][9] < previous_elevation:
+            if allpoints[PointIndex1]["elevation"] < previous_elevation:
                 totaldescent = totaldescent + (
-                    previous_elevation - points_info[PointIndex1][9]
+                    previous_elevation - allpoints[PointIndex1]["elevation"]
                     )
-            previous_elevation = points_info[PointIndex1][9]
+            previous_elevation = allpoints[PointIndex1]["elevation"]
         PointIndex2 = PointIndex1 + 1
         best20_done = False
         best30_done = False
         best60_done = False
-        distance_0 = points_info[PointIndex1][1]
-        time_0 = points_info[PointIndex1][3].seconds
-        while PointIndex2 < len(points_info)-1:
-            distance_t = points_info[PointIndex2][1] - distance_0
-            time_t = points_info[PointIndex2][3].seconds - time_0
+        distance_0 = allpoints[PointIndex1]["distance"]
+        time_0 = allpoints[PointIndex1]["moving_duration"].seconds
+        while PointIndex2 < len(allpoints)-1:
+            distance_t = allpoints[PointIndex2]["distance"] - distance_0
+            time_t = allpoints[PointIndex2]["moving_duration"].seconds - time_0
             if not best20_done:
                 if time_t >= 1200:
                     best20_done = True
@@ -455,7 +454,7 @@ def update_track(
 
 
 def make_map(
-    request, colorscheme, atrack, points, points_info, filename,
+    request, colorscheme, atrack, allpoints, filename,
     intermediate_points_selected, map_filename
 ):
     primary_color = settings.PRIMARY_COLOR[colorscheme]
@@ -463,8 +462,8 @@ def make_map(
     end_color = settings.END_COLOR[colorscheme]
 
     # print(points)
-    ave_lat = sum(p[0] for p in points)/len(points)
-    ave_lon = sum(p[1] for p in points)/len(points)
+    ave_lat = sum(p["latitude"] for p in allpoints)/len(allpoints)
+    ave_lon = sum(p["longitude"] for p in allpoints)/len(allpoints)
 
     # Load map centred on average coordinates
     my_map = folium.Map(location=[ave_lat, ave_lon], zoom_start=12)
@@ -473,15 +472,15 @@ def make_map(
     max_lat = float(-9999999)
     min_lon = float(9999999)
     max_lon = float(-9999999)
-    for p in points:
-        if min_lat > p[0]:
-            min_lat = p[0]
-        if max_lat < p[0]:
-            max_lat = p[0]
-        if min_lon > p[1]:
-            min_lon = p[1]
-        if max_lon < p[1]:
-            max_lon = p[1]
+    for p in allpoints:
+        if min_lat > p["latitude"]:
+            min_lat = p["latitude"]
+        if max_lat < p["latitude"]:
+            max_lat = p["latitude"]
+        if min_lon > p["longitude"]:
+            min_lon = p["longitude"]
+        if max_lon < p["longitude"]:
+            max_lon = p["longitude"]
 
     sw = tuple([min_lat, min_lon])
     ne = tuple([max_lat, max_lon])
@@ -493,40 +492,40 @@ def make_map(
 
     ip = int(intermediate_points_selected)
     if ip > 0:
-        for x in range(len(points)):
-            distance = float(points_info[x][1])
+        for x in range(len(allpoints)):
+            distance = float(allpoints[x]["distance"])
 
             if ip <= 10000:
                 if distance < previous_marker_distance + ip:
                     continue
                 previous_marker_distance = distance
                 i = i + ip
-                make_marker(my_map, colorscheme, points, points_info, x, distance, i, 'Intermediate point ')
+                make_marker(my_map, colorscheme, allpoints, x, distance, i, 'Intermediate point ')
 
             if ip == 20000:
                 if x > 0:
                     if x == atrack.best20_start_pointindex:
-                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Start best 20 minutes ')
+                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 20 minutes ')
                     elif x == atrack.best20_end_pointindex:
-                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'End best 20 minutes ')
+                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 20 minutes ')
 
             if ip == 30000:
                 if x > 0:
                     if x == atrack.best30_start_pointindex:
-                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Start best 30 minutes ')
+                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 30 minutes ')
                     elif x == atrack.best30_end_pointindex:
-                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'End best 30 minutes ')
+                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 30 minutes ')
 
             if ip == 60000:
                 if x > 0:
                     if x == atrack.best60_start_pointindex:
-                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Start best 60 minutes ')
+                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 60 minutes ')
                     elif x == atrack.best60_end_pointindex:
-                        make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'End best 60 minutes ')
+                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 60 minutes ')
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex:
-                    make_marker(my_map, colorscheme, points, points_info, x, distance, distance, 'Maximum speed ', atrack.maxspeed)
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum speed ', atrack.maxspeed)
 
     # start marker
     tooltip_text = "Start, click for details"
@@ -536,12 +535,13 @@ def make_map(
         "<h3 style='color: " + primary_color + "; font-weight: bold; font-size: 1.5vw'>" +
         "Start</h3><table style='color: " + primary_color + "; width: 100%; " +
         "font-size: 0.85vw'><tr><td><b>Time </b></td>" +
-        "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
+        "<td style='text-align:right'>"+allpoints[0]["created_date"]+"</td></tr>" +
         "</table>"
     )
+    first_point = [allpoints[0]["latitude"], allpoints[0]["longitude"]]
     popup = folium.Popup(html, max_width=300)
     folium.Marker(
-        points[0],
+        first_point,
         icon=folium.Icon(color=start_color),
         tooltip=tooltip,
         popup=popup
@@ -551,18 +551,16 @@ def make_map(
     tooltip_text = "Finish, click for details"
     tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    # tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
-    # duration = tx - t0
-    duration = points_info[-1][2]
-    moving_duration = points_info[-1][3]
-    avgspeed = float((points_info[-1][1] / moving_duration.seconds) * 3.6)
-    distance = float(points_info[-1][1]) / 1000
+    duration = allpoints[-1]["duration"]
+    moving_duration = allpoints[-1]["moving_duration"]
+    avgspeed = float((allpoints[-1]["speed"] / moving_duration.seconds) * 3.6)
+    distance = float(allpoints[-1]["distance"]) / 1000
 
     html = (
         "<h3 style='color: " + primary_color + "; font-weight: bold; font-size: 1.5vw'>" +
         "Finish</h3><table style='color: " + primary_color + "; width: 100%; " +
         "font-size: 0.85vw'><tr><td><b>Time</b></td>" +
-        "<td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
+        "<td style='text-align:right'>"+allpoints[-1]["created_date"]+"</td></tr>" +
         "<tr><td><b>Distance</b></td><td style='text-align:right'>" +
         str(round(distance, 2))+"</td></tr>" +
         "<tr><td><b>Average speed</b></td><td style='text-align:right'>" +
@@ -573,9 +571,10 @@ def make_map(
         str(moving_duration)+"</td></tr>" +
         "</table>"
     )
+    last_point = [allpoints[-1]["latitude"], allpoints[-1]["longitude"]]
     popup = folium.Popup(html, max_width=300)
     folium.Marker(
-        points[-1],
+        last_point,
         icon=folium.Icon(color=end_color),
         tooltip=tooltip,
         popup=popup
@@ -584,6 +583,9 @@ def make_map(
     # folium.LayerControl(collapsed=True).add_to(my_map)
 
     # add lines
+    points = []
+    for point in allpoints:
+        points.append([point["latitude"], point["longitude"]])
     folium.PolyLine(
         points,
         color=primary_color,
@@ -601,24 +603,24 @@ def make_map(
     return
 
 
-def make_marker(my_map, colorscheme, points, points_info, x, distance, i, tooltip_text, speed=None):
+def make_marker(my_map, colorscheme, allpoints, x, distance, i, tooltip_text, speed=None):
     primary_color = settings.PRIMARY_COLOR[colorscheme]
 
-    time = points_info[x][0]
-    duration = points_info[x][2]
-    moving_duration = points_info[x][3]
+    time = allpoints[x]["created_date"]
+    duration = allpoints[x]["duration"]
+    moving_duration = allpoints[x]["moving_duration"]
     if not speed:
-        speed = points_info[x][4]
+        speed = allpoints[x]["speed"]
     try:
         avgspeed = float(
-            (points_info[x][1] / moving_duration.seconds) * 3.6
+            (allpoints[x]["distance"] / moving_duration.seconds) * 3.6
             )
     except Exception:
         avgspeed = 0
-    heartrate = points_info[x][5]
-    avgheartrate = points_info[x][6]
-    cadence = points_info[x][7]
-    avgcadence = points_info[x][8]
+    heartrate = allpoints[x]["heartrate"]
+    avgheartrate = allpoints[x]["avgheartrate"]
+    cadence = allpoints[x]["cadence"]
+    avgcadence = allpoints[x]["avgcadence"]
     popup_title_text = tooltip_text + 'at '
     tooltip_text = (
         tooltip_text +
@@ -647,9 +649,10 @@ def make_marker(my_map, colorscheme, points, points_info, x, distance, i, toolti
         cadence,
         avgcadence,
         )
+    point_x = [allpoints[x]["latitude"], allpoints[x]["longitude"]]
     popup = folium.Popup(html_popup, max_width=400)
     folium.Marker(
-        points[x],
+        point_x,
         icon=folium.Icon(color=primary_color),
         tooltip=tooltip, popup=popup
         ).add_to(my_map)
@@ -657,7 +660,7 @@ def make_marker(my_map, colorscheme, points, points_info, x, distance, i, toolti
     return
 
 
-def save_csv(request, atrack, points, points_info):
+def save_csv(request, atrack, allpoints):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     csvfilename = os.path.splitext(atrack.displayfilename)[0]+".csv"
@@ -706,35 +709,35 @@ def save_csv(request, atrack, points, points_info):
         ])
 
     row = 0
-    while row < len(points):
-        moving_duration = points_info[row][3]
+    while row < len(allpoints):
+        moving_duration = allpoints[row]["moving_duration"]
         try:
             avgspeed = float(
-                (points_info[row][1] / moving_duration.seconds) * 3.6
+                (allpoints[row]["distancde"] / moving_duration.seconds) * 3.6
                 )
         except Exception:
             avgspeed = 0
         writer.writerow([
-            points[row][0],
-            points[row][1],
-            round(points_info[row][9], 2),
-            points_info[row][0],
-            round(points_info[row][1], 2),
-            points_info[row][2],
-            points_info[row][3],
-            points_info[row][4],
+            allpoints[row]["latitude"],
+            allpoints[row]["longitude"],
+            round(allpoints[row]["elevation"], 2),
+            allpoints[row]["created_date"],
+            round(allpoints[row]["distance"], 2),
+            allpoints[row]["duration"],
+            allpoints[row]["moving_duration"],
+            allpoints[row]["speed"],
             round(avgspeed, 2),
-            points_info[row][5],
-            int(points_info[row][6]),
-            points_info[row][7],
-            int(points_info[row][8]),
+            allpoints[row]["heartrate"],
+            int(allpoints[row]["avgheartrate"]),
+            allpoints[row]["cadence"],
+            int(allpoints[row]["avgcadence"]),
         ])
         row += 1
 
     return response
 
 
-def download_gpx(request, atrack, points, points_info):
+def download_gpx(request, atrack, allpoints):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/xml')
     gpxfilename = os.path.splitext(atrack.displayfilename)[0]+".gpx"
@@ -758,7 +761,7 @@ def download_gpx(request, atrack, points, points_info):
     writer.writerow([str("  <metadata>")])
     writer.writerow([str(
         "    <time>" +
-        make_aware(parse(points_info[0][0])).astimezone(
+        make_aware(parse(allpoints[0]["created_date"])).astimezone(
             gpx_timezone_info
             ).strftime("%Y-%m-%dT%H:%M:%SZ")+"</time>")]
         )
@@ -771,21 +774,21 @@ def download_gpx(request, atrack, points, points_info):
     writer.writerow([str("    <trkseg>")])
 
     row = 0
-    while row < len(points):
-        if points_info[row][10] is False:
+    while row < len(allpoints):
+        if allpoints[row]["flagged"] is False:
             writer.writerow([str(
                 "      <trkpt lat='" +
-                str(points[row][0]) +
-                "' lon='"+str(points[row][1])+"'>")]
+                str(allpoints[row]["latitude"]) +
+                "' lon='"+str(allpoints[row]["longitude"])+"'>")]
                 )
             writer.writerow([str(
-                "        <ele>"+str(round(points_info[row][9], 2))+"</ele>")]
+                "        <ele>"+str(round(allpoints[row]["elevation"], 2))+"</ele>")]
                 )
             if request.user == atrack.user:
                 writer.writerow([str(
                     "        <time>" +
                     make_aware(parse(
-                        points_info[row][0])
+                        allpoints[row]["created_date"])
                         ).astimezone(gpx_timezone_info).strftime(
                         "%Y-%m-%dT%H:%M:%SZ"
                         ) + "</time>")]
@@ -793,12 +796,12 @@ def download_gpx(request, atrack, points, points_info):
                 writer.writerow([str("        <extensions>")])
                 writer.writerow([str(
                     "          <heartrate>" +
-                    str(points_info[row][5]) +
+                    str(allpoints[row]["heartrate"]) +
                     "</heartrate>")]
                     )
                 writer.writerow([str(
                     "          <cadence>" +
-                    str(points_info[row][7]) +
+                    str(allpoints[row]["cadence"]) +
                     "</cadence>")]
                     )
                 writer.writerow([str("        </extensions>")])
@@ -923,7 +926,7 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
     gpx = gpxpy.parse(gpx_file)
 
     try:
-        points = []
+        allpoints = []
         atrack = {}
         timezone_info = timezone(settings.TIME_ZONE)
         previous_point = None
@@ -933,9 +936,11 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
                 trackname = track.name
             for segment in track.segments:
                 for point in segment.points:
-                    points.append(tuple([point.latitude,
-                                        point.longitude,
-                                        point.elevation, ]))
+                    allpoints.append({
+                        "latitude": point.latitude,
+                        "longitude": point.longitude,
+                        "elevation": point.elevation, 
+                        })
 
                     point_distance = calculate_using_haversine(
                         point, previous_point
@@ -946,7 +951,7 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
 
             atrack["trackname"] = trackname
             atrack["distance"] = round(distance/1000, 2)
-            atrack["points"] = points
+            atrack["allpoints"] = allpoints
     except Exception:
         atrack = None
 
@@ -967,10 +972,10 @@ def make_heatmap(
     try:
         for t in tracks:
             ave_lats.append(
-                sum(float(p[0]) for p in t["points"])/len(t["points"])
+                sum(float(p["latidute"]) for p in t["allpoints"])/len(t["allpoints"])
                 )
             ave_lons.append(
-                sum(float(p[1]) for p in t["points"])/len(t["points"])
+                sum(float(p["longitude"]) for p in t["allpoints"])/len(t["allpoints"])
                 )
 
         ave_lat = sum(float(p) for p in ave_lats) / len(ave_lats)
@@ -986,25 +991,25 @@ def make_heatmap(
     min_lon = float(9999999)
     max_lon = float(-9999999)
     for t in tracks:
-        for p in t["points"]:
-            if min_lat > p[0]:
-                min_lat = p[0]
-            if max_lat < p[0]:
-                max_lat = p[0]
-            if min_lon > p[1]:
-                min_lon = p[1]
-            if max_lon < p[1]:
-                max_lon = p[1]
+        for p in t["allpoints"]:
+            if min_lat > p["latitude"]:
+                min_lat = p["latitude"]
+            if max_lat < p["latitude"]:
+                max_lat = p["latitude"]
+            if min_lon > p["longitude"]:
+                min_lon = p["longitude"]
+            if max_lon < p["longitude"]:
+                max_lon = p["longitude"]
 
     sw = tuple([min_lat, min_lon])
     ne = tuple([max_lat, max_lon])
 
     my_map.fit_bounds([sw, ne])
 
-    points = []
+    allpoints = []
     for track in tracks:
-        for p in track["points"]:
-            points.append(tuple([p[0], p[1]]))
+        for p in track["allpoints"]:
+            allpoints.append(tuple([p["latitude"], p["longitude"]]))
 
     for track in tracks:
         my_map = draw_heatmap(request, my_map, track, colorscheme, opacity, weight, show_markers)
@@ -1026,9 +1031,9 @@ def draw_heatmap(request, my_map, track, colorscheme, opacity, weight, show_mark
     start_color = settings.START_COLOR[colorscheme]
     end_color = settings.END_COLOR[colorscheme]
 
-    points = []
-    for p in track["points"]:
-        points.append(tuple([p[0], p[1]]))
+    allpoints = []
+    for p in track["allpoints"]:
+        allpoints.append([p["latitude"], p["longitude"]])
 
     if show_markers:
         # start marker
@@ -1036,7 +1041,7 @@ def draw_heatmap(request, my_map, track, colorscheme, opacity, weight, show_mark
         tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
         tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
         folium.Marker(
-            points[0],
+            allpoints[0],
             icon=folium.Icon(color=start_color),
             tooltip=tooltip
             ).add_to(my_map)
@@ -1046,14 +1051,14 @@ def draw_heatmap(request, my_map, track, colorscheme, opacity, weight, show_mark
         tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
         tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
         folium.Marker(
-            points[-1],
+            allpoints[-1],
             icon=folium.Icon(color=end_color),
             tooltip=tooltip
             ).add_to(my_map)
 
     # add lines
     folium.PolyLine(
-        points, color=primary_color, weight=weight, opacity=opacity
+        allpoints, color=primary_color, weight=weight, opacity=opacity
         ).add_to(my_map)
 
     return my_map

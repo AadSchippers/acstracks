@@ -1060,7 +1060,8 @@ def publish(request):
                 colorscheme = settings.DEFAULT_COLORSCHEME
 
             make_heatmap(
-                request, all_tracks,
+                request, 
+                all_tracks,
                 map_filename,
                 colorscheme,
                 settings.NORMAL_OPACITY,
