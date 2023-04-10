@@ -59,6 +59,7 @@ def process_gpx_file(
     tsec140 = 0
     tsec150 = 0
     tsec160 = 0
+    tsec180 = 0
     previous_avgcadence = 0
     timezone_info = timezone(settings.TIME_ZONE)
     previous_point = None
@@ -147,8 +148,13 @@ def process_gpx_file(
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                            else:
+                            elif heartrate <= 180:
                                 tsec160 = tsec160 + (
+                                    duration.seconds -
+                                    previous_duration.seconds
+                                )
+                            else:
+                                tsec180 = tsec180 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
@@ -235,7 +241,7 @@ def process_gpx_file(
 
     if updatetrack:
         trackeffort = int(round(
-            (math.sqrt((tsec140 * 0.5) + (tsec150 * 1) + (tsec160 * 2)))
+            (math.sqrt((tsec140 * 0.75) + (tsec150 * 1) + (tsec160 * 1.5) + (tsec180 * 2)))
                 * (avgheartrate * avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
         update_track(
             atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
