@@ -744,8 +744,8 @@ def save_csv(request, atrack, allpoints):
 
 
 def download_gpx(request, atrack, allpoints):
-    # Create the HttpResponse object with the appropriate CSV header.
-    response = HttpResponse(content_type='text/xml')
+    # Create the HttpResponse object with the appropriate header.
+    response = HttpResponse(content_type='text/gpx')
     gpxfilename = os.path.splitext(atrack.displayfilename)[0]+".gpx"
     response['Content-Disposition'] = 'attachment; filename="'+gpxfilename+'"'
 
