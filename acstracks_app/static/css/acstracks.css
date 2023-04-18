@@ -365,6 +365,6 @@ a.summer, a.summer:active, a.summer:visited, a.summer:hover, a.summer:link {
     background-color:  blue;  
     }            
   .usermenu_selected.summer {
-    background-color:  green;  
+    background-color:  rgb(2, 216, 2);  
     }
   
