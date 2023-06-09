@@ -33,9 +33,11 @@ class Track(models.Model):
     totaldescent = models.IntegerField(default=0)
     avgcadence = models.IntegerField(null=True, blank=True, default=None)
     maxcadence = models.IntegerField(null=True, blank=True, default=None)
+    maxcadence_pointindex = models.DecimalField(max_digits=6, decimal_places=0, default=0)
     avgheartrate = models.IntegerField(null=True, blank=True, default=None)
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
+    maxheartrate_pointindex = models.DecimalField(max_digits=6, decimal_places=0, default=0)
     trackeffort = models.IntegerField(null=True, blank=True, default=None)
     public_track = models.BooleanField(default=False)
     publickey = models.CharField(

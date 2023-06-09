@@ -47,7 +47,6 @@ def process_gpx_file(
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
 
     allpoints = []
-    starting_distance = 0
     previous_distance = 0
     previous_speed = -1
     previous_avgheartrate = 0
@@ -158,19 +157,19 @@ def process_gpx_file(
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                        avgheartrate = (
-                            (previous_avgheartrate * (
-                                previous_duration.seconds -
-                                no_hr_detected_seconds
-                                )) +
-                            (
-                                heartrate * (
-                                    duration.seconds -
-                                    previous_duration.seconds
-                                    )
-                            )
-                        ) / (duration.seconds - no_hr_detected_seconds)
-                        previous_avgheartrate = avgheartrate
+                            avgheartrate = (
+                                (previous_avgheartrate * (
+                                    previous_duration.seconds -
+                                    no_hr_detected_seconds
+                                    )) +
+                                (
+                                    heartrate * (
+                                        duration.seconds -
+                                        previous_duration.seconds
+                                        )
+                                )
+                            ) / (duration.seconds - no_hr_detected_seconds)
+                            previous_avgheartrate = avgheartrate
                     else:
                         no_hr_detected_seconds = no_hr_detected_seconds + (
                             duration.seconds - previous_duration.seconds
@@ -196,7 +195,6 @@ def process_gpx_file(
                                 )
                         )
                 else:
-                    starting_distance = distance
                     distance = 0
                     speed = 0
                     t0 = datetime.strptime("00:00:00", "%H:%M:%S")
@@ -299,7 +297,6 @@ def update_track(
     trkMaxspeed2 = 0
     trkMaxspeed3 = 0
     trkMaxspeed4 = 0
-    trkMaxcadence = 0
     trkMaxspeedIndex = 0
     trkMaxspeedIndex1 = 0
     trkMaxspeedIndex2 = 0
@@ -307,7 +304,9 @@ def update_track(
     trkMaxspeedIndex4 = 0
     trkMinheartrate = 999
     trkMaxheartrate = 0
+    trkMaxheartrateIndex = 0
     trkMaxcadence = 0
+    trkMaxcadenceIndex = 0
     totalascent = 0
     totaldescent = 0
     previous_elevation = allpoints[0]["elevation"]
@@ -352,10 +351,12 @@ def update_track(
         if allpoints[PointIndex1]["heartrate"]:
             if allpoints[PointIndex1]["heartrate"] > trkMaxheartrate:
                 trkMaxheartrate = allpoints[PointIndex1]["heartrate"]
+                trkMaxheartrateIndex = PointIndex1
             if allpoints[PointIndex1]["heartrate"] < trkMinheartrate:
                 trkMinheartrate = allpoints[PointIndex1]["heartrate"]
         if allpoints[PointIndex1]["cadence"] > trkMaxcadence:
             trkMaxcadence = allpoints[PointIndex1]["cadence"]
+            trkMaxcadenceIndex = PointIndex1
         if (
             abs(allpoints[PointIndex1]["elevation"] - previous_elevation)
             > elevationthreshold
@@ -448,9 +449,11 @@ def update_track(
     atrack.totaldescent = round(totaldescent, 0)
     atrack.avgcadence = trkAvgcadence
     atrack.maxcadence = trkMaxcadence
+    atrack.maxcadence_pointindex = trkMaxcadenceIndex
     atrack.avgheartrate = trkAvgheartrate
     atrack.minheartrate = trkMinheartrate
     atrack.maxheartrate = trkMaxheartrate
+    atrack.maxheartrate_pointindex = trkMaxheartrateIndex
     if trackeffort:
         atrack.trackeffort = trackeffort
 
@@ -528,6 +531,14 @@ def make_map(
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 60 minutes ')
                     elif x == atrack.best60_end_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 60 minutes ')
+
+            if ip == 90000:
+                if x > 0 and x == atrack.maxheartrate_pointindex:
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate ', atrack.maxheartrate)
+
+            if ip == 95000:
+                if x > 0 and x == atrack.maxcadence_pointindex:
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence ', atrack.maxcadence)
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex:
@@ -884,10 +895,10 @@ def make_html_popup(
     )
     if heartrate:
         line_heartrate = (
-            "<tr><td><b>Current heartrate</b></td>" +
+            "<tr><td><b>Current heart rate</b></td>" +
             "<td style='padding: 0 10px;text-align:right'>" +
             str(heartrate)+"</td>" +
-            "<td><b>Average heartrate</b></td>" +
+            "<td><b>Average heart rate</b></td>" +
             "<td style='padding: 0 10px;text-align:right'>" +
             str(int(round(avgheartrate, 0))) +
             "</td></tr>"

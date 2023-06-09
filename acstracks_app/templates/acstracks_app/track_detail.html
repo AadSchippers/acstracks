@@ -60,6 +60,20 @@
                                 {% else %}
                                     <option value=60000>best 60 minutes</option>
                                 {% endif %}
+                                {% if atrack.maxheartrate  > 0 %}
+                                    {% if preference.intermediate_points_selected == 90000 %}
+                                        <option value=90000 selected="selected">Maximum heart rate</option>
+                                    {% else %}
+                                        <option value=90000>Maximum heart rate</option>
+                                    {% endif %}
+                                {% endif %}
+                                {% if atrack.maxcadence  > 0 %}
+                                    {% if preference.intermediate_points_selected == 95000 %}
+                                        <option value=95000 selected="selected">maximum cadence</option>
+                                    {% else %}
+                                        <option value=95000>maximum cadence</option>
+                                    {% endif %}
+                                {% endif %}
                                 {% if preference.intermediate_points_selected == 99999 %}
                                     <option value=99999 selected="selected">maximum speed</option>
                                 {% else %}
@@ -177,19 +191,19 @@
                 {% endif %}
                 <tr>
                     {% if atrack.avgheartrate > 0 %}
-                    <td><b>Average&nbsp;heartrate</b></td>
+                    <td><b>Average&nbsp;heart rate</b></td>
                     <td  style="text-align:right">{{ atrack.avgheartrate }}</td>
                 </tr>
                 {% endif %}
                 {% if atrack.minheartrate  < 999 %}
                     <tr>
-                        <td><b>Mininimum&nbsp;heartrate</b></td>
+                        <td><b>Mininimum&nbsp;heart rate</b></td>
                         <td  style="text-align:right">{{ atrack.minheartrate }}</td>
                     </tr>
                 {% endif %}
                 {% if atrack.maxheartrate  > 0 %}
                     <tr>
-                        <td><b>Maximum&nbsp;heartrate</b></td>
+                        <td><b>Maximum&nbsp;heart rate</b></td>
                         <td style="text-align:right">{{ atrack.maxheartrate }}</td>
                     </tr>
                 {% endif %}
@@ -224,7 +238,7 @@
                     <td>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <button type="submit" name="csvsave" id="id_csvsave" value="True">Save as .csv file</button
+                            <button type="submit" name="csvsave" id="id_csvsave" value="True">Save as .csv file</button>
                         </form>
                     </td>
                 </tr>
