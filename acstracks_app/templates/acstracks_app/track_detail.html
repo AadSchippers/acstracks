@@ -60,14 +60,14 @@
                                 {% else %}
                                     <option value=60000>best 60 minutes</option>
                                 {% endif %}
-                                {% if atrack.maxheartrate  > 0 %}
+                                {% if atrack.maxheartrate_pointindex  > 0 %}
                                     {% if preference.intermediate_points_selected == 90000 %}
                                         <option value=90000 selected="selected">Maximum heart rate</option>
                                     {% else %}
                                         <option value=90000>Maximum heart rate</option>
                                     {% endif %}
                                 {% endif %}
-                                {% if atrack.maxcadence  > 0 %}
+                                {% if atrack.maxcadence_pointindex  > 0 %}
                                     {% if preference.intermediate_points_selected == 95000 %}
                                         <option value=95000 selected="selected">maximum cadence</option>
                                     {% else %}
