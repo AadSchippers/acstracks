@@ -570,7 +570,7 @@ def make_map(
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     duration = allpoints[-1]["duration"]
     moving_duration = allpoints[-1]["moving_duration"]
-    avgspeed = float((allpoints[-1]["speed"] / moving_duration.seconds) * 3.6)
+    avgspeed = float((allpoints[-1]["distance"] / moving_duration.seconds) * 3.6)
     distance = float(allpoints[-1]["distance"]) / 1000
 
     html = (
