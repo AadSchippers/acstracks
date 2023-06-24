@@ -21,44 +21,44 @@
                             {% csrf_token %}
                             <select name="Intermediate_points" id="intermediate_points" onchange=processFiles("form1")>
                                 {% if preference.intermediate_points_selected == 0 %}
-                                    <option value=0 selected="selected">none</option>
+                                    <option value=0 selected="selected">None</option>
                                 {% else %}
-                                    <option value=0>none</option>
+                                    <option value=0>None</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 1000 %}
-                                    <option value=1000 selected="selected">every 1 km</option>
+                                    <option value=1000 selected="selected">Every 1 km</option>
                                 {% else %}
-                                    <option value=1000>every 1 km</option>
+                                    <option value=1000>Every 1 km</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 3000 %}
-                                    <option value=3000 selected="selected">every 3 km</option>
+                                    <option value=3000 selected="selected">Every 3 km</option>
                                 {% else %}
-                                    <option value=3000>every 3 km</option>
+                                    <option value=3000>Every 3 km</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 5000 %}
-                                    <option value=5000 selected="selected">every 5 km</option>
+                                    <option value=5000 selected="selected">Every 5 km</option>
                                 {% else %}
-                                    <option value=5000>every 5 km</option>
+                                    <option value=5000>Every 5 km</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 10000 %}
-                                    <option value=10000 selected="selected">every 10 km</option>
+                                    <option value=10000 selected="selected">Every 10 km</option>
                                 {% else %}
-                                    <option value=10000>every 10 km</option>
+                                    <option value=10000>Every 10 km</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 20000 %}
-                                    <option value=20000 selected="selected">best 20 minutes</option>
+                                    <option value=20000 selected="selected">Best 20 minutes</option>
                                 {% else %}
-                                    <option value=20000>best 20 minutes</option>
+                                    <option value=20000>Best 20 minutes</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 30000 %}
-                                    <option value=30000 selected="selected">best 30 minutes</option>
+                                    <option value=30000 selected="selected">Best 30 minutes</option>
                                 {% else %}
-                                    <option value=30000>best 30 minutes</option>
+                                    <option value=30000>Best 30 minutes</option>
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 60000 %}
-                                    <option value=60000 selected="selected">best 60 minutes</option>
+                                    <option value=60000 selected="selected">Best 60 minutes</option>
                                 {% else %}
-                                    <option value=60000>best 60 minutes</option>
+                                    <option value=60000>Best 60 minutes</option>
                                 {% endif %}
                                 {% if atrack.maxheartrate_pointindex  > 0 %}
                                     {% if preference.intermediate_points_selected == 90000 %}
@@ -69,15 +69,15 @@
                                 {% endif %}
                                 {% if atrack.maxcadence_pointindex  > 0 %}
                                     {% if preference.intermediate_points_selected == 95000 %}
-                                        <option value=95000 selected="selected">maximum cadence</option>
+                                        <option value=95000 selected="selected">Maximum cadence</option>
                                     {% else %}
-                                        <option value=95000>maximum cadence</option>
+                                        <option value=95000>Maximum cadence</option>
                                     {% endif %}
                                 {% endif %}
                                 {% if preference.intermediate_points_selected == 99999 %}
-                                    <option value=99999 selected="selected">maximum speed</option>
+                                    <option value=99999 selected="selected">Maximum speed</option>
                                 {% else %}
-                                    <option value=99999>maximum speed</option>
+                                    <option value=99999>Maximum speed</option>
                                 {% endif %}
                             </select>
                         </form>   

@@ -534,11 +534,11 @@ def make_map(
 
             if ip == 90000:
                 if x > 0 and x == atrack.maxheartrate_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate ', atrack.maxheartrate)
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate ')
 
             if ip == 95000:
                 if x > 0 and x == atrack.maxcadence_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence ', atrack.maxcadence)
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence ')
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex:
