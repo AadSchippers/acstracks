@@ -227,8 +227,8 @@ def track_detail(request, pk):
         atrack.user.username+".html"
     )
 
-    if len(atrack.displayfilename) > 28:
-        displayfilename = atrack.displayfilename[:25] + "..."
+    if len(atrack.displayfilename) > 25:
+        displayfilename = atrack.displayfilename[:22] + "..."
     else:
         displayfilename = atrack.displayfilename
     bike_profiles = get_bike_profiles(request)
@@ -1254,6 +1254,11 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         atrack.user.username+"_public.html"
     )
 
+    if len(atrack.displayfilename) > 25:
+        displayfilename = atrack.displayfilename[:22] + "..."
+    else:
+        displayfilename = atrack.displayfilename
+
     gpxdownload = None
 
     if request.method == 'POST':
@@ -1288,6 +1293,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         'backgroundimage': set_backgroundimage(preference),
         'atrack': atrack,
+        'displayfilename': displayfilename,
         'show_intermediate_points': show_intermediate_points,
         'show_heartrate': show_heartrate,
         'show_cadence': show_cadence,
