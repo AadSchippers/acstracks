@@ -55,7 +55,7 @@ def track_list(request):
             except Exception:
                 pass
             storagefilename = fs.save(storagefilename, file)
-            parse_file(request, storagefilename, file.name)
+            parse_file(request, storagefilename, file.name, preference.default_profile)
 
         if files or request.POST.get('Reset_filters'):
             preference.date_start = get_first_date(request.user)
@@ -390,6 +390,7 @@ def parse_file(
     request,
     storagefilename=None,
     displayfilename=None,
+    default_profile=None,
     intermediate_points_selected=0
 ):
     try:
@@ -437,6 +438,8 @@ def parse_file(
             profile = "Toerfiets"
     else:
         profile = None
+    if not profile:
+        profile = default_profile
 
     try:
         trk = Track.objects.create(
@@ -875,6 +878,7 @@ def process_preferences(request):
             show_cadence = data['show_cadence']
             show_trackeffort = data['show_trackeffort']
             show_trackeffort_public = data['show_trackeffort_public']
+            default_profile = data['default_profile']
 
             old_backgroundimage = preference.backgroundimage
             preference.speedthreshold = speedthreshold
@@ -904,6 +908,7 @@ def process_preferences(request):
             preference.show_cadence = show_cadence
             preference.show_trackeffort = show_trackeffort
             preference.show_trackeffort_public = show_trackeffort_public
+            preference.default_profile = default_profile
             preference.save()
             if old_backgroundimage:
                 if old_backgroundimage.name != preference.backgroundimage.name:
@@ -961,6 +966,7 @@ def get_preferenceform(request):
             'show_cadence': preference.show_cadence,
             'show_trackeffort': preference.show_trackeffort,
             'show_trackeffort_public': preference.show_trackeffort_public,
+            'default_profile': preference.default_profile, 
         })
     except Exception:
         form = PreferenceForm()

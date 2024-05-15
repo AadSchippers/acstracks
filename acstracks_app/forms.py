@@ -28,4 +28,5 @@ class PreferenceForm(forms.ModelForm):
             'show_cadence',
             'show_trackeffort',
             'show_trackeffort_public',
+            'default_profile',
             )

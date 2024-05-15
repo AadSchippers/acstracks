@@ -11,16 +11,30 @@
     <div>
         <form method="POST" class="preference-form" enctype="multipart/form-data">
             {% csrf_token %}
-            <h3>Thresholds</h3>
-            <p>
-                <i>Changing thresholds only affects new tracks.</i>
-            </p>
             <div class="row">
-                <div class="col-5">
+                <div class="col-12">
                     <table class="scalefont {{colorscheme}}">
                         <tr>
-                            <td valign="top" style="text-align:left"><b>Speed threshold (km/h):</b></td>
-                            <td style="text-align:right">
+                            <td style="width: 400px;">
+                                <h3>Thresholds</h3>
+                            </td>
+                        <td style="width: 200px;"></td>
+                        </td>
+                        <td style="width: 100px;">
+                            <h3>Defaults</h3>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td>
+                                <i>Changing thresholds only affects new tracks.</i>
+                            </td>
+                        </tr>
+                            <td><br></td>
+                        <tr>
+                        </tr>
+                        <tr>
+                            <td valign="top" style="text-align:left;"><b>Speed threshold (km/h)</b></td>
+                            <td style="text-align:left;">
                                 <input type="number" 
                                     name="speedthreshold" 
                                     value="{{ form.speedthreshold.value }}" 
@@ -28,12 +42,19 @@
                                     min="0" 
                                     max="10"
                                     id="id_speedthreshold" 
-                                    style="text-align:right">
+                                    style="text-align:right; width:100;">
                             </td>
-                        </tr>
+                            <td valign="top" style="text-align:left;"><b>Tag</b></td>
+                            <td style="text-align:right"><input 
+                                type="text" style="text-align:right" 
+                                name="default_profile" 
+                                id="id_default_profile" 
+                                autocomplete="off"
+                                value="{{ form.default_profile.value }}" 
+                            </td>
                         <tr>
-                            <td valign="top" style="text-align:left"><b>Elevation threshold (m):</b></td>
-                            <td style="text-align:right">
+                            <td valign="top" style="text-align:left;"><b>Elevation threshold (m)</b></td>
+                            <td style="text-align:left;">
                                 <input type="number" 
                                     name="elevationthreshold" 
                                     value="{{ form.elevationthreshold.value }}" 
@@ -41,12 +62,12 @@
                                     min="0" 
                                     max="10"
                                     id="id_elevationthreshold" 
-                                    style="text-align:right">
+                                    style="text-align:right; width:100;">
                             </td>
                         </tr>
                         <tr>
-                            <td valign="top" style="text-align:left"><b>Maximum speed capping factor:</b></td>
-                            <td style="text-align:right">
+                            <td valign="top" style="text-align:left;"><b>Maximum speed capping factor</b></td>
+                            <td style="text-align:left;">
                                 <input type="number" 
                                     name="maxspeedcappingfactor" 
                                     value="{{ form.maxspeedcappingfactor.value }}" 
@@ -54,7 +75,7 @@
                                     min="0" 
                                     max="10"
                                     id="maxspeedcappingfactor" 
-                                    style="text-align:right">
+                                    style="text-align:right; width:100;">
                             </td>
                         </tr>
                         <tr>
@@ -79,9 +100,9 @@
                 </div>
             </div>
             <hr>
-            <h3>Appearence</h3>
             <div class="row">
                 <div class="col-6">
+                    <h3>Appearence</h3>
                     <div class="file-field">
                         <table class="scalefont {{colorscheme}}" width="100%">
                             <tr>
@@ -145,7 +166,7 @@
                 <div class="col-12">
                     <table class="scalefont {{colorscheme}}">
                             <tr>
-                                <td style="width: 500px;">
+                                <td style="width: 600px;">
                                     <h3>Optional columns</h3>
                                 </td>
                                 <td style="width: 500px;">

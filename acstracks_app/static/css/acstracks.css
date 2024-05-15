@@ -216,7 +216,7 @@ a.summer, a.summer:active, a.summer:visited, a.summer:hover, a.summer:link {
   .responsive-iframe {
     position: relative;
     border: none;
-    padding-left: 8%;
+    padding-left: 0%;
     top: 0;
     left: 0;
     width: 100%;

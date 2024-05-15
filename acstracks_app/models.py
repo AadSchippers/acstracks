@@ -117,7 +117,11 @@ class Preference(models.Model):
     statistics_type = models.CharField(
         max_length=255, null=True, blank=True, default="annual"
         )
+    default_profile = models.CharField(
+        max_length=255, null=True, blank=True, default=None
+        )
 
+    
     def __str__(self):
         return "%s, %s, %s" % (
             self.user.username,

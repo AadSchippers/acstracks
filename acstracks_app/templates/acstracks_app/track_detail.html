@@ -12,11 +12,11 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3">
-            <table class="scalefont {{colorscheme}}">
+        <div class="col-4">
+            <table style="width: 100%;" class="scalefont {{colorscheme}}">
                 <tr>
-                    <td valign="Top"><b>Markers</b></td>
-                    <td valign="Bottom" style="text-align:right">
+                    <td valign="Top" style="text-align:left;"><b>Markers</b></td>
+                    <td valign="Bottom" style="text-align:right;">
                         <form method="post" id="form1" enctype="multipart/form-data">
                             {% csrf_token %}
                             <select name="Intermediate_points" id="intermediate_points" onchange=processFiles("form1")>
@@ -267,7 +267,7 @@
             <hr>
             <a href={{ public_url }} target="_blank" class="{{colorscheme}}"><b>Obtain a shareable link to this track</b></a>
         </div>
-        <div class="col-9">
+        <div class="col-8">
                 <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
         </div>
     </div>
