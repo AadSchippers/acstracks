@@ -15,7 +15,7 @@
                 <div class="col-12">
                     <table class="scalefont {{colorscheme}}">
                         <tr>
-                            <td style="width: 400px;">
+                            <td style="width: 350px;">
                                 <h3>Thresholds</h3>
                             </td>
                         <td style="width: 200px;"></td>
@@ -93,18 +93,31 @@
                             </td>
                         </tr>
                     </table>
-                    <p>
-                        <i>Depending on the number of tracks recalculating all tracks might take considerable time.</i>
-                    </p>
-                    <button type="submit" onclick=processFiles()>Apply and save</button>
+                    <table class="scalefont {{colorscheme}}">
+                        <tr>
+                            <td>
+                                <i>Depending on the number of tracks recalculating all tracks might take considerable time.</i>
+                            </td>
+                        </tr>
+                        <tr><td><br></td></tr>
+                        <tr>
+                            <td>
+                                <button type="submit" onclick=processFiles()>Apply and save</button>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <hr>
             <div class="row">
-                <div class="col-6">
-                    <h3>Appearence</h3>
+                <div class="col-12">
                     <div class="file-field">
                         <table class="scalefont {{colorscheme}}" width="100%">
+                            <tr>
+                                <td style="width: 350px;">
+                                    <h3>Appearence</h3>
+                                </td>
+                            </tr>
                             <tr>
                                 <td>
                                     <label>Background image:</label>
@@ -157,16 +170,21 @@
                     </div>
                 </div>
             </div>
-            <br>
-            <button type="submit" onclick=processFiles()>Apply and save</button>
-            &nbsp;or&nbsp;
-            <button type="submit" name="defaultappearence" onclick=processFiles()>Use default appearence</button>
+            <table class="scalefont {{colorscheme}}">
+                <tr>
+                    <td>
+                        <button type="submit" onclick=processFiles()>Apply and save</button>
+                                &nbsp;or&nbsp;
+                                <button type="submit" name="defaultappearence" onclick=processFiles()>Use default appearence</button>
+                    </td>
+                </tr>
+            </table>
             <hr>
             <div class="row">
                 <div class="col-12">
                     <table class="scalefont {{colorscheme}}">
                             <tr>
-                                <td style="width: 600px;">
+                                <td style="width: 550px;">
                                     <h3>Optional columns</h3>
                                 </td>
                                 <td style="width: 500px;">
@@ -346,14 +364,26 @@
                     </table>
                 </div>
             </div>
-            <button type="submit" onclick=processFiles()>Apply and save</button>
+            <table class="scalefont {{colorscheme}}">
+                <tr>
+                    <td>
+                        <button type="submit" onclick=processFiles()>Apply and save</button>
+                    </td>
+                </tr>
+            </table>
             <hr>
         </form>
     </div>
     {% if request.user.is_superuser %}
     <div class="row">
         <div class="col-3">
-            <a href="{% url 'cleanup' %}" class="{{colorscheme}}"><button onclick=processFiles()>CleanUp</button></a>        
+            <table class="scalefont {{colorscheme}}">
+                <tr>
+                    <td>
+                        <a href="{% url 'cleanup' %}" class="{{colorscheme}}"><button onclick=processFiles()>CleanUp</button></a>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
     {% endif %}

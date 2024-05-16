@@ -227,10 +227,7 @@ def track_detail(request, pk):
         atrack.user.username+".html"
     )
 
-    if len(atrack.displayfilename) > 25:
-        displayfilename = atrack.displayfilename[:22] + "..."
-    else:
-        displayfilename = atrack.displayfilename
+    displayfilename = truncatefilename(atrack.displayfilename)
     bike_profiles = get_bike_profiles(request)
 
     csvsave = None
@@ -374,6 +371,13 @@ def deletetrack(atrack):
     atrack.delete()
 
     return
+
+
+def truncatefilename(displayfilename):
+    if len(displayfilename) > 25:
+        return displayfilename[:22] + "..."
+    else:
+        return displayfilename
 
 
 def deletefile(storagefilename):
@@ -1260,10 +1264,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         atrack.user.username+"_public.html"
     )
 
-    if len(atrack.displayfilename) > 25:
-        displayfilename = atrack.displayfilename[:22] + "..."
-    else:
-        displayfilename = atrack.displayfilename
+    displayfilename = truncatefilename(atrack.displayfilename)
 
     gpxdownload = None
 

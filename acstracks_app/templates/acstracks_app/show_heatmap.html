@@ -12,7 +12,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3">
+        <div class="col-4">
             <table style="width: 100%;overflow-x: auto" class="scalefont {{colorscheme}}">
                 <tr>
                     <td><h3>Heatmap</h3></td>
@@ -21,16 +21,16 @@
                     {% csrf_token %}
                     <tr>
                         <td><label for="Date_start">Start date:</label></td>
-                        <td><input name="Date_start" id="date_start" type="date" value="{{ date_start }}"></td>
+                        <td style="text-align:right"><input name="Date_start" id="date_start" type="date" value="{{ date_start }}"></td>
                     </tr>
                     <tr>
                         <td><label for="Date_end">End date:</label></td>
-                        <td><input name="Date_end" id="date_end" type="date" value="{{ date_end }}"></td>
+                        <td style="text-align:right"><input name="Date_end" id="date_end" type="date" value="{{ date_end }}"></td>
                     </tr>
                     <tr>
                         <td><b>Tag</b></td>
-                        <td>
-                            <select name="Profile" id="profile">
+                        <td style="text-align:right">
+                            <select name="Profile" id="profile" style="text-align:right">
                                 {% if bike_profile_filters %}
                                     {% for profile in bike_profile_filters %}
                                         {% if profile == profile_filter %}
@@ -88,7 +88,7 @@
                 <br><br>
             </table>
         </div>
-        <div class="col-9">
+        <div class="col-8">
             <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
         </div>
     </div>
