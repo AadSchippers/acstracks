@@ -6,7 +6,7 @@ import gpxpy
 import gpxpy.gpx
 import folium
 from folium.features import DivIcon
-from decimal import Decimal
+from decimal import *
 from datetime import datetime
 from pytz import timezone
 from dateutil.parser import parse
