@@ -21,7 +21,7 @@
                         <td style="width: 200px;"></td>
                         </td>
                         <td style="width: 100px;">
-                            <h3>Defaults</h3>
+                            <h3>Miscellaneous</h3>
                         </td>
                     </tr>
                         <tr>
@@ -44,13 +44,13 @@
                                     id="id_speedthreshold" 
                                     style="text-align:right; width:100;">
                             </td>
-                            <td valign="top" style="text-align:left;"><b>Tag</b></td>
+                            <td valign="top" style="text-align:left;"><b>Default tag</b></td>
                             <td style="text-align:right"><input 
                                 type="text" style="text-align:right" 
                                 name="default_profile" 
                                 id="id_default_profile" 
                                 autocomplete="off"
-                                value="{{ form.default_profile.value }}" 
+                                value="{{ form.default_profile.value }}">
                             </td>
                         <tr>
                             <td valign="top" style="text-align:left;"><b>Elevation threshold (m)</b></td>
@@ -64,6 +64,14 @@
                                     id="id_elevationthreshold" 
                                     style="text-align:right; width:100;">
                             </td>
+                            <td valign="top" style="text-align:left;"><b>Maximum heart rate</b></td>
+                            <td style="text-align:right"><input
+                                type="number" style="text-align:right"
+                                name="maximum_heart_rate"
+                                id="id_maximum_heart_rate"
+                                autocomplete="off"
+                                value="{{ form.maximum_heart_rate.value }}">
+                            </td>
                         </tr>
                         <tr>
                             <td valign="top" style="text-align:left;"><b>Maximum speed capping factor</b></td>
@@ -76,6 +84,14 @@
                                     max="10"
                                     id="maxspeedcappingfactor" 
                                     style="text-align:right; width:100;">
+                            </td>
+                            <td valign="top" style="text-align:left;"><b>Resting heart rate</b></td>
+                            <td style="text-align:right"><input
+                                type="number" style="text-align:right"
+                                name="resting_heart_rate"
+                                id="id_resting_heart_rate"
+                                autocomplete="off"
+                                value="{{ form.resting_heart_rate.value }}">
                             </td>
                         </tr>
                         <tr>

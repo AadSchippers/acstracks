@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from dateutil.parser import parse
-from decimal import *
+from decimal import Decimal
 from pytz import timezone
 from datetime import datetime
 import time
 import os
 import gpxpy
 import gpxpy.gpx
-from acstracks_app.models import Track, User
+from acstracks_app.models import Track, User, Preference
 from acstracks_app.exceptions import *
 from acstracks_app.mapviews import *
 
@@ -39,7 +39,7 @@ class Command(BaseCommand):
         tracks = Track.objects.all()
         for track in tracks:
             if track.avgheartrate:
-                new_trackeffort = self.process_gpxfile(track.storagefilename, track.avgheartrate)
+                new_trackeffort = self.process_gpxfile(track.storagefilename, track.avgheartrate, track.user)
                 if verbosity > 0:
                     print(
                         track.user.username + ";" +
@@ -56,12 +56,27 @@ class Command(BaseCommand):
                     track.trackeffort = new_trackeffort
                     track.save()
 
-    def process_gpxfile(self, filename, avgheartrate):
-        tsec140 = 0
-        tsec150 = 0
-        tsec160 = 0
-        tsec180 = 0
+    def process_gpxfile(self, filename, avgheartrate, user):
+        zone1 = 0
+        zone2 = 0
+        zone3 = 0
+        zone4 = 0
+        zone5 = 0
         newtrackeffort = 0
+
+        try:
+            preference = Preference.objects.get(user=user)
+            maximum_heart_rate = preference.maximum_heart_rate
+            resting_heart_rate = preference.resting_heart_rate
+        except Exception:
+            maximum_heart_rate = settings.MAXIMUM_HEART_RATE
+            resting_heart_rate = preference.RESTING_HEART_RATE
+
+        heart_rate_reserve = maximum_heart_rate - resting_heart_rate
+        maximum_zone1 = resting_heart_rate + Decimal(round((0.6 * float(heart_rate_reserve)), 0))
+        maximum_zone2 = resting_heart_rate + Decimal(round((0.7 * float(heart_rate_reserve)), 0))
+        maximum_zone3 = resting_heart_rate + Decimal(round((0.8 * float(heart_rate_reserve)), 0))
+        maximum_zone4 = resting_heart_rate + Decimal(round((0.9 * float(heart_rate_reserve)), 0))
 
         fullfilename = os.path.join(
             settings.MEDIA_ROOT,
@@ -140,14 +155,16 @@ class Command(BaseCommand):
                         )
                         if heartrate:
                             if is_moving:
-                                if heartrate <= 140:
-                                    tsec140 = tsec140 + duration.seconds
-                                elif heartrate <= 160: 
-                                    tsec150 = tsec150 + duration.seconds
-                                elif heartrate <= 180: 
-                                    tsec160 = tsec160 + duration.seconds
+                                if heartrate <= maximum_zone1:
+                                    zone1 = zone1 + duration.seconds
+                                elif heartrate <= maximum_zone2:
+                                    zone2 = zone2 + duration.seconds
+                                elif heartrate <= maximum_zone3:
+                                    zone3 = zone3 + duration.seconds
+                                elif heartrate <= maximum_zone4:
+                                    zone4 = zone4 + duration.seconds
                                 else:
-                                    tsec180 = tsec180 + duration.seconds
+                                    zone5 = zone5 + duration.seconds
 
                     else:
                         distance = 0
@@ -159,7 +176,7 @@ class Command(BaseCommand):
                     previous_speed = speed
 
         newtrackeffort = int(round(
-            (math.sqrt((tsec140 * 0.75) + (tsec150 * 1) + (tsec160 * 1.5) + (tsec180 * 2)))
+            (math.sqrt((zone1 * 0.5) + (zone2 * 0.75) + (zone3 * 1) + (zone4 * 1.5) + (zone5 * 2)))
               * (avgheartrate * avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
 
         return newtrackeffort

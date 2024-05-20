@@ -29,4 +29,6 @@ class PreferenceForm(forms.ModelForm):
             'show_trackeffort',
             'show_trackeffort_public',
             'default_profile',
+            'maximum_heart_rate',
+            'resting_heart_rate',
             )

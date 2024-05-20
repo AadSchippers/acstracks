@@ -883,6 +883,8 @@ def process_preferences(request):
             show_trackeffort = data['show_trackeffort']
             show_trackeffort_public = data['show_trackeffort_public']
             default_profile = data['default_profile']
+            maximum_heart_rate = data['maximum_heart_rate']
+            resting_heart_rate = data['resting_heart_rate']
 
             old_backgroundimage = preference.backgroundimage
             preference.speedthreshold = speedthreshold
@@ -913,6 +915,8 @@ def process_preferences(request):
             preference.show_trackeffort = show_trackeffort
             preference.show_trackeffort_public = show_trackeffort_public
             preference.default_profile = default_profile
+            preference.maximum_heart_rate = maximum_heart_rate
+            preference.resting_heart_rate = resting_heart_rate
             preference.save()
             if old_backgroundimage:
                 if old_backgroundimage.name != preference.backgroundimage.name:
@@ -971,6 +975,8 @@ def get_preferenceform(request):
             'show_trackeffort': preference.show_trackeffort,
             'show_trackeffort_public': preference.show_trackeffort_public,
             'default_profile': preference.default_profile, 
+            'maximum_heart_rate': preference.maximum_heart_rate,
+            'resting_heart_rate': preference.resting_heart_rate,
         })
     except Exception:
         form = PreferenceForm()

@@ -6,7 +6,7 @@ import gpxpy
 import gpxpy.gpx
 import folium
 from folium.features import DivIcon
-from decimal import *
+from decimal import Decimal
 from datetime import datetime
 from pytz import timezone
 from dateutil.parser import parse
@@ -40,11 +40,21 @@ def process_gpx_file(
         speedthreshold = preference.speedthreshold
         elevationthreshold = preference.elevationthreshold
         maxspeedcappingfactor = preference.maxspeedcappingfactor
+        maximum_heart_rate = preference.maximum_heart_rate
+        resting_heart_rate = preference.resting_heart_rate
     except Exception:
         colorscheme = settings.DEFAULT_COLORSCHEME
         speedthreshold = settings.SPEEDTHRESHOLD
         elevationthreshold = settings.ELEVATIONTHRESHOLD
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
+        maximum_heart_rate = settings.MAXIMUM_HEART_RATE
+        resting_heart_rate = preference.RESTING_HEART_RATE
+
+    heart_rate_reserve = maximum_heart_rate - resting_heart_rate
+    maximum_zone1 = resting_heart_rate + Decimal(round((0.6 * float(heart_rate_reserve)), 0))
+    maximum_zone2 = resting_heart_rate + Decimal(round((0.7 * float(heart_rate_reserve)), 0))
+    maximum_zone3 = resting_heart_rate + Decimal(round((0.8 * float(heart_rate_reserve)), 0))
+    maximum_zone4 = resting_heart_rate + Decimal(round((0.9 * float(heart_rate_reserve)), 0))
 
     allpoints = []
     previous_distance = 0
@@ -55,10 +65,11 @@ def process_gpx_file(
     cadence = 0
     avgcadence = None
     avgheartrate = None
-    tsec140 = 0
-    tsec150 = 0
-    tsec160 = 0
-    tsec180 = 0
+    zone1 = 0
+    zone2 = 0
+    zone3 = 0
+    zone4 = 0
+    zone5 = 0
     previous_avgcadence = 0
     timezone_info = timezone(settings.TIME_ZONE)
     previous_point = None
@@ -137,23 +148,28 @@ def process_gpx_file(
 
                     if heartrate:
                         if is_moving:
-                            if heartrate <= 140:
-                                tsec140 = tsec140 + (
+                            if heartrate <= maximum_zone1:
+                                zone1 = zone1 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                            elif heartrate <= 160:
-                                tsec150 = tsec150 + (
+                            elif heartrate <= maximum_zone2:
+                                zone2 = zone2 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                            elif heartrate <= 180:
-                                tsec160 = tsec160 + (
+                            elif heartrate <= maximum_zone3:
+                                zone3 = zone3 + (
+                                    duration.seconds -
+                                    previous_duration.seconds
+                                )
+                            elif heartrate <= maximum_zone4:
+                                zone4 = zone4 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
                             else:
-                                tsec180 = tsec180 + (
+                                zone5 = zone5 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
@@ -239,7 +255,7 @@ def process_gpx_file(
 
     if updatetrack:
         trackeffort = int(round(
-            (math.sqrt((tsec140 * 0.75) + (tsec150 * 1) + (tsec160 * 1.5) + (tsec180 * 2)))
+            (math.sqrt((zone1 * 0.5) + (zone2 * 0.75) + (zone3 * 1) + (zone4 * 1.5) + (zone5 * 2)))
                 * (avgheartrate * avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
         update_track(
             atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
