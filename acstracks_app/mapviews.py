@@ -51,10 +51,10 @@ def process_gpx_file(
         resting_heart_rate = preference.RESTING_HEART_RATE
 
     heart_rate_reserve = maximum_heart_rate - resting_heart_rate
-    maximum_zone1 = resting_heart_rate + Decimal(round((0.6 * float(heart_rate_reserve)), 0))
-    maximum_zone2 = resting_heart_rate + Decimal(round((0.7 * float(heart_rate_reserve)), 0))
-    maximum_zone3 = resting_heart_rate + Decimal(round((0.8 * float(heart_rate_reserve)), 0))
-    maximum_zone4 = resting_heart_rate + Decimal(round((0.9 * float(heart_rate_reserve)), 0))
+    maximum_zone1 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE1 * float(heart_rate_reserve)), 0))
+    maximum_zone2 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE2 * float(heart_rate_reserve)), 0))
+    maximum_zone3 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE3 * float(heart_rate_reserve)), 0))
+    maximum_zone4 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE4 * float(heart_rate_reserve)), 0))
 
     allpoints = []
     previous_distance = 0
@@ -254,8 +254,13 @@ def process_gpx_file(
             )
 
     if updatetrack:
+        avgheartrate = int(round(avgheartrate, 0))
         trackeffort = int(round(
-            (math.sqrt((zone1 * 0.5) + (zone2 * 0.75) + (zone3 * 1) + (zone4 * 1.5) + (zone5 * 2)))
+            (math.sqrt((zone1 * settings.WEIGHT_ZONE1) + 
+                       (zone2 * settings.WEIGHT_ZONE2) + 
+                       (zone3 * settings.WEIGHT_ZONE3) + 
+                       (zone4 * settings.WEIGHT_ZONE4) + 
+                       (zone5 * settings.WEIGHT_ZONE5)))
                 * (avgheartrate * avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
         update_track(
             atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
@@ -300,11 +305,11 @@ def update_track(
     except Exception:
         trkAvgspeed = 0
     try:
-        trkAvgcadence = int(allpoints[last]["avgcadence"])
+        trkAvgcadence = int(round(allpoints[last]["avgcadence"]))
     except Exception:
         trkAvgcadence = None
     try:
-        trkAvgheartrate = int(allpoints[last]["avgheartrate"])
+        trkAvgheartrate = int(round(allpoints[last]["avgheartrate"]))
     except Exception:
         trkAvgheartrate = None
 
@@ -761,9 +766,9 @@ def save_csv(request, atrack, allpoints):
             allpoints[row]["speed"],
             round(avgspeed, 2),
             allpoints[row]["heartrate"],
-            int(allpoints[row]["avgheartrate"]),
+            int(round(allpoints[row]["avgheartrate"]), 0),
             allpoints[row]["cadence"],
-            int(allpoints[row]["avgcadence"]),
+            int(round(allpoints[row]["avgcadence"]), 0),
         ])
         row += 1
 

@@ -163,12 +163,26 @@ GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExten
 HEARTRATETAGS = ['heartrate', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}hr']
 CADENCETAGS = ['cadence', '{http://www.garmin.com/xmlschemas/TrackPointExtension/v1}cad']
 
+# thresholds
 SPEEDTHRESHOLD = 3.60
 ELEVATIONTHRESHOLD = 0.25
 MAXSPEEDCAPPINGFACTOR = 1.25
-# effort at 2 hours(7200 sec) and average heartbeat of 150 = 100 (sqrt(7200)*150**2/19091.883092036783) = 100
-TRACKEFFORTFACTOR = 19091.8830920368
+
+# heart rate
 MAXIMUM_HEART_RATE = 175
 RESTING_HEART_RATE = 70
+FACTOR_MAXIMUM_ZONE1 = 0.31
+FACTOR_MAXIMUM_ZONE2 = 0.48
+FACTOR_MAXIMUM_ZONE3 = 0.65
+FACTOR_MAXIMUM_ZONE4 = 0.83
+
+# track effort
+# effort at 2 hours(7200 sec) and average heartbeat of 150 = 100 (sqrt(7200)*150**2/19091.883092036783) = 100
+TRACKEFFORTFACTOR = 19091.8830920368
+WEIGHT_ZONE1 = 0.5
+WEIGHT_ZONE2 = 0.75
+WEIGHT_ZONE3 = 1
+WEIGHT_ZONE4 = 1.5
+WEIGHT_ZONE5 = 2
 
 from .config import *   # noqa
