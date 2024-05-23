@@ -48,13 +48,28 @@ def process_gpx_file(
         elevationthreshold = settings.ELEVATIONTHRESHOLD
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
         maximum_heart_rate = settings.MAXIMUM_HEART_RATE
-        resting_heart_rate = preference.RESTING_HEART_RATE
+        resting_heart_rate = settings.RESTING_HEART_RATE
 
     heart_rate_reserve = maximum_heart_rate - resting_heart_rate
     maximum_zone1 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE1 * float(heart_rate_reserve)), 0))
     maximum_zone2 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE2 * float(heart_rate_reserve)), 0))
     maximum_zone3 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE3 * float(heart_rate_reserve)), 0))
     maximum_zone4 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE4 * float(heart_rate_reserve)), 0))
+
+    """
+    Fictive Referential Ride:
+    - two hours
+    - average heart rate = heart rate in the middle of zone 3
+    - half an hour in zone 2
+    - one hour in zone 3
+    - half an hour in zone 4 
+    """
+    fictive_referential_ride_heartrate =  maximum_zone2 + round((maximum_zone3 - maximum_zone2) / 2)
+    fictive_referenctial_ride = (math.sqrt(
+        (1800 * settings.WEIGHT_ZONE2) +
+        (3600 * settings.WEIGHT_ZONE3) +
+        (1800 * settings.WEIGHT_ZONE4))
+        * float((fictive_referential_ride_heartrate * fictive_referential_ride_heartrate) / 100))
 
     allpoints = []
     previous_distance = 0
@@ -261,7 +276,7 @@ def process_gpx_file(
                        (zone3 * settings.WEIGHT_ZONE3) + 
                        (zone4 * settings.WEIGHT_ZONE4) + 
                        (zone5 * settings.WEIGHT_ZONE5)))
-                * (avgheartrate * avgheartrate) / settings.TRACKEFFORTFACTOR, 0))
+                 * (avgheartrate * avgheartrate) / fictive_referenctial_ride, 0))
         update_track(
             atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
             )
