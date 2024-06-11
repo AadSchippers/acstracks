@@ -170,16 +170,16 @@
                     <td  style="text-align:right">{{ atrack.length }}</td>
                 </tr>
                 <tr>
-                    <td><b>Duration</b></td>
-                    <td  style="text-align:right">{{ atrack.timelength|time:"H:i:s" }}</td>
-                </tr>
-                <tr>
                     <td><b>Total&nbsp;ascent&nbsp;(m)</b></td>
                     <td style="text-align:right">{{ atrack.totalascent }}</td>
                 </tr>
                 <tr>
                     <td><b>Total&nbsp;descent&nbsp;(m)</b></td>
                     <td style="text-align:right">{{ atrack.totaldescent }}</td>
+                </tr>
+                <tr>
+                    <td><b>Duration (hh:mm:ss)</b></td>
+                    <td  style="text-align:right">{{ atrack.timelength|time:"H:i:s" }}</td>
                 </tr>
                 {% if atrack.trackeffort  > 0 %}
                     <tr>

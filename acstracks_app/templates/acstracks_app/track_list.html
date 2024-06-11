@@ -252,13 +252,13 @@
             </form>
         </th>
         <th valign="Top" style="text-align:right">Length</th>
-        <th valign="Top" style="text-align:right">Duration</th>
         {% if preference.show_totalascent %}
             <th valign="Top" style="text-align:right">Total<br>ascent</th>
         {% endif %}
         {% if preference.show_totaldescent %}
             <th valign="Top" style="text-align:right">Total<br>descent</th>
         {% endif %}
+        <th valign="Top" style="text-align:right">Duration</th>
         {% if preference.show_avgspeed %}
             <th valign="Top" style="text-align:right">Average<br>speed</th>
         {% endif %}
@@ -288,13 +288,13 @@
                     <td>-</td>
                 {% endif %}
                 <td style="text-align:right">{{ track.length }}</td>
-                <td style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
                 {% if preference.show_totalascent %}
                     <td style="text-align:right">{{ track.totalascent }}</td>
                 {% endif %}
                 {% if preference.show_totaldescent %}
                     <td style="text-align:right">{{ track.totaldescent }}</td>
                 {% endif %}
+                <td style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
                 {% if preference.show_avgspeed %}
                     <td style="text-align:right">{{ track.avgspeed }}</td>
                 {% endif %}
