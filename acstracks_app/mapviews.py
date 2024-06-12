@@ -270,6 +270,11 @@ def process_gpx_file(
             )
 
     if updatetrack:
+        atrack.hrzone1 = time.strftime('%H:%M:%S', time.gmtime(zone1))
+        atrack.hrzone2 = time.strftime('%H:%M:%S', time.gmtime(zone2))
+        atrack.hrzone3 = time.strftime('%H:%M:%S', time.gmtime(zone3))
+        atrack.hrzone4 = time.strftime('%H:%M:%S', time.gmtime(zone4))
+        atrack.hrzone5 = time.strftime('%H:%M:%S', time.gmtime(zone5))
         avgheartrate = int(round(avgheartrate, 0))
         atrack.trackeffort = int(round(
             (math.sqrt((zone1 * settings.WEIGHT_ZONE1) + 
@@ -729,11 +734,13 @@ def save_csv(request, atrack, allpoints):
     writer.writerow(['name', atrack.name])
     writer.writerow(['profile', atrack.profile])
     writer.writerow(['length', atrack.length])
-    writer.writerow(['timelength', atrack.timelength])
-    writer.writerow(['avgspeed', atrack.avgspeed])
-    writer.writerow(['maxspeed', atrack.maxspeed])
     writer.writerow(['totalascent', atrack.totalascent])
     writer.writerow(['totaldescent', atrack.totaldescent])
+    writer.writerow(['timelength', atrack.timelength])
+    if atrack.trackeffort:
+        writer.writerow(['trackeffort', atrack.trackeffort])
+    writer.writerow(['avgspeed', atrack.avgspeed])
+    writer.writerow(['maxspeed', atrack.maxspeed])
     if atrack.avgcadence:
         writer.writerow(['avgcadence', atrack.avgcadence])
         writer.writerow(['maxcadence', atrack.maxcadence])
@@ -741,6 +748,11 @@ def save_csv(request, atrack, allpoints):
         writer.writerow(['avgheartrate', atrack.avgheartrate])
         writer.writerow(['minheartrate', atrack.minheartrate])
         writer.writerow(['maxheartrate', atrack.maxheartrate])
+        writer.writerow(['zone1', atrack.hrzone1])
+        writer.writerow(['zone2', atrack.hrzone2])
+        writer.writerow(['zone3', atrack.hrzone3])
+        writer.writerow(['zone4', atrack.hrzone4])
+        writer.writerow(['zone5', atrack.hrzone5])
 
     writer.writerow([''])
 
@@ -753,7 +765,7 @@ def save_csv(request, atrack, allpoints):
         'duration',
         'moving_duration',
         'speed (km/h)',
-        'average speed (km/h)'
+        'average speed (km/h)',
         'heartrate',
         'average heartrate',
         'cadence',
@@ -780,9 +792,9 @@ def save_csv(request, atrack, allpoints):
             allpoints[row]["speed"],
             round(avgspeed, 2),
             allpoints[row]["heartrate"],
-            int(round(allpoints[row]["avgheartrate"]), 0),
+            int(round(allpoints[row]["avgheartrate"])),
             allpoints[row]["cadence"],
-            int(round(allpoints[row]["avgcadence"]), 0),
+            int(round(allpoints[row]["avgcadence"])),
         ])
         row += 1
 
