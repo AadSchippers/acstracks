@@ -51,10 +51,10 @@ def process_gpx_file(
         resting_heart_rate = settings.RESTING_HEART_RATE
 
     heart_rate_reserve = maximum_heart_rate - resting_heart_rate
-    maximum_zone1 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE1 * float(heart_rate_reserve)), 0))
-    maximum_zone2 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE2 * float(heart_rate_reserve)), 0))
-    maximum_zone3 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE3 * float(heart_rate_reserve)), 0))
-    maximum_zone4 = resting_heart_rate + Decimal(round((settings.FACTOR_MAXIMUM_ZONE4 * float(heart_rate_reserve)), 0))
+    maximum_zone1 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE1 * float(heart_rate_reserve)))
+    maximum_zone2 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE2 * float(heart_rate_reserve)))
+    maximum_zone3 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE3 * float(heart_rate_reserve)))
+    maximum_zone4 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE4 * float(heart_rate_reserve)))
 
     """
     Fictive Referential Ride:
@@ -90,6 +90,7 @@ def process_gpx_file(
     previous_point = None
     distance = None
     iFlagged = 0
+
     for track in gpx.tracks:
         for segment in track.segments:
             for point in segment.points:
@@ -153,7 +154,7 @@ def process_gpx_file(
                         except Exception:
                             speed = 0
 
-                    is_moving = (speed > settings.SPEEDTHRESHOLD) and (
+                    is_moving = (speed > speedthreshold) and (
                         not cadence or cadence > 0
                     )
                     if is_moving:
@@ -270,7 +271,7 @@ def process_gpx_file(
 
     if updatetrack:
         avgheartrate = int(round(avgheartrate, 0))
-        trackeffort = int(round(
+        atrack.trackeffort = int(round(
             (math.sqrt((zone1 * settings.WEIGHT_ZONE1) + 
                        (zone2 * settings.WEIGHT_ZONE2) + 
                        (zone3 * settings.WEIGHT_ZONE3) + 
@@ -278,7 +279,7 @@ def process_gpx_file(
                        (zone5 * settings.WEIGHT_ZONE5)))
                  * (avgheartrate * avgheartrate) / fictive_referenctial_ride, 0))
         update_track(
-            atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
+            atrack, allpoints, elevationthreshold, maxspeedcappingfactor
             )
 
     if map_filename:
@@ -302,7 +303,7 @@ def process_gpx_file(
 
 
 def update_track(
-    atrack, allpoints, trackeffort, elevationthreshold, maxspeedcappingfactor
+    atrack, allpoints, elevationthreshold, maxspeedcappingfactor
 ):
 
     last = len(allpoints) - 1
@@ -490,8 +491,6 @@ def update_track(
     atrack.minheartrate = trkMinheartrate
     atrack.maxheartrate = trkMaxheartrate
     atrack.maxheartrate_pointindex = trkMaxheartrateIndex
-    if trackeffort:
-        atrack.trackeffort = trackeffort
 
     atrack.save()
 
