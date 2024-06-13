@@ -40,21 +40,13 @@ def process_gpx_file(
         speedthreshold = preference.speedthreshold
         elevationthreshold = preference.elevationthreshold
         maxspeedcappingfactor = preference.maxspeedcappingfactor
-        maximum_heart_rate = preference.maximum_heart_rate
-        resting_heart_rate = preference.resting_heart_rate
     except Exception:
         colorscheme = settings.DEFAULT_COLORSCHEME
         speedthreshold = settings.SPEEDTHRESHOLD
         elevationthreshold = settings.ELEVATIONTHRESHOLD
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
-        maximum_heart_rate = settings.MAXIMUM_HEART_RATE
-        resting_heart_rate = settings.RESTING_HEART_RATE
 
-    heart_rate_reserve = maximum_heart_rate - resting_heart_rate
-    maximum_zone1 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE1 * float(heart_rate_reserve)))
-    maximum_zone2 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE2 * float(heart_rate_reserve)))
-    maximum_zone3 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE3 * float(heart_rate_reserve)))
-    maximum_zone4 = resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE4 * float(heart_rate_reserve)))
+    heartratezones = get_heartratezones(request)
 
     """
     Fictive Referential Ride:
@@ -64,7 +56,7 @@ def process_gpx_file(
     - one hour in zone 3
     - half an hour in zone 4 
     """
-    fictive_referential_ride_heartrate =  maximum_zone2 + round((maximum_zone3 - maximum_zone2) / 2)
+    fictive_referential_ride_heartrate =  heartratezones[1] + round((heartratezones[2] - heartratezones[1]) / 2)
     fictive_referenctial_ride = (math.sqrt(
         (1800 * settings.WEIGHT_ZONE2) +
         (3600 * settings.WEIGHT_ZONE3) +
@@ -164,22 +156,22 @@ def process_gpx_file(
 
                     if heartrate:
                         if is_moving:
-                            if heartrate <= maximum_zone1:
+                            if heartrate <= heartratezones[0]:
                                 zone1 = zone1 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                            elif heartrate <= maximum_zone2:
+                            elif heartrate <= heartratezones[1]:
                                 zone2 = zone2 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                            elif heartrate <= maximum_zone3:
+                            elif heartrate <= heartratezones[2]:
                                 zone3 = zone3 + (
                                     duration.seconds -
                                     previous_duration.seconds
                                 )
-                            elif heartrate <= maximum_zone4:
+                            elif heartrate <= heartratezones[3]:
                                 zone4 = zone4 + (
                                     duration.seconds -
                                     previous_duration.seconds
@@ -500,6 +492,25 @@ def update_track(
     atrack.save()
 
     return
+
+
+def get_heartratezones(request):
+    try:
+        preference = Preference.objects.get(user=request.user)
+        maximum_heart_rate = preference.maximum_heart_rate
+        resting_heart_rate = preference.resting_heart_rate
+    except Exception:
+        maximum_heart_rate = settings.MAXIMUM_HEART_RATE
+        resting_heart_rate = settings.RESTING_HEART_RATE
+    heart_rate_reserve = maximum_heart_rate - resting_heart_rate
+
+    heartratezones = []
+    heartratezones.append(resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE1 * float(heart_rate_reserve))))
+    heartratezones.append(resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE2 * float(heart_rate_reserve))))
+    heartratezones.append(resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE3 * float(heart_rate_reserve))))
+    heartratezones.append(resting_heart_rate + int(round(settings.FACTOR_MAXIMUM_ZONE4 * float(heart_rate_reserve))))
+
+    return heartratezones
 
 
 def make_map(

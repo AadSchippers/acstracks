@@ -151,11 +151,11 @@
                         </tr>
                     {% endif %}
                 {% endif %}
-
             </table>
+            <hr>
+
             <div  id="id-speed-hide" style="display:block">
                 <table style="width: 100%;" class="scalefont {{colorscheme}}">
-                    <tr><td><hr></td></tr>
                     <tr onClick=showSpeed() class="table-row">
                         <td><b>▸ Speed</b></td>
                     </tr>
@@ -163,7 +163,6 @@
             </div>
             <div  id="id-speed-show" style="display:none">
                 <table style="width: 100%;" class="scalefont {{colorscheme}}">
-                    <tr><td><hr></td></tr>
                     <tr onClick=hideSpeed() class="table-row">
                         <td><b>▾ Speed</b></td>
                     </tr>
@@ -206,7 +205,6 @@
                 {% if atrack.avgcadence > 0 %}
                     <div  id="id-cadence-hide" style="display:block">
                         <table style="width: 100%;" class="scalefont {{colorscheme}}">
-                            <tr><td><hr></td></tr>
                             <tr onClick=showCadence() class="table-row">
                                 <td><b>▸ Cadence</b></td>
                             </tr>
@@ -214,7 +212,6 @@
                     </div>
                     <div  id="id-cadence-show" style="display:none">
                         <table style="width: 100%;" class="scalefont {{colorscheme}}">
-                            <tr><td><hr></td></tr>
                             <tr onClick=hideCadence() class="table-row">
                                 <td><b>▾ Cadence</b></td>
                             <tr>
@@ -239,7 +236,6 @@
                 {% if atrack.avgheartrate > 0 %}
                     <div  id="id-hr-hide" style="display:block">
                         <table style="width: 100%;" class="scalefont {{colorscheme}}">
-                            <tr><td><hr></td></tr>
                             <tr onClick=showHR() class="table-row">
                                 <td><b>▸ Heart rate</b></td>
                             </tr>
@@ -247,7 +243,6 @@
                     </div>
                     <div  id="id-hr-show" style="display:none">
                         <table style="width: 100%;" class="scalefont {{colorscheme}}">
-                            <tr><td><hr></td></tr>
                             <tr onClick=hideHR() class="table-row">
                                 <td><b>▸ Heart rate</b></td>
                             <tr>
@@ -269,26 +264,26 @@
                                 </tr>
                             {% endif %}
                             <tr>
-                                <td>◦ Zone 1 (hh:mm:ss)</td>
+                                <td>◦ Time spent in zone 1 (< {{ heartratezones.0}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone1|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Zone 2 (hh:mm:ss)</td>
+                                <td>◦ Time spent in zone 2 ({{ heartratezones.0}} - {{ heartratezones.1}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone2|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Zone 3 (hh:mm:ss)</td>
+                                <td>◦ Time spent in zone 3 ({{ heartratezones.1}} - {{ heartratezones.2}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone3|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Zone 4 (hh:mm:ss)</td>
+                                <td>◦ Time spent in zone 4 ({{ heartratezones.2}} - {{ heartratezones.3}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone4|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Zone 5 (hh:mm:ss)</td>
+                                <td>◦ Time spent in zone 5 (> {{ heartratezones.3}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone5|time:"H:i:s" }}</td>
                             </tr>
-                            </table>
+                        </table>
                     </div>
                 {% endif %}
             {% endif %}

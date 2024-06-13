@@ -230,6 +230,8 @@ def track_detail(request, pk):
     displayfilename = truncatefilename(atrack.displayfilename)
     bike_profiles = get_bike_profiles(request)
 
+    heartratezones = get_heartratezones(request)
+
     csvsave = None
 
     public_url = (
@@ -263,6 +265,7 @@ def track_detail(request, pk):
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
+                'heartratezones': heartratezones,
                 'public_url': public_url,
                 'page_name': "Track detail",
                 }
@@ -285,6 +288,7 @@ def track_detail(request, pk):
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
+                'heartratezones': heartratezones,
                 'public_url': public_url,
                 'page_name': "Track detail",
                 }
@@ -304,6 +308,7 @@ def track_detail(request, pk):
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
+                'heartratezones': heartratezones,
                 'public_url': public_url,
                 'page_name': "Track detail",
                 }
@@ -360,6 +365,7 @@ def track_detail(request, pk):
                 'map_filename': full_map_filename,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
+                'heartratezones': heartratezones,
                 'public_url': public_url,
                 'page_name': "Track detail",
         }
@@ -1272,6 +1278,8 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     displayfilename = truncatefilename(atrack.displayfilename)
 
+    heartratezones = get_heartratezones(request)
+
     gpxdownload = None
 
     if request.method == 'POST':
@@ -1313,6 +1321,7 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         'show_download_gpx': show_download_gpx,
         'show_trackeffort_public': show_trackeffort_public,
         'preference': preference,
+        'heartratezones': heartratezones,
         'map_filename': full_map_filename,
         'intermediate_points_selected': int(intermediate_points_selected),
         'page_name': "Publish",
