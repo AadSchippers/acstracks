@@ -264,26 +264,26 @@
                                 </tr>
                             {% endif %}
                             <tr>
-                                <td>◦ Time spent in zone 1 (< {{ heartratezones.0}} bpm)</td>
+                                <td>◦ Time spent in zone 1 (<= {{ heartratezones.0}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone1|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Time spent in zone 2 ({{ heartratezones.0}} - {{ heartratezones.1}} bpm)</td>
+                                <td>◦ Time spent in zone 2 ({{ heartratezones.0|add:"1" }} - {{ heartratezones.1}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone2|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Time spent in zone 3 ({{ heartratezones.1}} - {{ heartratezones.2}} bpm)</td>
+                                <td>◦ Time spent in zone 3 ({{ heartratezones.1|add:"1" }} - {{ heartratezones.2}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone3|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
-                                <td>◦ Time spent in zone 4 ({{ heartratezones.2}} - {{ heartratezones.3}} bpm)</td>
+                                <td>◦ Time spent in zone 4 ({{ heartratezones.2|add:"1" }} - {{ heartratezones.3}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone4|time:"H:i:s" }}</td>
                             </tr>
                             <tr>
                                 <td>◦ Time spent in zone 5 (> {{ heartratezones.3}} bpm)</td>
                                 <td style="text-align:right">{{ atrack.hrzone5|time:"H:i:s" }}</td>
                             </tr>
-                        </table>
+                            </table>
                     </div>
                 {% endif %}
             {% endif %}
