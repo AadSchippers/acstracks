@@ -2,7 +2,7 @@ asgiref==3.7.1
 branca==0.4.1
 certifi>=2023.07.22
 chardet==3.0.4
-Django>=5.0
+Django>=4.2.13
 folium==0.11.0
 gpxpy==1.4.2
 haversine==2.3.0
