@@ -81,6 +81,11 @@
                                 {% else %}
                                     <option value=10000>Every 10 km</option>
                                 {% endif %}
+                                {% if preference.intermediate_points_selected == 15000 %}
+                                    <option value=15000 selected="selected">Every 30 minutes</option>
+                                {% else %}
+                                    <option value=15000>Every 30 minutes</option>
+                                {% endif %}
                                 {% if preference.intermediate_points_selected == 20000 %}
                                     <option value=20000 selected="selected">Best 20 minutes</option>
                                 {% else %}

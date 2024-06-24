@@ -549,11 +549,13 @@ def make_map(
 
     i = 0
     previous_marker_distance = 0
+    previous_marker_moving_duration = 0
 
     ip = int(intermediate_points_selected)
     if ip > 0:
         for x in range(len(allpoints)):
             distance = float(allpoints[x]["distance"])
+            moving_duration = float(allpoints[x]["moving_duration"].seconds)
 
             if ip <= 10000:
                 if distance < previous_marker_distance + ip:
@@ -561,6 +563,14 @@ def make_map(
                 previous_marker_distance = distance
                 i = i + ip
                 make_marker(my_map, colorscheme, allpoints, x, distance, i, 'Intermediate point ')
+
+            if ip == 15000:
+                if moving_duration < previous_marker_moving_duration + 1800:
+                    continue
+                previous_marker_moving_duration = moving_duration
+                i = i + ip
+                tooltip_text = 'Intermediate point at ' + str(allpoints[x]["moving_duration"])
+                make_marker(my_map, colorscheme, allpoints, x, distance, distance, tooltip_text, time_text=True)
 
             if ip == 20000:
                 if x > 0:
@@ -671,7 +681,7 @@ def make_map(
     return
 
 
-def make_marker(my_map, colorscheme, allpoints, x, distance, i, tooltip_text, speed=None):
+def make_marker(my_map, colorscheme, allpoints, x, distance, i, tooltip_text, speed=None, time_text=False):
     primary_color = settings.PRIMARY_COLOR[colorscheme]
 
     time = allpoints[x]["created_date"]
@@ -690,11 +700,17 @@ def make_marker(my_map, colorscheme, allpoints, x, distance, i, tooltip_text, sp
     cadence = allpoints[x]["cadence"]
     avgcadence = allpoints[x]["avgcadence"]
     popup_title_text = tooltip_text + 'at '
-    tooltip_text = (
-        tooltip_text +
-        str(round(i/1000, 2)) + ' km, ' +
-        str(speed) + ' km/h'
-        )
+    if time_text:
+        tooltip_text = (
+            tooltip_text + ', ' +
+            str(speed) + ' km/h'
+            )
+    else:
+        tooltip_text = (
+            tooltip_text +
+            str(round(i/1000, 2)) + ' km, ' +
+            str(speed) + ' km/h'
+            )
     tooltip_style = (
         'color: ' +
         primary_color +
