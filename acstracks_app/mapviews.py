@@ -569,7 +569,7 @@ def make_map(
                     continue
                 previous_marker_moving_duration = moving_duration
                 i = i + ip
-                tooltip_text = 'Intermediate point at ' + str(allpoints[x]["moving_duration"]) + ' h, '
+                tooltip_text = 'Intermediate point at ' + time.strftime('%H:%M:%S', time.gmtime(int(moving_duration))) + ', '
                 make_marker(my_map, colorscheme, allpoints, x, distance, distance, tooltip_text, time_text=True)
 
             if ip == 20000:
