@@ -41,59 +41,62 @@
             </td>
         </form>
     </tr>
+    </table>
     {% for track in tracks %}
-    <tr>
-        <td>
-            {% if page_headline == annual_statistics %}
-                <a href="{% url 'heatmap'  profile='All' year=track.year %}" class="{{colorscheme}}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
-            {% else %}
-                <a href="{% url 'heatmap' profile=track.profile year='0' %}" class="{{colorscheme}}" onclick=processFiles()><h3>{{ track.profile }}</h3>
-            {% endif %}
-            </td>
-        <table id="click-table" class="table-hover scalefont {{colorscheme}}">
-            <thead>
+    <table style="width: 100%;overflow-x: auto" class="scalefont {{colorscheme}}">
+        <tr>
+            <td>
                 {% if page_headline == annual_statistics %}
-                   <th>Year</th>
+                    <a href="{% url 'heatmap'  profile='All' year=track.year %}" class="{{colorscheme}}" onclick=processFiles()><h3>{{ track.year }}</h3></a>
                 {% else %}
-                    <th>Tag</th>
+                    <a href="{% url 'heatmap' profile=track.profile year='0' %}" class="{{colorscheme}}" onclick=processFiles()><h3>{{ track.profile }}</h3>
                 {% endif %}
-                <th style="text-align:right">Number of rides</th>
-                <th style="text-align:right">Total length (km)</th>
-                <th style="text-align:right">Average speed (km/h)</th>
-                <th style="text-align:right">Highest average speed (km/h)</th>
-                <th style="text-align:right">Highest maximum speed (km/h)</th>
-                <th style="text-align:right">Longest track (km)</th>
-                <th style="text-align:right">Longest duration</th>
-                <th style="text-align:right">Maximum ascent</th>
-                <th style="text-align:right">Maximum descent</th>
-            </thead>
-            <tbody>
-                {% for stats_collection in track.stats_collection %}
-                    {% if stats_collection.statistics.number_of_tracks > 0 %}
-                        <tr>
-                            {% if page_headline == annual_statistics %}
-                                <td><a href="{% url 'heatmap' profile=stats_collection.profile year=track.year %}" class="{{colorscheme}}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
-                            {% elif stats_collection.year == 'Total' %}
-                                <td><a href="{% url 'heatmap' profile=track.profile %}" class="{{colorscheme}}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
-                            {% else %}
-                                <td><a href="{% url 'heatmap' profile=track.profile year=stats_collection.year %}" class="{{colorscheme}}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
-                            {% endif %}
-                            <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
-                            <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>
-                            <td style="text-align:right">{{ stats_collection.statistics.total_avgspeed }}</td> 
-                            <td style="text-align:right">{{ stats_collection.statistics.highest_avgspeed }}</td>
-                            <td style="text-align:right">{{ stats_collection.statistics.highest_maxspeed }}</td>
-                            <td style="text-align:right">{{ stats_collection.statistics.longest_length }}</td>
-                            <td style="text-align:right">{{ stats_collection.statistics.longest_duration }}</td>
-                            <td style="text-align:right">{{ stats_collection.statistics.max_ascent }}</td>
-                            <td style="text-align:right">{{ stats_collection.statistics.max_descent }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <hr>
-    </tr> 
+            </td>
+        </tr>
+    </table>
+    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+        <thead>
+        {% if page_headline == annual_statistics %}
+            <th>Year</th>
+        {% else %}
+            <th>Tag</th>
+        {% endif %}
+            <th style="text-align:right">Number of rides</th>
+            <th style="text-align:right">Total length (km)</th>
+            <th style="text-align:right">Average speed (km/h)</th>
+            <th style="text-align:right">Highest average speed (km/h)</th>
+            <th style="text-align:right">Highest maximum speed (km/h)</th>
+            <th style="text-align:right">Longest track (km)</th>
+            <th style="text-align:right">Longest duration</th>
+            <th style="text-align:right">Maximum ascent</th>
+            <th style="text-align:right">Maximum descent</th>
+        </thead>
+        <tbody>
+        {% for stats_collection in track.stats_collection %}
+            {% if stats_collection.statistics.number_of_tracks > 0 %}
+                <tr class="table-row">
+                {% if page_headline == annual_statistics %}
+                    <td><a href="{% url 'heatmap' profile=stats_collection.profile year=track.year %}" class="{{colorscheme}}" onclick=processFiles()>{{ stats_collection.profile }}</a></td>
+                {% elif stats_collection.year == 'Total' %}
+                    <td><a href="{% url 'heatmap' profile=track.profile %}" class="{{colorscheme}}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
+                {% else %}
+                    <td><a href="{% url 'heatmap' profile=track.profile year=stats_collection.year %}" class="{{colorscheme}}" onclick=processFiles()>{{ stats_collection.year }}</a></td>
+                {% endif %}
+                    <td style="text-align:right">{{ stats_collection.statistics.number_of_tracks }}</td> 
+                    <td style="text-align:right">{{ stats_collection.statistics.total_length}}</td>
+                    <td style="text-align:right">{{ stats_collection.statistics.total_avgspeed }}</td> 
+                    <td style="text-align:right">{{ stats_collection.statistics.highest_avgspeed }}</td>
+                    <td style="text-align:right">{{ stats_collection.statistics.highest_maxspeed }}</td>
+                    <td style="text-align:right">{{ stats_collection.statistics.longest_length }}</td>
+                    <td style="text-align:right">{{ stats_collection.statistics.longest_duration }}</td>
+                    <td style="text-align:right">{{ stats_collection.statistics.max_ascent }}</td>
+                    <td style="text-align:right">{{ stats_collection.statistics.max_descent }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    <hr>
     {% endfor %}
 </table>
 {% endblock %}
