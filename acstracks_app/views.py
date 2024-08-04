@@ -589,15 +589,17 @@ def show_statistics(request):
                 tracks = get_tracks(
                     request, date_start, date_end, None, profile
                     )
-                statistics = compute_statistics(tracks)
-                stats_collection.append({
-                    "profile": profile,
-                    "statistics": statistics,
+                if len(tracks) > 0:
+                    statistics = compute_statistics(tracks)
+                    stats_collection.append({
+                        "profile": profile,
+                        "statistics": statistics,
+                    })
+            if len(stats_collection) > 0:
+                alltracks.append({
+                    "year": current_year,
+                    "stats_collection": stats_collection,
                 })
-            alltracks.append({
-                "year": current_year,
-                "stats_collection": stats_collection,
-            })
             current_year -= 1
     else:
         page_headline = profile_statistics
