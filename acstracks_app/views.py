@@ -321,6 +321,17 @@ def track_detail(request, pk):
             deletetrack(atrack)
             return redirect('track_list')
 
+    UpdateTrack = False
+    if atrack.length == 0:
+        UpdateTrack = True
+    if atrack.avgheartrate > 0:
+        if (str(atrack.hrzone1) == "00:00:00" and
+            str(atrack.hrzone2) == "00:00:00" and
+            str(atrack.hrzone3) == "00:00:00" and
+            str(atrack.hrzone4) == "00:00:00" and
+            str(atrack.hrzone5) == "00:00:00"):
+            UpdateTrack = True
+
     if csvsave:
         return (
             process_gpx_file(
@@ -334,24 +345,13 @@ def track_detail(request, pk):
                 False
                 )
         )
-    elif atrack.length == 0:
+    else:
         process_gpx_file(
             request, atrack.storagefilename,
             preference.intermediate_points_selected,
             atrack,
             map_filename,
-            True,
-            False,
-            False
-            )
-    else:
-        process_gpx_file(
-            request,
-            atrack.storagefilename,
-            preference.intermediate_points_selected,
-            atrack,
-            map_filename,
-            False,
+            UpdateTrack,
             False,
             False
             )

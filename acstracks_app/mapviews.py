@@ -490,6 +490,7 @@ def update_track(
     atrack.maxheartrate_pointindex = trkMaxheartrateIndex
 
     atrack.save()
+    atrack.refresh_from_db()
 
     return
 
