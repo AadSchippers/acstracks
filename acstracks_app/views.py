@@ -219,12 +219,12 @@ def track_detail(request, pk):
         return redirect('track_list')
 
     map_filename = (
-        atrack.user.username+".html"
+        hashlib.sha256(atrack.user.username.encode()).hexdigest()+".html"
     )
 
     full_map_filename = (
         settings.MAPS_URL +
-        atrack.user.username+".html"
+        hashlib.sha256(atrack.user.username.encode()).hexdigest()+".html"
     )
 
     displayfilename = truncatefilename(atrack.displayfilename)
@@ -695,12 +695,12 @@ def heatmap(request, profile=None, year=None):
     bike_profile_filters = get_bike_profile_filters(request)
 
     map_filename = (
-        request.user.username+"_heatmap.html"
+        hashlib.sha256(request.user.username.encode()).hexdigest()+"_heatmap.html"
     )
 
     full_map_filename = (
         settings.MAPS_URL +
-        request.user.username+"_heatmap.html"
+        hashlib.sha256(request.user.username.encode()).hexdigest()+"_heatmap.html"
     )
 
     all_tracks = []
@@ -1020,6 +1020,12 @@ def cleanup(request):
 
     obsolete_files = []
     try:
+        files = fs.listdir(settings.MEDIA_ROOT + "/maps")[1]
+        for f in files:
+                obsolete_files.append(tuple(["./maps/" + f, int(((fs.size("./maps/"+ f)/1024)+0.5))]))
+    except Exception:
+        pass
+    try:
         files = fs.listdir(settings.MEDIA_ROOT + "/gpx")[1]
         for f in files:
             if len(Track.objects.filter(storagefilename=f)) == 0:
@@ -1270,12 +1276,12 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         show_download_gpx = False
 
     map_filename = (
-        atrack.user.username+"_public.html"
+        atrack.publickey+".html"
     )
 
     full_map_filename = (
         settings.MAPS_URL +
-        atrack.user.username+"_public.html"
+        atrack.publickey+".html"
     )
 
     displayfilename = truncatefilename(atrack.displayfilename)
