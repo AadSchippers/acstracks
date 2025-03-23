@@ -1022,6 +1022,7 @@ def cleanup(request):
     try:
         files = fs.listdir(settings.MEDIA_ROOT + "/maps")[1]
         for f in files:
+            if not f.endswith("_public.html"):
                 obsolete_files.append(tuple(["./maps/" + f, int(((fs.size("./maps/"+ f)/1024)+0.5))]))
     except Exception:
         pass
