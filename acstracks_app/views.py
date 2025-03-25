@@ -252,24 +252,12 @@ def track_detail(request, pk):
 
             preference.save()
 
+        atrack_changed = False
+
         name = request.POST.get('name_input')
         if is_input_valid(name):
             atrack.name = name
-            atrack.save()
-            return render(request, 'acstracks_app/track_detail.html', {
-                'colorscheme': preference.colorscheme,
-                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
-                'backgroundimage': set_backgroundimage(preference),
-                'atrack': atrack,
-                'displayfilename': displayfilename,
-                'map_filename': full_map_filename,
-                'preference': preference,
-                'bike_profiles': bike_profiles,
-                'heartratezones': heartratezones,
-                'public_url': public_url,
-                'page_name': "Track detail",
-                }
-            )
+            atrack_changed = True
 
         profile = request.POST.get('profile_input')
         if profile == '':
@@ -278,26 +266,57 @@ def track_detail(request, pk):
             if profile == '-':
                 profile = None
             atrack.profile = profile
-            atrack.save()
-            return render(request, 'acstracks_app/track_detail.html', {
-                'colorscheme': preference.colorscheme,
-                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
-                'backgroundimage': set_backgroundimage(preference),
-                'atrack': atrack,
-                'displayfilename': displayfilename,
-                'map_filename': full_map_filename,
-                'preference': preference,
-                'bike_profiles': bike_profiles,
-                'heartratezones': heartratezones,
-                'public_url': public_url,
-                'page_name': "Track detail",
-                }
-            )
+            atrack_changed = True
 
         public_track_changed = request.POST.get('public_track_changed')
         if public_track_changed:
             public_track = request.POST.get('public_track')
             atrack.public_track = (public_track == "on")
+            atrack_changed = True
+
+        hide_first_part_changed = request.POST.get('hide_first_part_changed')
+        if hide_first_part_changed:
+            hide_first_part = request.POST.get('hide_first_part')
+            atrack.hide_first_part = (hide_first_part == "on")
+            atrack_changed = True
+
+        hide_last_part_changed = request.POST.get('hide_last_part_changed')
+        if hide_last_part_changed:
+            hide_last_part = request.POST.get('hide_last_part')
+            atrack.hide_last_part = (hide_last_part == "on")
+            atrack_changed = True
+
+        show_markers_changed = request.POST.get('show_markers_changed')
+        if show_markers_changed:
+            show_markers = request.POST.get('show_markers')
+            atrack.show_markers = (show_markers == "on")
+            atrack_changed = True
+
+        show_cadence_changed = request.POST.get('show_cadence_changed')
+        if show_cadence_changed:
+            show_cadence = request.POST.get('show_cadence')
+            atrack.show_cadence = (show_cadence == "on")
+            atrack_changed = True
+
+        show_heartrate_changed = request.POST.get('show_heartrate_changed')
+        if show_heartrate_changed:
+            show_heartrate = request.POST.get('show_heartrate')
+            atrack.show_heartrate = (show_heartrate == "on")
+            atrack_changed = True
+
+        show_trackeffort_public_changed = request.POST.get('show_trackeffort_public_changed')
+        if show_trackeffort_public_changed:
+            show_trackeffort_public = request.POST.get('show_trackeffort_public')
+            atrack.show_trackeffort_public = (show_trackeffort_public == "on")
+            atrack_changed = True
+
+        show_download_gpx_changed = request.POST.get('show_download_gpx_changed')
+        if show_download_gpx_changed:
+            show_download_gpx = request.POST.get('show_download_gpx')
+            atrack.show_download_gpx = (show_download_gpx == "on")
+            atrack_changed = True
+        
+        if atrack_changed:
             atrack.save()
             return render(request, 'acstracks_app/track_detail.html', {
                 'colorscheme': preference.colorscheme,
@@ -1259,22 +1278,28 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     try:
         atrack = Track.objects.get(publickey=publickey)
+        show_intermediate_points = atrack.show_markers
+        show_heartrate = atrack.show_heartrate
+        show_cadence = atrack.show_cadence
+        show_trackeffort_public = atrack.show_trackeffort_public
+        show_download_gpx = atrack.show_download_gpx
     except Exception:
         return redirect('track_list')
 
     try:
         preference = Preference.objects.get(user=atrack.user)
-        show_intermediate_points = preference.show_intermediate_points
-        show_heartrate = preference.show_heartrate
-        show_cadence = preference.show_cadence
-        show_trackeffort_public = preference.show_trackeffort_public
-        show_download_gpx = preference.show_download_gpx
+#         show_intermediate_points = preference.show_intermediate_points
+#         show_heartrate = preference.show_heartrate
+#         show_cadence = preference.show_cadence
+#         show_trackeffort_public = preference.show_trackeffort_public
+#         show_download_gpx = preference.show_download_gpx
     except Exception:
-        show_intermediate_points = False
-        show_heartrate = False
-        show_cadence = False
-        show_trackeffort_public = False
-        show_download_gpx = False
+        pass
+#         show_intermediate_points = False
+#         show_heartrate = False
+#         show_cadence = False
+#         show_trackeffort_public = False
+#         show_download_gpx = False
 
     map_filename = (
         atrack.publickey+".html"

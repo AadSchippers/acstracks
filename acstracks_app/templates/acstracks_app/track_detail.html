@@ -372,7 +372,120 @@
                 </form>
             </table>
             <hr>
+            <table class="scalefont {{colorscheme}}">
+                <tr>
+                    <td style="width: 500px;">
+                        <h3>Public tracks settings</h3>
+                    </td>
+                </tr>
+                <form method="post"  id="form5" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="hide_first_part_changed" value="True">
+                    <input type="hidden" name="hide_last_part_changed" value="True">
+                    <input type="hidden" name="show_markers_changed" value="True">
+                    <input type="hidden" name="show_cadence_changed" value="True">
+                    <input type="hidden" name="show_heartrate_changed" value="True">
+                    <input type="hidden" name="show_trackeffort_public_changed" value="True">
+                    <input type="hidden" name="show_download_gpx_changed" value="True">
+                    <tr>
+                        <td>       
+                        <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Hide first part</b>
+                            <input type="checkbox"
+                                name="hide_first_part" 
+                                {% if atrack.hide_first_part %}
+                                    checked="checked" 
+                                {% endif %}
+                                id="id_hide_first_part"
+                                onchange=processFiles("form5")>
+                            <span class="checkmark {{colorscheme}}"></span> 
+                        </label>
+                    </tr>
+                    <tr>
+                        <td>       
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Hide last part</b>
+                                <input type="checkbox"
+                                    name="hide_last_part" 
+                                    {% if atrack.hide_last_part %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_hide_last_part"
+                                    onchange=processFiles("form5")>
+                                <span class="checkmark {{colorscheme}}"></span> 
+                            </label>
+                    </tr>
+                    <tr>
+                        <td>       
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show markers</b>
+                                <input type="checkbox"
+                                    name="show_markers" 
+                                    {% if atrack.show_markers %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_markers"
+                                    onchange=processFiles("form5")>
+                                <span class="checkmark {{colorscheme}}"></span> 
+                            </label>
+                    </tr>
+                    <tr>
+                        <td>       
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show heart rate</b>
+                                <input type="checkbox"
+                                    name="show_heartrate" 
+                                    {% if atrack.show_heartrate %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_heartrate"
+                                    onchange=processFiles("form5")>
+                                <span class="checkmark {{colorscheme}}"></span> 
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>       
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show cadence</b>
+                                <input type="checkbox"
+                                    name="show_cadence" 
+                                    {% if atrack.show_cadence %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_cadence"
+                                    onchange=processFiles("form5")>
+                                <span class="checkmark {{colorscheme}}"></span> 
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show track effort</b>
+                                <input type="checkbox"
+                                    name="show_trackeffort_public"
+                                    {% if atrack.show_trackeffort_public %}
+                                        checked="checked"
+                                    {% endif %}
+                                    id="id_show_trackeffort_public"
+                                    onchange=processFiles("form5")>
+                                <span class="checkmark {{colorscheme}}"></span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>       
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show download GPX track</b>
+                                <input type="checkbox"
+                                    name="show_download_gpx" 
+                                    {% if atrack.show_download_gpx %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_show_download_gpx"
+                                    onchange=processFiles("form5")>
+                                <span class="checkmark {{colorscheme}}"></span> 
+                            </label>
+                        </td>
+                    </tr>
+                </form>
+            </table>
             <a href={{ public_url }} target="_blank" class="{{colorscheme}}"><b>Obtain a shareable link to this track</b></a>
+
         </div>
         <div class="col-8">
                 <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>

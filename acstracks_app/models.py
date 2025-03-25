@@ -45,6 +45,14 @@ class Track(models.Model):
     hrzone4 = models.TimeField(default="00:00:00")
     hrzone5 = models.TimeField(default="00:00:00")
     public_track = models.BooleanField(default=False)
+    hide_first_part = models.BooleanField(default=False)
+    hide_last_part = models.BooleanField(default=False)
+    show_markers = models.BooleanField(default=False)
+    show_heartrate = models.BooleanField(default=False)
+    show_cadence = models.BooleanField(default=False)
+    show_trackeffort_public = models.BooleanField(default=False)
+    show_download_gpx = models.BooleanField(default=False)
+
     publickey = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )
