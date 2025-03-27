@@ -185,4 +185,8 @@ WEIGHT_ZONE3 = 1
 WEIGHT_ZONE4 = 1.5
 WEIGHT_ZONE5 = 2
 
+# privacy zone
+PRIVACYZONES = [0, 1000, 2000, 3000, 5000]
+DEFAULT_PRIVACYZONE = 2000
+
 from .config import *   # noqa

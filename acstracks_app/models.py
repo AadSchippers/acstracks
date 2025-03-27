@@ -100,12 +100,7 @@ class Preference(models.Model):
     show_trackeffort = models.BooleanField(default=True)
     show_is_public_track = models.BooleanField(default=True)
     # Preferences for public page
-    link_to_detail_page = models.BooleanField(default=False)
-    show_intermediate_points = models.BooleanField(default=False)
-    show_download_gpx = models.BooleanField(default=False)
-    show_heartrate = models.BooleanField(default=False)
-    show_cadence = models.BooleanField(default=False)
-    show_trackeffort_public = models.BooleanField(default=False)
+    privacy_zone = models.DecimalField(max_digits=6, decimal_places=0, default=2000)
     date_start = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )

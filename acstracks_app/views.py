@@ -352,27 +352,37 @@ def track_detail(request, pk):
             UpdateTrack = True
 
     if csvsave:
+        map_filename=None
+        updatetrack=True
+        savecsv=True
+        downloadgpx=False
+        ispublictrack=False
         return (
             process_gpx_file(
                 request,
                 atrack.storagefilename,
                 preference.intermediate_points_selected,
                 atrack,
-                None,
-                True,
-                True,
-                False
+                map_filename,
+                updatetrack,
+                savecsv,
+                downloadgpx,
+                ispublictrack
                 )
         )
     else:
+        savecsv=False
+        downloadgpx=False
+        ispublictrack=False
         process_gpx_file(
             request, atrack.storagefilename,
             preference.intermediate_points_selected,
             atrack,
             map_filename,
             UpdateTrack,
-            False,
-            False
+            savecsv,
+            downloadgpx,
+            ispublictrack
             )
 
     return render(request, 'acstracks_app/track_detail.html', {
@@ -484,16 +494,25 @@ def parse_file(
         trk.save()
 
         try:
-            process_gpx_file(
-                request,
-                trk.storagefilename,
-                intermediate_points_selected,
-                trk,
-                None,
-                True,
-                False,
-                False
-                )
+            map_filename=None
+            updatetrack=True
+            savecsv=False
+            downloadgpx=False
+            ispublictrack=False
+            return (
+                process_gpx_file(
+                    request,
+                    trk.storagefilename,
+                    intermediate_points_selected,
+                    trk,
+                    map_filename,
+                    updatetrack,
+                    savecsv,
+                    downloadgpx,
+                    ispublictrack
+                    )
+            )
+
         except AcsFileNoActivity:
             deletetrack(trk)
             # error processing file, file skipped
@@ -902,13 +921,8 @@ def process_preferences(request):
             show_avgcadence = data['show_avgcadence']
             show_avgheartrate = data['show_avgheartrate']
             show_is_public_track = data['show_is_public_track']
-            link_to_detail_page = data['link_to_detail_page']
-            show_intermediate_points = data['show_intermediate_points']
-            show_download_gpx = data['show_download_gpx']
-            show_heartrate = data['show_heartrate']
-            show_cadence = data['show_cadence']
+            privacy_zone = data['privacy_zone']
             show_trackeffort = data['show_trackeffort']
-            show_trackeffort_public = data['show_trackeffort_public']
             default_profile = data['default_profile']
             maximum_heart_rate = data['maximum_heart_rate']
             resting_heart_rate = data['resting_heart_rate']
@@ -934,13 +948,8 @@ def process_preferences(request):
             preference.show_avgcadence = show_avgcadence
             preference.show_avgheartrate = show_avgheartrate
             preference.show_is_public_track = show_is_public_track
-            preference.link_to_detail_page = link_to_detail_page
-            preference.show_intermediate_points = show_intermediate_points
-            preference.show_download_gpx = show_download_gpx
-            preference.show_heartrate = show_heartrate
-            preference.show_cadence = show_cadence
+            preference.privacy_zone = privacy_zone
             preference.show_trackeffort = show_trackeffort
-            preference.show_trackeffort_public = show_trackeffort_public
             preference.default_profile = default_profile
             preference.maximum_heart_rate = maximum_heart_rate
             preference.resting_heart_rate = resting_heart_rate
@@ -970,6 +979,8 @@ def process_preferences(request):
             'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
             'backgroundimage': set_backgroundimage(preference),
             'allcolorschemes': settings.COLORSCHEMES,            
+            'privacy_zone': preference.privacy_zone,
+            'allprivacyzones': settings.PRIVACYZONES,            
             'page_name': "Preferences",
             }
         )
@@ -993,14 +1004,8 @@ def get_preferenceform(request):
             'show_avgcadence': preference.show_avgcadence,
             'show_avgheartrate': preference.show_avgheartrate,
             'show_is_public_track': preference.show_is_public_track,
-            'link_to_detail_page': preference.link_to_detail_page,
-            'show_intermediate_points':
-                preference.show_intermediate_points,
-            'show_download_gpx': preference.show_download_gpx,
-            'show_heartrate': preference.show_heartrate,
-            'show_cadence': preference.show_cadence,
+            'privacy_zone': preference.privacy_zone,
             'show_trackeffort': preference.show_trackeffort,
-            'show_trackeffort_public': preference.show_trackeffort_public,
             'default_profile': preference.default_profile, 
             'maximum_heart_rate': preference.maximum_heart_rate,
             'resting_heart_rate': preference.resting_heart_rate,
@@ -1013,9 +1018,25 @@ def get_preferenceform(request):
 
 def recalculate_tracks(request):
     tracks = Track.objects.filter(user=request.user)
+    intermediate_points_selected = 0
+    map_filename = None
+    updatetrack=True
+    savecsv=False
+    downloadgpx=False
+    ispublictrack=False
     for track in tracks:
-        process_gpx_file(
-            request, track.storagefilename, 0, track, None, True, False, False
+            return (
+                process_gpx_file(
+                    request,
+                    track.storagefilename,
+                    intermediate_points_selected,
+                    track,
+                    map_filename,
+                    updatetrack,
+                    savecsv,
+                    downloadgpx,
+                    ispublictrack
+                    )
             )
 
     return
@@ -1288,18 +1309,8 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     try:
         preference = Preference.objects.get(user=atrack.user)
-#         show_intermediate_points = preference.show_intermediate_points
-#         show_heartrate = preference.show_heartrate
-#         show_cadence = preference.show_cadence
-#         show_trackeffort_public = preference.show_trackeffort_public
-#         show_download_gpx = preference.show_download_gpx
     except Exception:
         pass
-#         show_intermediate_points = False
-#         show_heartrate = False
-#         show_cadence = False
-#         show_trackeffort_public = False
-#         show_download_gpx = False
 
     map_filename = (
         atrack.publickey+".html"
@@ -1321,16 +1332,27 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         gpxdownload = request.POST.get('gpxdownload')
 
     if gpxdownload == 'True':
+        map_filename=None
+        updatetrack=True
+        savecsv=False
+        downloadgpx=True
+        ispublictrack=True
         return process_gpx_file(
             request,
             atrack.storagefilename,
             intermediate_points_selected,
             atrack,
-            None,
-            True,
-            False,
-            True
+            map_filename,
+            updatetrack,
+            savecsv,
+            downloadgpx,
+            ispublictrack
         )
+
+    updatetrack=False
+    savecsv=False
+    downloadgpx=False
+    ispublictrack=True
 
     process_gpx_file(
         request,
@@ -1338,9 +1360,10 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         intermediate_points_selected,
         atrack,
         map_filename,
-        False,
-        False,
-        False
+        updatetrack,
+        savecsv,
+        downloadgpx,
+        ispublictrack
         )
 
     return render(request, 'acstracks_app/publictrack_detail.html', {

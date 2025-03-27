@@ -203,7 +203,7 @@
                                 <td style="width: 550px;">
                                     <h3>Optional columns</h3>
                                 </td>
-                                <td style="width: 500px;">
+                                <td style="width: 300px;">
                                     <h3>Public tracks settings</h3>
                                 </td>
                             </tr>
@@ -219,16 +219,20 @@
                                         <span class="checkmark {{colorscheme}}"></span> 
                                     </label>
                                 </td>
-                                <td>       
-                                    <label class="checkcontainer {{colorscheme}}">Link to detail page
-                                        <input type="checkbox"
-                                            name="link_to_detail_page" 
-                                            {% if form.link_to_detail_page.value %}
-                                                checked="checked" 
+                                <td>
+                                    <label for="privacy_zone">Privacy zone (m):</label>
+                                </td>
+                                <td style="text-align: left">
+                                    <select name="privacy_zone" id="privacy_zone">
+                                        {% for a_privacy_zone in allprivacyzones %}
+                                        {{ a_privacy_zone }} / {{ privacy_zone}}
+                                            {% if a_privacy_zone == privacy_zone %}
+                                                <option value="{{ a_privacy_zone }}" selected="selected">{{ a_privacy_zone }}</option>
+                                            {% else %}
+                                                <option value="{{ a_privacy_zone }}">{{ a_privacy_zone }}</option>
                                             {% endif %}
-                                            id="id_link_to_detail_page">
-                                        <span class="checkmark {{colorscheme}}"></span> 
-                                    </label>
+                                        {% endfor %}
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
@@ -243,16 +247,6 @@
                                         <span class="checkmark {{colorscheme}}"></span> 
                                     </label>
                                 </td>
-                                <td>       
-                                    <label class="checkcontainer {{colorscheme}}">Show markers
-                                        <input type="checkbox"
-                                            name="show_intermediate_points" 
-                                            {% if form.show_intermediate_points.value %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_show_intermediate_points">
-                                        <span class="checkmark {{colorscheme}}"></span> 
-                                    </label>
                             </tr>
                             <tr>
                                 <td>
@@ -265,17 +259,6 @@
                                         id="id_show_totalascent">
                                     <span class="checkmark {{colorscheme}}"></span> 
                                 </label>
-                                </td>
-                                <td>       
-                                    <label class="checkcontainer {{colorscheme}}">Show download GPX track
-                                        <input type="checkbox"
-                                            name="show_download_gpx" 
-                                            {% if form.show_download_gpx.value %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_show_download_gpx">
-                                        <span class="checkmark {{colorscheme}}"></span> 
-                                    </label>
                                 </td>
                             </tr>
                             <tr>
@@ -290,17 +273,6 @@
                                     <span class="checkmark {{colorscheme}}"></span> 
                                 </label>
                                 </td>
-                                <td>       
-                                    <label class="checkcontainer {{colorscheme}}">Show heart rate
-                                        <input type="checkbox"
-                                            name="show_heartrate" 
-                                            {% if form.show_heartrate.value %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_show_heartrate">
-                                        <span class="checkmark {{colorscheme}}"></span> 
-                                    </label>
-                                </td>
                             </tr>
                             <tr>
                                 <td>
@@ -311,17 +283,6 @@
                                                 checked="checked" 
                                             {% endif %}
                                             id="id_show_avgcadence">
-                                        <span class="checkmark {{colorscheme}}"></span> 
-                                    </label>
-                                </td>
-                                <td>       
-                                    <label class="checkcontainer {{colorscheme}}">Show cadence
-                                        <input type="checkbox"
-                                            name="show_cadence" 
-                                            {% if form.show_cadence.value %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_show_cadence">
                                         <span class="checkmark {{colorscheme}}"></span> 
                                     </label>
                                 </td>
@@ -337,17 +298,6 @@
                                         id="id_show_avgheartrate">
                                     <span class="checkmark {{colorscheme}}"></span> 
                                 </label>
-                                </td>
-                                <td>
-                                    <label class="checkcontainer {{colorscheme}}">Show track effort
-                                        <input type="checkbox"
-                                            name="show_trackeffort_public"
-                                            {% if form.show_trackeffort_public.value %}
-                                                checked="checked"
-                                            {% endif %}
-                                            id="id_show_trackeffort_public">
-                                        <span class="checkmark {{colorscheme}}"></span>
-                                    </label>
                                 </td>
                             </tr>
                             <tr>

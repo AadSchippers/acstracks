@@ -22,7 +22,7 @@ import math
 def process_gpx_file(
     request, filename, intermediate_points_selected,
     atrack=None, map_filename=None, updatetrack=False,
-    savecsv=False, downloadgpx=False
+    savecsv=False, downloadgpx=False, ispublictrack=False
 ):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT,
@@ -34,17 +34,22 @@ def process_gpx_file(
 
     gpx = gpxpy.parse(gpx_file)
 
+    hide_first_part = atrack.hide_first_part
+    hide_last_part = atrack.hide_last_part
+
     try:
         preference = Preference.objects.get(user=request.user)
         colorscheme = preference.colorscheme
         speedthreshold = preference.speedthreshold
         elevationthreshold = preference.elevationthreshold
         maxspeedcappingfactor = preference.maxspeedcappingfactor
+        privacy_zone = preference.privacy_zone
     except Exception:
         colorscheme = settings.DEFAULT_COLORSCHEME
         speedthreshold = settings.SPEEDTHRESHOLD
         elevationthreshold = settings.ELEVATIONTHRESHOLD
         maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
+        privacy_zone = settings.DEFAULT_PRIVACYZONE
 
     heartratezones = get_heartratezones(request)
 
@@ -248,11 +253,30 @@ def process_gpx_file(
                     "avgcadence": avgcadence,
                     "flagged": flagged,
                 }
-            
+
                 allpoints.append(apoint)
 
                 previous_distance = distance
                 previous_speed = speed
+
+    if ispublictrack:
+        if atrack.hide_first_part:
+            track_too_long = True
+            while track_too_long:
+                if float(allpoints[0]["distance"]) <= float(privacy_zone):
+                    allpoints.pop(0)
+                else:
+                    track_too_long = False
+        if atrack.hide_last_part:
+            track_too_long = True
+            last = len(allpoints) - 1
+            trkLength = float(allpoints[last]["distance"])
+            while track_too_long:
+                last = len(allpoints) - 1
+                if float(allpoints[last]["distance"]) >= trkLength - float(privacy_zone):
+                    allpoints.pop()
+                else:
+                    track_too_long = False
 
     if iFlagged > 0:
         print(
