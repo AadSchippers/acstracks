@@ -34,8 +34,8 @@ def process_gpx_file(
 
     gpx = gpxpy.parse(gpx_file)
 
-    hide_first_part = atrack.hide_first_part
-    hide_last_part = atrack.hide_last_part
+    add_heartrate = not ispublictrack or (ispublictrack and atrack.show_heartrate)
+    add_cadence = not ispublictrack or (ispublictrack and atrack.show_cadence)
 
     try:
         preference = Preference.objects.get(user=request.user)
@@ -99,15 +99,19 @@ def process_gpx_file(
                 heartrate = 0
                 cadence = 0
                 for extension in point.extensions:
-                    if extension.tag in settings.HEARTRATETAGS:
-                        heartrate = int(extension.text)
-                    if extension.tag in settings.CADENCETAGS:
-                        cadence = int(extension.text)
+                    if add_heartrate:
+                        if extension.tag in settings.HEARTRATETAGS:
+                            heartrate = int(extension.text)
+                    if add_cadence:
+                        if extension.tag in settings.CADENCETAGS:
+                            cadence = int(extension.text)
                     for TrackPointExtension in extension:
-                        if TrackPointExtension.tag in settings.HEARTRATETAGS:
-                            heartrate = int(TrackPointExtension.text)
-                        if TrackPointExtension.tag in settings.CADENCETAGS:
-                            cadence = int(TrackPointExtension.text)
+                        if add_heartrate:
+                            if TrackPointExtension.tag in settings.HEARTRATETAGS:
+                                heartrate = int(TrackPointExtension.text)
+                        if add_cadence:
+                            if TrackPointExtension.tag in settings.CADENCETAGS:
+                                cadence = int(TrackPointExtension.text)
 
                 point_distance = calculate_using_haversine(
                     point, previous_point
@@ -159,7 +163,7 @@ def process_gpx_file(
                             moving_duration + (duration - previous_duration)
                             )
 
-                    if heartrate:
+                    if heartrate and add_heartrate:
                         if is_moving:
                             if heartrate <= heartratezones[0]:
                                 zone1 = zone1 + (
@@ -203,7 +207,7 @@ def process_gpx_file(
                         no_hr_detected_seconds = no_hr_detected_seconds + (
                             duration.seconds - previous_duration.seconds
                             )
-                    if cadence:
+                    if cadence and add_cadence:
                         avgcadence = (
                             (previous_avgcadence * (
                                 previous_duration.seconds -
