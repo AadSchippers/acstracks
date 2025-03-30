@@ -1366,11 +1366,16 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
         ispublictrack
         )
 
+    add_maxheartrate = (atrack.maxheartrate_pointindex > 0) and atrack.show_heartrate
+    add_maxcadence = (atrack.maxcadence_pointindex > 0) and atrack.show_cadence
+
     return render(request, 'acstracks_app/publictrack_detail.html', {
         'colorscheme': preference.colorscheme,
         'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
         'backgroundimage': set_backgroundimage(preference),
         'atrack': atrack,
+        'add_maxheartrate': add_maxheartrate,
+        'add_maxcadence': add_maxcadence,
         'displayfilename': displayfilename,
         'show_intermediate_points': show_intermediate_points,
         'show_heartrate': show_heartrate,

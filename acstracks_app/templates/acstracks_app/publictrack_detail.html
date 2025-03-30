@@ -102,6 +102,20 @@
                                     {% else %}
                                         <option value=60000>Best 60 minutes</option>
                                     {% endif %}
+                                    {% if add_maxheartrate == True %}
+                                        {% if intermediate_points_selected == 90000 %}
+                                            <option value=90000 selected="selected">Maximum heart rate</option>
+                                        {% else %}
+                                            <option value=90000>Maximum heart rate</option>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if add_maxcadence == True %}
+                                        {% if intermediate_points_selected == 95000 %}
+                                            <option value=95000 selected="selected">Maximum cadence</option>
+                                        {% else %}
+                                            <option value=95000>Maximum cadence</option>
+                                        {% endif %}
+                                    {% endif %}
                                     {% if intermediate_points_selected == 99999 %}
                                         <option value=99999 selected="selected">Maximum speed</option>
                                     {% else %}

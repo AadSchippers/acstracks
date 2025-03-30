@@ -38,6 +38,7 @@ class Track(models.Model):
     minheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate = models.IntegerField(null=True, blank=True, default=None)
     maxheartrate_pointindex = models.DecimalField(max_digits=6, decimal_places=0, default=0)
+    publictrack_pointindex = models.DecimalField(max_digits=6, decimal_places=0, default=0)
     trackeffort = models.IntegerField(null=True, blank=True, default=None)
     hrzone1 = models.TimeField(default="00:00:00")
     hrzone2 = models.TimeField(default="00:00:00")

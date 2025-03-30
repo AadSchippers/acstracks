@@ -263,25 +263,6 @@ def process_gpx_file(
                 previous_distance = distance
                 previous_speed = speed
 
-    if ispublictrack:
-        if atrack.hide_first_part:
-            track_too_long = True
-            while track_too_long:
-                if float(allpoints[0]["distance"]) <= float(privacy_zone):
-                    allpoints.pop(0)
-                else:
-                    track_too_long = False
-        if atrack.hide_last_part:
-            track_too_long = True
-            last = len(allpoints) - 1
-            trkLength = float(allpoints[last]["distance"])
-            while track_too_long:
-                last = len(allpoints) - 1
-                if float(allpoints[last]["distance"]) >= trkLength - float(privacy_zone):
-                    allpoints.pop()
-                else:
-                    track_too_long = False
-
     if iFlagged > 0:
         print(
             f"Filename: {filename}," +
@@ -307,6 +288,30 @@ def process_gpx_file(
             atrack, allpoints, elevationthreshold, maxspeedcappingfactor
             )
 
+    if ispublictrack:
+        if atrack.hide_first_part:
+            publictrack_pointindex = 0
+            track_too_long = True
+            while track_too_long:
+                if float(allpoints[0]["distance"]) <= float(privacy_zone):
+                    allpoints.pop(0)
+                    publictrack_pointindex += 1
+                else:
+                    track_too_long = False
+                    atrack.publictrack_pointindex = publictrack_pointindex
+                    atrack.save()
+                    atrack.refresh_from_db()
+        if atrack.hide_last_part:
+            track_too_long = True
+            last = len(allpoints) - 1
+            trkLength = float(allpoints[last]["distance"])
+            while track_too_long:
+                last = len(allpoints) - 1
+                if float(allpoints[last]["distance"]) >= trkLength - float(privacy_zone):
+                    allpoints.pop()
+                else:
+                    track_too_long = False
+
     if map_filename:
         make_map(
             request,
@@ -315,7 +320,8 @@ def process_gpx_file(
             allpoints,
             filename,
             intermediate_points_selected,
-            map_filename
+            map_filename,
+            ispublictrack
             )
 
     if savecsv:
@@ -544,7 +550,7 @@ def get_heartratezones(request):
 
 def make_map(
     request, colorscheme, atrack, allpoints, filename,
-    intermediate_points_selected, map_filename
+    intermediate_points_selected, map_filename, ispublictrack=False
 ):
     primary_color = settings.PRIMARY_COLOR[colorscheme]
     start_color = settings.START_COLOR[colorscheme]
@@ -580,6 +586,10 @@ def make_map(
     previous_marker_distance = 0
     previous_marker_moving_duration = 0
 
+    if ispublictrack:
+        publictrack_pointindex = int(atrack.publictrack_pointindex)
+    else:
+        publictrack_pointindex = 0
     ip = int(intermediate_points_selected)
     if ip > 0:
         for x in range(len(allpoints)):
@@ -603,35 +613,35 @@ def make_map(
 
             if ip == 20000:
                 if x > 0:
-                    if x == atrack.best20_start_pointindex:
+                    if x == atrack.best20_start_pointindex - publictrack_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 20 minutes at ')
-                    elif x == atrack.best20_end_pointindex:
+                    elif x == atrack.best20_end_pointindex - publictrack_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 20 minutes at ')
 
             if ip == 30000:
                 if x > 0:
-                    if x == atrack.best30_start_pointindex:
+                    if x == atrack.best30_start_pointindex - publictrack_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 30 minutes at ')
-                    elif x == atrack.best30_end_pointindex:
+                    elif x == atrack.best30_end_pointindex - publictrack_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 30 minutes at ')
 
             if ip == 60000:
                 if x > 0:
-                    if x == atrack.best60_start_pointindex:
+                    if x == atrack.best60_start_pointindex - publictrack_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 60 minutes at ')
-                    elif x == atrack.best60_end_pointindex:
+                    elif x == atrack.best60_end_pointindex - publictrack_pointindex:
                         make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 60 minutes at ')
 
             if ip == 90000:
-                if x > 0 and x == atrack.maxheartrate_pointindex:
+                if x > 0 and x == atrack.maxheartrate_pointindex - publictrack_pointindex:
                     make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate at ')
 
             if ip == 95000:
-                if x > 0 and x == atrack.maxcadence_pointindex:
+                if x > 0 and x == atrack.maxcadence_pointindex - publictrack_pointindex:
                     make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence at ')
 
             if ip == 99999:
-                if x > 0 and x == atrack.maxspeed_pointindex:
+                if x > 0 and x == atrack.maxspeed_pointindex - publictrack_pointindex:
                     make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum speed at ', atrack.maxspeed)
 
     # start marker
