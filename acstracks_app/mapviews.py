@@ -634,15 +634,15 @@ def make_map(
 
             if ip == 90000:
                 if x > 0 and x == atrack.maxheartrate_pointindex - publictrack_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate at ')
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate at ', heartrate=atrack.maxheartrate)
 
             if ip == 95000:
                 if x > 0 and x == atrack.maxcadence_pointindex - publictrack_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence at ')
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence at ', cadence=atrack.maxcadence)
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex - publictrack_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum speed at ', atrack.maxspeed)
+                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum speed at ', speed=atrack.maxspeed)
 
     # start marker
     tooltip_text = "Start, click for details"
@@ -720,7 +720,17 @@ def make_map(
     return
 
 
-def make_marker(my_map, colorscheme, allpoints, x, distance, i, tooltip_text, speed=None, time_text=False):
+def make_marker(my_map,
+                colorscheme,
+                allpoints,
+                x,
+                distance,
+                i,
+                tooltip_text,
+                speed=None,
+                heartrate=None,
+                cadence=None,
+                time_text=False):
     primary_color = settings.PRIMARY_COLOR[colorscheme]
 
     time = allpoints[x]["created_date"]
@@ -734,9 +744,11 @@ def make_marker(my_map, colorscheme, allpoints, x, distance, i, tooltip_text, sp
             )
     except Exception:
         avgspeed = 0
-    heartrate = allpoints[x]["heartrate"]
+    if not heartrate:
+        heartrate = allpoints[x]["heartrate"]
     avgheartrate = allpoints[x]["avgheartrate"]
-    cadence = allpoints[x]["cadence"]
+    if not cadence:
+        cadence = allpoints[x]["cadence"]
     avgcadence = allpoints[x]["avgcadence"]
     popup_title_text = tooltip_text + 'at '
     if time_text:
