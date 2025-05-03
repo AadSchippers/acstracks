@@ -601,7 +601,7 @@ def make_map(
                     continue
                 previous_marker_distance = distance
                 i = i + ip
-                make_marker(my_map, colorscheme, allpoints, x, distance, i, 'Intermediate point at ')
+                make_marker(my_map, colorscheme, allpoints[x], distance, i, 'Intermediate point at ')
 
             if ip == 15000:
                 if moving_duration < previous_marker_moving_duration + 1800:
@@ -609,40 +609,40 @@ def make_map(
                 previous_marker_moving_duration = moving_duration
                 i = i + ip
                 tooltip_text = 'Intermediate point at ' + time.strftime('%H:%M:%S', time.gmtime(int(moving_duration))) + ', '
-                make_marker(my_map, colorscheme, allpoints, x, distance, distance, tooltip_text, time_text=True)
+                make_marker(my_map, colorscheme, allpoints[x], distance, distance, tooltip_text, time_text=True)
 
             if ip == 20000:
                 if x > 0:
                     if x == atrack.best20_start_pointindex - publictrack_pointindex:
-                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 20 minutes at ')
+                        make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'Start best 20 minutes at ')
                     elif x == atrack.best20_end_pointindex - publictrack_pointindex:
-                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 20 minutes at ')
+                        make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'End best 20 minutes at ')
 
             if ip == 30000:
                 if x > 0:
                     if x == atrack.best30_start_pointindex - publictrack_pointindex:
-                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 30 minutes at ')
+                        make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'Start best 30 minutes at ')
                     elif x == atrack.best30_end_pointindex - publictrack_pointindex:
-                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 30 minutes at ')
+                        make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'End best 30 minutes at ')
 
             if ip == 60000:
                 if x > 0:
                     if x == atrack.best60_start_pointindex - publictrack_pointindex:
-                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Start best 60 minutes at ')
+                        make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'Start best 60 minutes at ')
                     elif x == atrack.best60_end_pointindex - publictrack_pointindex:
-                        make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'End best 60 minutes at ')
+                        make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'End best 60 minutes at ')
 
             if ip == 90000:
                 if x > 0 and x == atrack.maxheartrate_pointindex - publictrack_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum heart rate at ', heartrate=atrack.maxheartrate)
+                    make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'Maximum heart rate at ', heartrate=atrack.maxheartrate)
 
             if ip == 95000:
                 if x > 0 and x == atrack.maxcadence_pointindex - publictrack_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum cadence at ', cadence=atrack.maxcadence)
+                    make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'Maximum cadence at ', cadence=atrack.maxcadence)
 
             if ip == 99999:
                 if x > 0 and x == atrack.maxspeed_pointindex - publictrack_pointindex:
-                    make_marker(my_map, colorscheme, allpoints, x, distance, distance, 'Maximum speed at ', speed=atrack.maxspeed)
+                    make_marker(my_map, colorscheme, allpoints[x], distance, distance, 'Maximum speed at ', speed=atrack.maxspeed)
 
     # start marker
     tooltip_text = "Start, click for details"
@@ -722,8 +722,7 @@ def make_map(
 
 def make_marker(my_map,
                 colorscheme,
-                allpoints,
-                x,
+                apoint,
                 distance,
                 i,
                 tooltip_text,
@@ -733,23 +732,23 @@ def make_marker(my_map,
                 time_text=False):
     primary_color = settings.PRIMARY_COLOR[colorscheme]
 
-    time = allpoints[x]["created_date"]
-    duration = allpoints[x]["duration"]
-    moving_duration = allpoints[x]["moving_duration"]
+    time = apoint["created_date"]
+    duration = apoint["duration"]
+    moving_duration = apoint["moving_duration"]
     if not speed:
-        speed = allpoints[x]["speed"]
+        speed = apoint["speed"]
     try:
         avgspeed = float(
-            (allpoints[x]["distance"] / moving_duration.seconds) * 3.6
+            (apoint["distance"] / moving_duration.seconds) * 3.6
             )
     except Exception:
         avgspeed = 0
     if not heartrate:
-        heartrate = allpoints[x]["heartrate"]
-    avgheartrate = allpoints[x]["avgheartrate"]
+        heartrate = apoint["heartrate"]
+    avgheartrate = apoint["avgheartrate"]
     if not cadence:
-        cadence = allpoints[x]["cadence"]
-    avgcadence = allpoints[x]["avgcadence"]
+        cadence = apoint["cadence"]
+    avgcadence = apoint["avgcadence"]
     popup_title_text = tooltip_text + 'at '
     if time_text:
         tooltip_text = (
@@ -785,7 +784,7 @@ def make_marker(my_map,
         cadence,
         avgcadence,
         )
-    point_x = [allpoints[x]["latitude"], allpoints[x]["longitude"]]
+    point_x = [apoint["latitude"], apoint["longitude"]]
     popup = folium.Popup(html_popup, max_width=400)
     folium.Marker(
         point_x,
