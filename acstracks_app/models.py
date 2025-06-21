@@ -53,7 +53,6 @@ class Track(models.Model):
     show_cadence = models.BooleanField(default=False)
     show_trackeffort_public = models.BooleanField(default=False)
     show_download_gpx = models.BooleanField(default=False)
-
     publickey = models.CharField(
         max_length=255, null=True, blank=True, default=None
         )

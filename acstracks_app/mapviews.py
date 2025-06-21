@@ -668,10 +668,10 @@ def make_map(
     tooltip_text = "Finish, click for details"
     tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    duration = allpoints[-1]["duration"]
+    duration = atrack.timelength
     moving_duration = allpoints[-1]["moving_duration"]
-    avgspeed = float((allpoints[-1]["distance"] / moving_duration.seconds) * 3.6)
-    distance = float(allpoints[-1]["distance"]) / 1000
+    avgspeed = atrack.avgspeed
+    distance = atrack.length
 
     html = (
         "<h3 style='color: " + primary_color + "; font-weight: bold; font-size: 1.5vw'>" +
@@ -679,9 +679,9 @@ def make_map(
         "font-size: 0.85vw'><tr><td><b>Time</b></td>" +
         "<td style='text-align:right'>"+allpoints[-1]["created_date"]+"</td></tr>" +
         "<tr><td><b>Distance</b></td><td style='text-align:right'>" +
-        str(round(distance, 2))+"</td></tr>" +
+        str(distance)+"</td></tr>" +
         "<tr><td><b>Average speed</b></td><td style='text-align:right'>" +
-        str(round(avgspeed, 2))+"</td></tr>" +
+        str(avgspeed)+"</td></tr>" +
         "<tr><td><b>Duration</b></td><td style='text-align:right'>" +
         str(duration)+"</td></tr><tr><td><b>Duration while moving</b>" +
         "</td><td style='text-align:right'>" +
