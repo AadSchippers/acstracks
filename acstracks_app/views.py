@@ -1084,7 +1084,7 @@ def cleanup(request):
     try:
         preference = Preference.objects.get(user=request.user)
         colorscheme = preference.colorscheme
-    except:
+    except Exception:
         colorscheme = settings.DEFAULT_COLORSCHEME
 
     return render(request, 'acstracks_app/cleanup.html', {
@@ -1127,7 +1127,7 @@ def publish(request):
             try:
                 preference = Preference.objects.get(user=request.user)
                 colorscheme = preference.colorscheme
-            except:
+            except Exception:
                 colorscheme = settings.DEFAULT_COLORSCHEME
 
             make_heatmap(

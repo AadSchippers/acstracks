@@ -243,7 +243,6 @@ def process_gpx_file(
                 apoint = {
                     "latitude": point.latitude,
                     "longitude": point.longitude,
-                    "elevation": round(point.elevation, 2),
                     "created_date": point.time.astimezone(timezone_info).strftime(
                         "%Y-%m-%d %H:%M:%S"
                         ),
@@ -257,6 +256,11 @@ def process_gpx_file(
                     "avgcadence": avgcadence,
                     "flagged": flagged,
                 }
+
+                try:
+                    apoint["elevation"] = round(point.elevation, 2)
+                except Exception:
+                    pass
 
                 allpoints.append(apoint)
 
@@ -377,8 +381,7 @@ def update_track(
     trkMaxcadenceIndex = 0
     totalascent = 0
     totaldescent = 0
-    previous_elevation = allpoints[0]["elevation"]
-
+    previous_elevation = None
     trkBest20 = 0
     trkBest30 = 0
     trkBest60 = 0
@@ -425,19 +428,30 @@ def update_track(
         if allpoints[PointIndex1]["cadence"] > trkMaxcadence:
             trkMaxcadence = allpoints[PointIndex1]["cadence"]
             trkMaxcadenceIndex = PointIndex1
-        if (
-            abs(allpoints[PointIndex1]["elevation"] - previous_elevation)
-            > elevationthreshold
-        ):
-            if allpoints[PointIndex1]["elevation"] > previous_elevation:
-                totalascent = totalascent + (
-                    allpoints[PointIndex1]["elevation"] - previous_elevation
-                    )
-            if allpoints[PointIndex1]["elevation"] < previous_elevation:
-                totaldescent = totaldescent + (
-                    previous_elevation - allpoints[PointIndex1]["elevation"]
-                    )
-            previous_elevation = allpoints[PointIndex1]["elevation"]
+
+        try:
+            if allpoints[PointIndex1]["elevation"]:
+                if not previous_elevation:
+                    try:
+                        previous_elevation = allpoints[PointIndex1]["elevation"]
+                    except Exception:
+                        pass
+                if (
+                    abs(allpoints[PointIndex1]["elevation"] - previous_elevation)
+                    > elevationthreshold
+                ):
+                    if allpoints[PointIndex1]["elevation"] > previous_elevation:
+                        totalascent = totalascent + (
+                            allpoints[PointIndex1]["elevation"] - previous_elevation
+                            )
+                    if allpoints[PointIndex1]["elevation"] < previous_elevation:
+                        totaldescent = totaldescent + (
+                            previous_elevation - allpoints[PointIndex1]["elevation"]
+                            )
+                    previous_elevation = allpoints[PointIndex1]["elevation"]
+        except Exception:
+            pass
+
         PointIndex2 = PointIndex1 + 1
         best20_done = False
         best30_done = False
@@ -859,10 +873,14 @@ def save_csv(request, atrack, allpoints):
                 )
         except Exception:
             avgspeed = 0
+        try:
+            anElevation = round(allpoints[row]["elevation"], 2)
+        except Exception:
+            anElevation = ""
         writer.writerow([
             allpoints[row]["latitude"],
             allpoints[row]["longitude"],
-            round(allpoints[row]["elevation"], 2),
+            anElevation,
             allpoints[row]["created_date"],
             round(allpoints[row]["distance"], 2),
             allpoints[row]["duration"],
@@ -923,9 +941,12 @@ def download_gpx(request, atrack, allpoints):
                 str(allpoints[row]["latitude"]) +
                 "' lon='"+str(allpoints[row]["longitude"])+"'>")]
                 )
-            writer.writerow([str(
-                "        <ele>"+str(round(allpoints[row]["elevation"], 2))+"</ele>")]
-                )
+            try:
+                writer.writerow([str(
+                    "        <ele>"+str(round(allpoints[row]["elevation"], 2))+"</ele>")]
+                    )
+            except Exception:
+                pass
             if request.user == atrack.user:
                 writer.writerow([str(
                     "        <time>" +
@@ -1078,11 +1099,18 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
                 trackname = track.name
             for segment in track.segments:
                 for point in segment.points:
-                    allpoints.append({
+
+                    apoint = {
                         "latitude": point.latitude,
                         "longitude": point.longitude,
-                        "elevation": point.elevation, 
-                        })
+                    }
+
+                    try:
+                        apoint["elevation"] = round(point.elevation, 2),
+                    except Exception:
+                        pass
+
+                    allpoints.append(apoint)
 
                     point_distance = calculate_using_haversine(
                         point, previous_point
