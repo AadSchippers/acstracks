@@ -294,7 +294,7 @@
                 {% if preference.show_totaldescent %}
                     <td style="text-align:right">{{ track.totaldescent }}</td>
                 {% endif %}
-                <td style="text-align:right">{{ track.timelength|time:"H:i:s" }}</td>
+                <td style="text-align:right">{{ track.movingduration|time:"H:i:s" }}</td>
                 {% if preference.show_avgspeed %}
                     <td style="text-align:right">{{ track.avgspeed }}</td>
                 {% endif %}

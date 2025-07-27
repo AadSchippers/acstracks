@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 "created_date" + ";" +
                 "name" + ";" +
                 "profile" + ";" +
-                "timelength" + ";" +
+                "movingduration" + ";" +
                 "maxcadence_pointindex" + ";" +
                 "new maxcadence_pointindex" + ";"
                 "maxheartrate_pointindex" + ";"
@@ -48,7 +48,7 @@ class Command(BaseCommand):
                         track.created_date.strftime("%c") + ";" +
                         track.name + ";" +
                         track.profile + ";" +
-                        track.timelength.strftime("%X") + ";" +
+                        track.movingduration.strftime("%X") + ";" +
                         str(track.maxcadence_pointindex) + ";" +
                         str(new_pointindices[0]) + ";" +
                         str(track.maxheartrate_pointindex) + ";" +

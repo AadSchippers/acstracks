@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 "created_date" + ";" +
                 "name" + ";" +
                 "profile" + ";" +
-                "timelength" + ";" +
+                "movingduration" + ";" +
                 "avgheartrate" + ";" +
                 "trackeffort" + ";"
                 "new trackeffort" + ";"
@@ -47,7 +47,7 @@ class Command(BaseCommand):
                         track.created_date.strftime("%c") + ";" +
                         track.name + ";" +
                         track.profile + ";" +
-                        track.timelength.strftime("%X") + ";" +
+                        track.movingduration.strftime("%X") + ";" +
                         str(track.avgheartrate) + ";" +
                         str(track.trackeffort) + ";" +
                         str(new_trackeffort) + ";"

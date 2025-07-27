@@ -118,10 +118,10 @@ def get_tracks(request, date_start, date_end, order_selected, profile_filter):
         order_by = "-length"
 
     if order_selected == "duration_ascending":
-        order_by = "timelength"
+        order_by = "movingduration"
 
     if order_selected == "duration_descending":
-        order_by = "-timelength"
+        order_by = "-movingduration"
 
     if order_selected == "avgspeed_ascending":
         order_by = "avgspeed"
@@ -794,15 +794,15 @@ def compute_statistics(tracks):
         total_length = total_length + float(t.length)
         total_avgspeed = total_avgspeed + float(t.avgspeed * t.length)
         t0 = t0 + (
-            (int(t.timelength.strftime("%H")) * 3600) +
-            (int(t.timelength.strftime("%M")) * 60) +
-            (int(t.timelength.strftime("%S")))
+            (int(t.movingduration.strftime("%H")) * 3600) +
+            (int(t.movingduration.strftime("%M")) * 60) +
+            (int(t.movingduration.strftime("%S")))
             )
         if longest_length < t.length:
             longest_length = t.length
             datetime_longest_length = t.created_date
-        if longest_duration < str(t.timelength):
-            longest_duration = str(t.timelength)
+        if longest_duration < str(t.movingduration):
+            longest_duration = str(t.movingduration)
             datetime_longest_duration = t.created_date
         if highest_avgspeed < t.avgspeed:
             highest_avgspeed = t.avgspeed
@@ -1413,7 +1413,7 @@ def exporttracks(request):
         'length', 
         'totalascent', 
         'totaldescent', 
-        'timelength', 
+        'movingduration', 
         'avgspeed', 
         'best20', 
         'best30', 
@@ -1444,7 +1444,7 @@ def exporttracks(request):
             aTrack.length, 
             aTrack.totalascent, 
             aTrack.totaldescent, 
-            aTrack.timelength, 
+            aTrack.movingduration, 
             aTrack.avgspeed, 
             aTrack.best20, 
             aTrack.best30, 

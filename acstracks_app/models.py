@@ -16,7 +16,8 @@ class Track(models.Model):
         max_length=255, null=True, blank=True, default=None
         )
     length = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    timelength = models.TimeField(default="00:00:00")
+    movingduration = models.TimeField(default="00:00:00")
+    duration = models.TimeField(default="00:00:00")
     avgspeed = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     best20 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     best20_start_pointindex = models.DecimalField(max_digits=6, decimal_places=0, default=0)

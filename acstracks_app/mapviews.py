@@ -345,7 +345,11 @@ def update_track(
     created_date = allpoints[0]["created_date"]
     trkLength = float(allpoints[last]["distance"]) / 1000
     trkSeconds = int(allpoints[last]["moving_duration"].seconds)
-    trkTimelength = time.strftime(
+    trkMovingDuration = time.strftime(
+        '%H:%M:%S', time.gmtime(trkSeconds)
+        )
+    trkSeconds = int(allpoints[last]["duration"].seconds)
+    trkDuration = time.strftime(
         '%H:%M:%S', time.gmtime(trkSeconds)
         )
 
@@ -514,7 +518,8 @@ def update_track(
 
     atrack.created_date = make_aware(parse(created_date))
     atrack.length = round(trkLength, 2)
-    atrack.timelength = trkTimelength
+    atrack.movingduration = trkMovingDuration
+    atrack.duration = trkDuration
     atrack.avgspeed = round(trkAvgspeed, 2)
     atrack.best20 = round(trkBest20, 2)
     atrack.best20_start_pointindex = trkbest20_start_pointindex
@@ -682,7 +687,7 @@ def make_map(
     tooltip_text = "Finish, click for details"
     tooltip_style = "color: " + primary_color + "; font-size: 0.85vw"
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    duration = atrack.timelength
+    duration = allpoints[-1]["duration"]
     moving_duration = allpoints[-1]["moving_duration"]
     avgspeed = atrack.avgspeed
     distance = atrack.length
@@ -828,7 +833,7 @@ def save_csv(request, atrack, allpoints):
     writer.writerow(['length', atrack.length])
     writer.writerow(['totalascent', atrack.totalascent])
     writer.writerow(['totaldescent', atrack.totaldescent])
-    writer.writerow(['timelength', atrack.timelength])
+    writer.writerow(['movingduration', atrack.movingduration])
     if atrack.trackeffort:
         writer.writerow(['trackeffort', atrack.trackeffort])
     writer.writerow(['avgspeed', atrack.avgspeed])
