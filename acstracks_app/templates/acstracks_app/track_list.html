@@ -73,7 +73,7 @@
                     <td><b>Total&nbsp;length&nbsp;(km)</b></td><td style="text-align:right">{{ statistics.total_length }}</td>
                 </tr>
                 <tr>
-                    <td><b>Total&nbsp;duration&nbsp;</b></td><td style="text-align:right">{{ statistics.total_duration }}</td>
+                    <td><b>Total&nbsp;duration&nbsp;while&nbsp;moving&nbsp;</b></td><td style="text-align:right">{{ statistics.total_duration }}</td>
                 </tr>
                 <tr>
                     <td><b>Total&nbsp;average&nbsp;speed (km/h)</b></td><td style="text-align:right">{{ statistics.total_avgspeed }}</td>
@@ -83,7 +83,7 @@
                     <td style="width: 300px;">{{ statistics.datetime_longest_length|date:"d b Y" }}</td>
                 </tr>
                 <tr>
-                    <td><b>Longest&nbsp;duration</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
+                    <td><b>Longest&nbsp;duration&nbsp;while&nbsp;moving&nbsp;</b></td><td style="text-align:right">{{ statistics.longest_duration }}</td>
                     <td style="width: 300px;">{{ statistics.datetime_longest_duration|date:"d b Y" }}</td>
                 </tr>
                 <tr>
@@ -258,7 +258,7 @@
         {% if preference.show_totaldescent %}
             <th valign="Top" style="text-align:right">Total<br>descent</th>
         {% endif %}
-        <th valign="Top" style="text-align:right">Duration</th>
+        <th valign="Top" style="text-align:right">Duration<br>(moving)</th>
         {% if preference.show_avgspeed %}
             <th valign="Top" style="text-align:right">Average<br>speed</th>
         {% endif %}
