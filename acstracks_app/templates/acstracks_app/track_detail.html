@@ -344,12 +344,23 @@
                 </div>
             {% endif %}
             <hr>
+            <table style="width: 100%;" class="scalefont {{colorscheme}}">
+                <tr>
+                    <td>
+                        <form action="{% url 'track_segments' pk=atrack.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" name="segments" id="id_segmentw" value="True" onclick="processFiles()">View track segments</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <hr>
             <table class="scalefont {{colorscheme}}">
                 <tr>
                     <td>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <button type="submit" name="csvsave" id="id_csvsave" value="True">Save as .csv file</button>
+                            <button type="submit" name="csvsave" id="id_csvsave" value="True" onclick="processFiles()">Save as .csv file</button>
                         </form>
                     </td>
                 </tr>

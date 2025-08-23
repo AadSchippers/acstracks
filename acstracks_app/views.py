@@ -20,6 +20,7 @@ from decimal import *
 from datetime import datetime
 import time
 from .mapviews import *
+from .segmentviews import *
 import re
 import hashlib
 import ast
@@ -340,16 +341,17 @@ def track_detail(request, pk):
             deletetrack(atrack)
             return redirect('track_list')
 
-    UpdateTrack = False
+    updatetrack = False
     if atrack.length == 0:
-        UpdateTrack = True
+        updatetrack = True
     if atrack.avgheartrate > 0:
         if (str(atrack.hrzone1) == "00:00:00" and
             str(atrack.hrzone2) == "00:00:00" and
             str(atrack.hrzone3) == "00:00:00" and
             str(atrack.hrzone4) == "00:00:00" and
             str(atrack.hrzone5) == "00:00:00"):
-            UpdateTrack = True
+            updatetrack = True
+
 
     if csvsave:
         map_filename=None
@@ -375,11 +377,12 @@ def track_detail(request, pk):
         downloadgpx=False
         ispublictrack=False
         process_gpx_file(
-            request, atrack.storagefilename,
+            request,
+            atrack.storagefilename,
             preference.intermediate_points_selected,
             atrack,
             map_filename,
-            UpdateTrack,
+            updatetrack,
             savecsv,
             downloadgpx,
             ispublictrack
@@ -397,6 +400,115 @@ def track_detail(request, pk):
                 'heartratezones': heartratezones,
                 'public_url': public_url,
                 'page_name': "Track detail",
+        }
+    )
+
+
+@login_required(login_url='/login/')
+def track_segments(request, pk):
+    try:
+        preference = Preference.objects.get(user=request.user)
+        colorscheme = preference.colorscheme
+        speedthreshold = preference.speedthreshold
+        elevationthreshold = preference.elevationthreshold
+        maxspeedcappingfactor = preference.maxspeedcappingfactor
+    except Exception:
+        colorscheme = settings.DEFAULT_COLORSCHEME
+        speedthreshold = settings.SPEEDTHRESHOLD
+        elevationthreshold = settings.ELEVATIONTHRESHOLD
+        maxspeedcappingfactor = settings.MAXSPEEDCAPPINGFACTOR
+
+    try:
+        atrack = Track.objects.get(id=pk, user=request.user)
+    except Exception:
+        return redirect('track_list')
+
+    displayfilename = truncatefilename(atrack.displayfilename)
+
+    heartratezones = get_heartratezones(request)
+
+    try:
+        if not start_segment:
+            start_segment = 0
+    except Exception:
+        start_segment = 0
+
+    try:
+        if not end_segment:
+            end_segment = 999999
+    except Exception:
+        end_segment = 999999
+
+    if request.method == 'POST':
+        try:
+            start_segment = int(request.POST.get("start_segment"))
+            end_segment = int(request.POST.get("end_segment"))
+        except Exception:
+            pass
+
+    try:
+        if start_segment > end_segment:
+            start_segment, end_segment = end_segment, start_segment
+    except Exception:
+        pass
+
+    map_filename = None # draw map not just yet
+    updatetrack = False
+    savecsv=False
+    downloadgpx=False
+    ispublictrack=False
+    allpoints = process_gpx_file(
+        request,
+        atrack.storagefilename,
+        preference.intermediate_points_selected,
+        atrack,
+        map_filename,
+        updatetrack,
+        savecsv,
+        downloadgpx,
+        ispublictrack
+        )
+
+    asegment = process_segment(
+        allpoints,
+        elevationthreshold,
+        maxspeedcappingfactor,
+        start_segment,
+        end_segment,
+    )
+
+    map_filename = (
+        hashlib.sha256(atrack.user.username.encode()).hexdigest()+".html"
+    )
+
+    full_map_filename = (
+        settings.MAPS_URL +
+        hashlib.sha256(atrack.user.username.encode()).hexdigest()+".html"
+    )
+
+    segments_make_map(
+        request,
+        colorscheme,
+        atrack,
+        allpoints,
+        map_filename,
+        start_segment,
+        end_segment
+    )
+
+    return render(request, 'acstracks_app/track_segments.html', {
+                'colorscheme': preference.colorscheme,
+                'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
+                'backgroundimage': set_backgroundimage(preference),
+                'atrack': atrack,
+                'displayfilename': displayfilename,
+                'map_filename': full_map_filename,
+                'preference': preference,
+                'heartratezones': heartratezones,
+                'asegment': asegment,
+                "start_segment": start_segment,
+                "end_segment": end_segment,
+                'page_name': "Track segments",
         }
     )
 

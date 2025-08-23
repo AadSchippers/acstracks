@@ -4,6 +4,7 @@ from . import classviews, views
 urlpatterns = [
     path('', views.track_list, name='track_list'),
     path('track/<int:pk>', views.track_detail, name='track_detail'),
+    path('track/segments/<int:pk>', views.track_segments, name='track_segments'),
     path('preference/', views.process_preferences, name='preference'),
     path('cleanup/', views.cleanup, name='cleanup'),
     path('statistics/', views.show_statistics, name='show_statistics'),

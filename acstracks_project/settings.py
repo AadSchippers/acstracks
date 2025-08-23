@@ -151,6 +151,8 @@ END_COLOR = {
     "ocean": "blue",
     "summer": "green",
     }
+CONNECT_COLOR = "gray"
+NOT_SELECTED_COLOR = 'gray'
 
 MAP_LINE_WEIGHT = 2.5
 HEATMAP_OPACITY = 0.5

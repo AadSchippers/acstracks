@@ -1,0 +1,163 @@
+{% extends 'acstracks_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<script>
+    function processFiles(id) {
+        document.getElementById("id-processing-p").style.display = "block";
+        document.getElementById("id-processing-img").style.display = "block";
+        document.getElementById(id).submit();
+    }
+    function showSpeed() {
+			document.getElementById("id-speed-show").style.display = "block";
+			document.getElementById("id-speed-hide").style.display = "none";
+			document.getElementById("id-cadence-hide").style.display = "block";
+			document.getElementById("id-cadence-show").style.display = "none";
+			document.getElementById("id-hr-hide").style.display = "block";
+			document.getElementById("id-hr-show").style.display = "none";
+    }
+    function hideSpeed() {
+			document.getElementById("id-speed-show").style.display = "none";
+			document.getElementById("id-speed-hide").style.display = "block";
+    }
+    function showCadence() {
+            document.getElementById("id-cadence-hide").style.display = "none";
+			document.getElementById("id-cadence-show").style.display = "block";
+			document.getElementById("id-hr-show").style.display = "none";
+			document.getElementById("id-hr-hide").style.display = "block";
+			document.getElementById("id-speed-show").style.display = "none";
+			document.getElementById("id-speed-hide").style.display = "block";
+    }
+    function hideCadence() {
+			document.getElementById("id-cadence-show").style.display = "none";
+			document.getElementById("id-cadence-hide").style.display = "block";
+    }
+    function showHR() {
+			document.getElementById("id-hr-show").style.display = "block";
+			document.getElementById("id-hr-hide").style.display = "none";
+			document.getElementById("id-cadence-hide").style.display = "block";
+			document.getElementById("id-cadence-show").style.display = "none";
+			document.getElementById("id-speed-show").style.display = "none";
+			document.getElementById("id-speed-hide").style.display = "block";
+    }
+    function hideHR() {
+			document.getElementById("id-hr-show").style.display = "none";
+			document.getElementById("id-hr-hide").style.display = "block";
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            <table style="width: 100%;" class="scalefont {{colorscheme}}">
+                <tr>
+                    <td><a href="{% url 'track_detail' pk=atrack.pk %}" class="{{colorscheme}}"><b>Back to track</b></a></td>
+                </tr>
+            </table>
+            <hr>
+            <table style="width: 100%;" class="scalefont {{colorscheme}}">
+                <tr>
+                    <td><b>Filename</b></td>
+                    <td style="text-align:right">{{ displayfilename }}</td>
+                </tr>
+                <tr>
+                    <td><b>Created&nbsp;date</b></td>
+                    <td style="text-align:right">{{ atrack.created_date|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Length&nbsp;(km)</b></td>
+                    <td  style="text-align:right">{{ atrack.length }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;ascent&nbsp;(m)</b></td>
+                    <td style="text-align:right">{{ atrack.totalascent }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;descent&nbsp;(m)</b></td>
+                    <td style="text-align:right">{{ atrack.totaldescent }}</td>
+                </tr>
+                <tr>
+                    <td><b>Duration while moving (hh:mm:ss)</b></td>
+                    <td  style="text-align:right">{{ atrack.movingduration|time:"H:i:s" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Duration (hh:mm:ss)</b></td>
+                    <td  style="text-align:right">{{ atrack.duration|time:"H:i:s" }}</td>
+                </tr>
+                {% if atrack.trackeffort  > 0 %}
+                    <tr>
+                        <td><b>Track&nbsp;effort</b></td>
+                        <td style="text-align:right">{{ atrack.trackeffort }}</td>
+                    </tr>
+                {% endif %}
+            </table>
+            <hr>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table style="width: 100%;" class="scalefont {{colorscheme}}">
+                    <tr>
+                        <td>
+                            <b>Start segment </b><input type="number" name="start_segment" value="{{ start_segment }}">
+                        </td>
+                        <td>
+                            <b>End segment </b><input type="number" name="end_segment" value="{{ end_segment }}">
+                        </td>
+                        <td>
+                            <br><input type="submit" id="calculate" value="Calculate" onclick="processFiles()">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <hr>
+            <table style="width: 100%;" class="scalefont {{colorscheme}}">
+                <tr>
+                    <td><b>Length&nbsp;(km)</b></td>
+                    <td  style="text-align:right">{{ asegment.length }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;ascent&nbsp;(m)</b></td>
+                    <td style="text-align:right">{{ asegment.totalascent }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;descent&nbsp;(m)</b></td>
+                    <td style="text-align:right">{{ asegment.totaldescent }}</td>
+                </tr>
+                <tr>
+                    <td><b>Duration while moving (hh:mm:ss)</b></td>
+                    <td  style="text-align:right">{{ asegment.movingduration|time:"H:i:s" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Duration (hh:mm:ss)</b></td>
+                    <td  style="text-align:right">{{ asegment.duration|time:"H:i:s" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Average&nbsp;speed&nbsp;(km/h)</b></td>
+                    <td style="text-align:right">{{ asegment.avgspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Maximum&nbsp;speed&nbsp;(km/h)</b></td>
+                    <td style="text-align:right">{{ asegment.maxspeed }}</td>
+                </tr>
+                {% if asegment.maxheartrate  > 0 %}
+                    <tr>
+                        <td><b>Maximum&nbsp;heart rate (bpm)</b>></td>
+                        <td style="text-align:right">{{ asegment.maxheartrate }}</td>
+                    </tr>
+                {% endif %}
+                    {% if atrack.maxcadence > 0 %}
+                        <tr>
+                            <td><b>Maximum&nbsp;cadence (rpm)</b></td>
+                            <td  style="text-align:right">{{ asegment.maxcadence }}</td>
+                        </tr>
+                    {% endif %}
+            </table>
+            <hr>
+
+        </div>
+        <div class="col-8">
+                <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
+        </div>
+    </div>
+</div>
+<hr>
+{% endblock %}

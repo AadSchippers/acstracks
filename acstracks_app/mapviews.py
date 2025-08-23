@@ -334,7 +334,7 @@ def process_gpx_file(
     if downloadgpx:
         return download_gpx(request, atrack, allpoints)
 
-    return
+    return allpoints
 
 
 def update_track(
