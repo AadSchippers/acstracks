@@ -127,8 +127,8 @@ def process_segment(
         "duration": segDuration,
         "avgspeed": round(segAvgspeed, 2),
         "maxspeed": round(segMaxspeed, 2),
-        "totalascent": round(totalascent, 0),
-        "totaldescent": round(totaldescent, 0),
+        "totalascent": int(round(totalascent, 0)),
+        "totaldescent": int(round(totaldescent, 0)),
         "maxcadence": segMaxcadence,
         "maxheartrate": segMaxheartrate,
     }
