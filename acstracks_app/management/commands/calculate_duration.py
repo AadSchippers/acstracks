@@ -31,8 +31,8 @@ class Command(BaseCommand):
                 "created_date" + ";" +
                 "name" + ";" +
                 "profile" + ";" +
-                "movingduration" + ";" +
-                "duration"
+                "duration" + ";" +
+                "new duration"
             )
         tracks = Track.objects.all()
         for track in tracks:
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                         track.created_date.strftime("%c") + ";" +
                         track.name + ";" +
                         track.profile + ";" +
-                        track.movingduration.strftime("%X") + ";" +
+                        track.duration.strftime("%X") + ";" +
                         new_duration
                     )
                 if verbosity < 2:
@@ -68,19 +68,17 @@ class Command(BaseCommand):
         timezone_info = timezone(settings.TIME_ZONE)
 
         for track in gpx.tracks:
-            for segment in track.segments:
-                if not segment.points[0].time:
-                    raise AcsFileNoActivity
-                last = len(segment.points) - 1
-                strStartTime = str(segment.points[0])
-                StartTime = strStartTime.split(" ")[1].split(":")
-                StartTimeSeconds = (int(StartTime[0]) * 3600) + (int(StartTime[1]) * 60) + int(StartTime[2].split("+")[0])
-                strEndTime = str(segment.points[last])
-                EndTime = strEndTime.split(" ")[1].split(":")
-                EndTimeSeconds = (int(EndTime[0]) * 3600) + (int(EndTime[1]) * 60) + int(EndTime[2].split("+")[0])
-                new_duration = time.strftime(
-                    '%H:%M:%S', time.gmtime(EndTimeSeconds - StartTimeSeconds)
-                    )
+            if not track.segments[0].points[0].time:
+                raise AcsFileNoActivity
+            strStartTime = str(track.segments[0].points[0].time)
+            StartTime = strStartTime.split(" ")[1].split(":")
+            StartTimeSeconds = (int(StartTime[0]) * 3600) + (int(StartTime[1]) * 60) + int(StartTime[2].split("+")[0])
+            strEndTime = str(track.segments[-1].points[-1].time)
+            EndTime = strEndTime.split(" ")[1].split(":")
+            EndTimeSeconds = (int(EndTime[0]) * 3600) + (int(EndTime[1]) * 60) + int(EndTime[2].split("+")[0])
+            new_duration = time.strftime(
+                '%H:%M:%S', time.gmtime(EndTimeSeconds - StartTimeSeconds)
+                )
 
 
         return new_duration
