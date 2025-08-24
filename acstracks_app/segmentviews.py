@@ -28,8 +28,6 @@ def process_segment(
     if end_segment >= len(allpoints):
         end_segment = len(allpoints) - 1
 
-#############
-    last = len(allpoints) - 1
     segLength = float(allpoints[end_segment]["distance"] - allpoints[start_segment]["distance"]) / 1000
     segMovingSeconds = int(allpoints[end_segment]["moving_duration"].seconds) - int(allpoints[start_segment]["moving_duration"].seconds)
     segMovingDuration = time.strftime(
@@ -134,7 +132,6 @@ def process_segment(
         "maxcadence": segMaxcadence,
         "maxheartrate": segMaxheartrate,
     }
-#############
 
     return asegment
 

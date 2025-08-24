@@ -84,6 +84,44 @@
                     <td><b>Duration (hh:mm:ss)</b></td>
                     <td  style="text-align:right">{{ atrack.duration|time:"H:i:s" }}</td>
                 </tr>
+                <tr>
+                    <td><b>Average&nbsp;speed&nbsp;(km/h)</b></td>
+                    <td style="text-align:right">{{ atrack.avgspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Maximum&nbsp;speed&nbsp;(km/h)</b></td>
+                    <td style="text-align:right">{{ atrack.maxspeed }}</td>
+                </tr>
+                {% if atrack.avgcadence > 0 %}
+                    <tr>
+                        <td><b>Average&nbsp;cadence (rpm)</b></td>
+                        <td style="text-align:right">{{ atrack.avgcadence }}</td>
+                    </tr>
+                {% endif %}
+                {% if atrack.maxcadence > 0 %}
+                    <tr>
+                        <td><b>Maximum&nbsp;cadence (rpm)</b></td>
+                        <td  style="text-align:right">{{ atrack.maxcadence }}</td>
+                    </tr>
+                {% endif %}
+                    {% if atrack.avgheartrate > 0 %}
+                <tr>
+                    <td><b>Average&nbsp;heart rate (bpm)</b></td>
+                    <td  style="text-align:right">{{ atrack.avgheartrate }}</td>
+                </tr>
+                {% endif %}
+                {% if atrack.minheartrate  < 999 %}
+                    <tr>
+                        <td><b>Mininimum&nbsp;heart rate (bpm)</b></td>
+                        <td  style="text-align:right">{{ atrack.minheartrate }}</td>
+                    </tr>
+                {% endif %}
+                {% if atrack.maxheartrate  > 0 %}
+                    <tr>
+                        <td><b>Maximum&nbsp;heart rate (bpm)</b></td>
+                        <td style="text-align:right">{{ atrack.maxheartrate }}</td>
+                    </tr>
+                {% endif %}
                 {% if atrack.trackeffort  > 0 %}
                     <tr>
                         <td><b>Track&nbsp;effort</b></td>
@@ -124,11 +162,11 @@
                 </tr>
                 <tr>
                     <td><b>Duration while moving (hh:mm:ss)</b></td>
-                    <td  style="text-align:right">{{ asegment.movingduration|time:"H:i:s" }}</td>
+                    <td  style="text-align:right">{{ asegment.movingduration }}</td>
                 </tr>
                 <tr>
                     <td><b>Duration (hh:mm:ss)</b></td>
-                    <td  style="text-align:right">{{ asegment.duration|time:"H:i:s" }}</td>
+                    <td  style="text-align:right">{{ asegment.duration }}</td>
                 </tr>
                 <tr>
                     <td><b>Average&nbsp;speed&nbsp;(km/h)</b></td>
@@ -138,18 +176,18 @@
                     <td><b>Maximum&nbsp;speed&nbsp;(km/h)</b></td>
                     <td style="text-align:right">{{ asegment.maxspeed }}</td>
                 </tr>
-                {% if asegment.maxheartrate  > 0 %}
-                    <tr>
-                        <td><b>Maximum&nbsp;heart rate (bpm)</b>></td>
-                        <td style="text-align:right">{{ asegment.maxheartrate }}</td>
-                    </tr>
-                {% endif %}
                     {% if atrack.maxcadence > 0 %}
                         <tr>
                             <td><b>Maximum&nbsp;cadence (rpm)</b></td>
                             <td  style="text-align:right">{{ asegment.maxcadence }}</td>
                         </tr>
                     {% endif %}
+                {% if asegment.maxheartrate  > 0 %}
+                    <tr>
+                        <td><b>Maximum&nbsp;heart rate (bpm)</b>></td>
+                        <td style="text-align:right">{{ asegment.maxheartrate }}</td>
+                    </tr>
+                {% endif %}
             </table>
             <hr>
 
