@@ -1411,6 +1411,8 @@ def publictrack_detail(request, publickey, intermediate_points_selected=None):
 
     try:
         atrack = Track.objects.get(publickey=publickey)
+        if not atrack.public_track:
+            raise AcsNoPublicFile
         show_intermediate_points = atrack.show_markers
         show_heartrate = atrack.show_heartrate
         show_cadence = atrack.show_cadence

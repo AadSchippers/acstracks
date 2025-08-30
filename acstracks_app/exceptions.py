@@ -11,3 +11,6 @@ class AcsFileNoActivity(AcsException):
 
 class AcsFileNotValid(AcsException):
     pass
+
+class AcsNoPublicFile(AcsException):
+    pass
