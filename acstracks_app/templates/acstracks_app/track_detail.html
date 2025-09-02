@@ -196,26 +196,8 @@
                         <td style="text-align:right">{{ atrack.trackeffort }}</td>
                     </tr>
                 {% endif %}
-                <form method="post"  id="form4" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="public_track_changed" value="True">
-                    <tr>
-                        <td><br>
-                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Public track</b>
-                                <input type="checkbox"
-                                    name="public_track" 
-                                    {% if atrack.public_track %}
-                                        checked="checked" 
-                                    {% endif %}
-                                    id="id_public_track"
-                                    onchange=processFiles("form4")>
-                                <span class="checkmark {{colorscheme}}"></span> 
-                            </label>
-                        </td>
-                    </tr>
-                </form>
             </table>
-            <hr>
+            <br>
             <div  id="id-speed-hide" style="display:block">
                 <table style="width: 100%;" class="scalefont {{colorscheme}}">
                     <tr onClick=showSpeed() class="table-row">
@@ -343,7 +325,7 @@
                     </table>
                 </div>
             {% endif %}
-            <hr>
+            <br>
             <table style="width: 100%;" class="scalefont {{colorscheme}}">
                 <tr>
                     <td>
@@ -354,46 +336,29 @@
                     </td>
                 </tr>
             </table>
-            <hr>
-            <table class="scalefont {{colorscheme}}">
-                <tr>
-                    <td>
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <button type="submit" name="csvsave" id="id_csvsave" value="True" onclick="processFiles()">Save as .csv file</button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <hr>
-            <table class="scalefont {{colorscheme}}">
-                <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <tr>
-                    <td>
-                        <button type="submit" name="delete" id="delete" onclick="processFiles()">Delete this track</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><br>
-                        <label class="checkcontainer {{colorscheme}}" style="font-weight: normal;"><i>I understand that deleting this track is an action that cannot be undone</i>
-                            <input type="checkbox"
-                                name="confirm_delete" 
-                                id="id_confirm_delete">
-                            <span class="checkmark {{colorscheme}}"></span> 
-                        </label>
-                    </td>
-                </tr>
-                </form>
-            </table>
-            <hr>
-            {% if atrack.public_track %}
-                <table class="scalefont {{colorscheme}}">
+            <br>
+            <table style="width: 100%;" class="scalefont {{colorscheme}}">
+                <form method="post"  id="form4" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="public_track_changed" value="True">
                     <tr>
-                        <td style="width: 500px;">
-                            <h3>Public tracks settings</h3>
+                        <td><br>
+                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Public track</b>
+                                <input type="checkbox"
+                                    name="public_track" 
+                                    {% if atrack.public_track %}
+                                        checked="checked" 
+                                    {% endif %}
+                                    id="id_public_track"
+                                    onchange=processFiles("form4")>
+                                <span class="checkmark {{colorscheme}}"></span> 
+                            </label>
                         </td>
                     </tr>
+                </form>
+            </table>
+            {% if atrack.public_track %}
+                <table style="width:100%" class="scalefont {{colorscheme}}">
                     <form method="post"  id="form5" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="hidden" name="hide_first_part_changed" value="True">
@@ -405,20 +370,21 @@
                         <input type="hidden" name="show_download_gpx_changed" value="True">
                         <tr>
                             <td>       
-                            <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Hide first part</b>
-                                <input type="checkbox"
-                                    name="hide_first_part" 
-                                    {% if atrack.hide_first_part %}
-                                        checked="checked" 
-                                    {% endif %}
-                                    id="id_hide_first_part"
-                                    onchange=processFiles("form5")>
-                                <span class="checkmark {{colorscheme}}"></span> 
-                            </label>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Hide first part
+                                    <input type="checkbox"
+                                        name="hide_first_part" 
+                                        {% if atrack.hide_first_part %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_hide_first_part"
+                                        onchange=processFiles("form5")>
+                                    <span class="checkmark {{colorscheme}}"></span> 
+                                </label>
+                            </td>
                         </tr>
                         <tr>
                             <td>       
-                                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Hide last part</b>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Hide last part
                                     <input type="checkbox"
                                         name="hide_last_part" 
                                         {% if atrack.hide_last_part %}
@@ -428,10 +394,11 @@
                                         onchange=processFiles("form5")>
                                     <span class="checkmark {{colorscheme}}"></span> 
                                 </label>
+                            </td>
                         </tr>
                         <tr>
                             <td>       
-                                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show markers</b>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Show markers
                                     <input type="checkbox"
                                         name="show_markers" 
                                         {% if atrack.show_markers %}
@@ -441,10 +408,11 @@
                                         onchange=processFiles("form5")>
                                     <span class="checkmark {{colorscheme}}"></span> 
                                 </label>
+                            </td>
                         </tr>
                         <tr>
                             <td>       
-                                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show heart rate</b>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Show heart rate
                                     <input type="checkbox"
                                         name="show_heartrate" 
                                         {% if atrack.show_heartrate %}
@@ -458,7 +426,7 @@
                         </tr>
                         <tr>
                             <td>       
-                                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show cadence</b>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Show cadence
                                     <input type="checkbox"
                                         name="show_cadence" 
                                         {% if atrack.show_cadence %}
@@ -472,7 +440,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show track effort</b>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Show track effort
                                     <input type="checkbox"
                                         name="show_trackeffort_public"
                                         {% if atrack.show_trackeffort_public %}
@@ -486,7 +454,7 @@
                         </tr>
                         <tr>
                             <td>       
-                                <label class="checkcontainer {{colorscheme}}" style="font-weight: normal"><b>Show download GPX track</b>
+                                <label class="checkcontainer {{colorscheme}}" style="left:20px; font-weight: normal">Show download GPX track
                                     <input type="checkbox"
                                         name="show_download_gpx" 
                                         {% if atrack.show_download_gpx %}
@@ -502,7 +470,38 @@
                 </table>
                 <a href={{ public_url }} target="_blank" class="{{colorscheme}}"><b>Obtain a shareable link to this track</b></a>
             {% endif %}
-
+        <hr>
+        <table class="scalefont {{colorscheme}}">
+            <tr>
+                <td>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <button type="submit" name="csvsave" id="id_csvsave" value="True" onclick="processFiles()">Save as .csv file</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <table class="scalefont {{colorscheme}}">
+            <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <tr>
+                <td>
+                    <button type="submit" name="delete" id="delete" onclick="processFiles()">Delete this track</button>
+                </td>
+            </tr>
+            <tr>
+                <td><br>
+                    <label class="checkcontainer {{colorscheme}}" style="font-weight: normal;"><i>I understand that deleting this track is an action that cannot be undone</i>
+                        <input type="checkbox"
+                            name="confirm_delete" 
+                            id="id_confirm_delete">
+                        <span class="checkmark {{colorscheme}}"></span> 
+                    </label>
+                </td>
+            </tr>
+            </form>
+        </table>
         </div>
         <div class="col-8">
                 <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
