@@ -291,7 +291,9 @@ def process_gpx_file(
         update_track(
             atrack, allpoints, elevationthreshold, maxspeedcappingfactor
             )
-
+        if atrack.length == 0:
+            raise AcsTrackNoLength
+        
     if ispublictrack:
         if atrack.hide_first_part:
             publictrack_pointindex = 0

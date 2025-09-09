@@ -9,8 +9,9 @@ class AcsFileNoActivity(AcsException):
     pass
 
 
-class AcsFileNotValid(AcsException):
+class AcsTrackNoLength(AcsException):
     pass
+
 
 class AcsNoPublicFile(AcsException):
     pass

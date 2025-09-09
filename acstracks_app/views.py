@@ -627,11 +627,23 @@ def parse_file(
 
         except AcsFileNoActivity:
             deletetrack(trk)
+            deletefile(storagefilename)
             # error processing file, file skipped
             messages.error(
                 request,
                 displayfilename +
                 " is not an activity file, " +
+                " file skipped.")
+            return
+
+        except AcsTrackNoLength:
+            deletetrack(trk)
+            deletefile(storagefilename)
+            # error processing file, file skipped
+            messages.error(
+                request,
+                displayfilename +
+                " track has no length, " +
                 " file skipped.")
             return
 
