@@ -395,6 +395,7 @@ def track_detail(request, pk):
                 'atrack': atrack,
                 'displayfilename': displayfilename,
                 'map_filename': full_map_filename,
+                'is_admin': request.user.is_staff,
                 'preference': preference,
                 'bike_profiles': bike_profiles,
                 'heartratezones': heartratezones,

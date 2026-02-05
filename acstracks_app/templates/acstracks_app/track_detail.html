@@ -49,6 +49,13 @@
                                 {% else %}
                                     <option value=0>None</option>
                                 {% endif %}
+                                {% if is_admin %}
+                                    {% if preference.intermediate_points_selected == 1 %}
+                                        <option value=1 selected="selected">All</option>
+                                    {% else %}
+                                        <option value=1>All</option>
+                                    {% endif %}
+                                {% endif %}
                                 {% if preference.intermediate_points_selected == 1000 %}
                                     <option value=1000 selected="selected">Every 1 km</option>
                                 {% else %}
