@@ -1,0 +1,272 @@
+{% extends 'acstracks_app/base.html' %}
+
+{% block content %}
+<script>
+    function processFiles(id) {
+        document.getElementById("id-processing-anim-p").style.display = "block";
+        document.getElementById("id-processing-anim-img").style.display = "block";
+        document.getElementById("id-processing-static-img").style.display = "none";
+        document.getElementById("id-messages").style.display = "none";
+        document.getElementById(id).submit();
+    }
+</script>
+        <div class="row">
+            <div class="col-4">
+                <table style="width:100%" class="scalefont">
+                    <tr>
+                        <td align="center">
+                            <img id="id-processing-static-img" style="width:135px; height:131px; display: block;" src="/static/img/acsgpxstitch-progress-static.gif">        
+                            <img id="id-processing-anim-img" style="width:135px; height:131px; display: none;" src="/static/img/acsgpxstitch-progress-anim.gif">        
+                            <br><p id="id-processing-anim-p" style="text-align: center; display: none;">Processing...</p>
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                <table style="width:100%" class="scalefont">
+                    <tr>
+                        <td>
+                            <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                <div class="file-field">
+                                    <label for="gpxfile" 
+                                            id="gpxfilelabel" 
+                                            class="gpxfilelabel save btn btn-default scalefont">
+                                            <b>Select GPX files</b>
+                                    </label>
+                                    <div class="btn">
+                                        <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
+                                    </div>
+                                    <div class="gpxfilepath file-path-wrapper">
+                                        <input class="gpxfilepath file-path validate" type="text" onchange=processFiles("uploadform")>
+                                    </div>
+                                    <br>
+                                </div>
+                                {% if tracks.1.filename %}
+                                    <label class="checkcontainer {{colorscheme}}">
+                                        <b>Intelligent Stitch </b>
+                                        <input type="checkbox"
+                                            name="intelligent_stitch"
+                                            {% if intelligent_stitch %}
+                                                checked="checked" 
+                                            {% endif %}
+                                                onchange=processFiles("uploadform")
+                                            id="id_intelligent_stitch">
+                                        <span class="checkmark {{colorscheme}}"></span> 
+                                    </label>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                {% if tracks.0.filename %}
+                    <table id="click-table" style="overflow-x:auto;"" class="table-hover scalefont">
+                        <thead>
+                            <th>Filename</th>
+                            <th style="text-align:right;">Length (km)</th>
+                            {% if intelligent_stitch %}
+                                <th>Reversed</th>
+                            {% endif %}
+                        </thead>
+                        <tbody>
+                            {% for track in tracks %}
+                                <tr>
+                                    {% if track.filename %}
+                                        <td>{{ track.filename }}</td>
+                                        <td style="text-align:right;">{{ track.distance }}</td>
+                                        {% if intelligent_stitch %}
+                                            <td>
+                                                <label class="checkcontainer {{colorscheme}}">
+                                                    <input type="checkbox"
+                                                        name="reverse_track" 
+                                                        {% if track.reversed %}
+                                                            checked="checked" 
+                                                        {% endif %}
+                                                        id="id_reverse_track"
+                                                        disabled="disabled">
+                                                    <span class="checkmark {{colorscheme}}"></span> 
+                                                </label>
+                                            </td>
+                                        {% endif %}
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            {% if tracks.1.filename %}
+                                <tr>
+                                    <td><b>Total:</b></td>
+                                    <td style="text-align:right;"><b>{{ total_distance }}</b></td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    {% if not tracks.1.filename %}
+                    <table class="scalefont">
+                        <form method="post" class="md-form" id="reverseform" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="tracks" value="{{ tracks }}">
+                        <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                        <tr>
+                            <td>
+                                <label class="checkcontainer {{colorscheme}}">
+                                    <b>Reverse track</b>
+                                    <input type="checkbox"
+                                        name="reverse_track"
+                                        {% if reverse_track == 'on' %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        onchange=processFiles("reverseform")
+                                        id="id_reverse_track">
+                                    <span class="checkmark {{colorscheme}}"></span> 
+                                </label>
+                            </td>
+                        </tr>
+                        </form>
+                    </table>
+                    <table class="scalefont">
+                            <form method="post" class="md-form" id="splitform" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="tracks" value="{{ tracks }}">
+                            <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                            <input type="hidden" name="start_selection" value="{{ start_selection }}">
+                            <input type="hidden" name="end_selection" value="{{ end_selection }}">
+                            <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
+                                <tr>
+                                    <td>
+                                        <label class="checkcontainer {{colorscheme}}">
+                                            <b>Split track</b>
+                                            <input type="checkbox"
+                                                name="split_track"
+                                                {% if split_track == 'on' %}
+                                                    checked="checked" 
+                                                {% endif %}
+                                                    onchange=processFiles("splitform")
+                                                id="id_split_track">
+                                            <span class="checkmark {{colorscheme}}"></span> 
+                                        </label>
+                                    </td>
+                                </tr>
+                            </form>
+                            {% if split_track == 'on' %}
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tracks" value="{{ tracks }}">
+                                    <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                    <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
+                                    <input type="hidden" name="split_track" value="{{ split_track }}">
+                                        <tr>
+                                        <td>
+                                            <b>Start selection </b><input type="number" name="start_selection" value="{{ start_selection }}">
+                                        </td>
+                                        <td>
+                                            <b>End selection </b><input type="number" name="end_selection" value="{{ end_selection }}">
+                                        </td>
+                                        <td>
+                                            <br><input type="submit" id="selection" value="Select" onclick="processFiles()">
+                                        </td>
+                                    </tr>
+                                </form>
+                            {% endif %}
+                        </table>
+                        {% if new_start_point_possible %}
+                            <table class="scalefont">
+                                <form method="post" class="md-form" id="startpointform" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="tracks" value="{{ tracks }}">
+                                <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
+                                    <tr>
+                                        <td>
+                                            <label class="checkcontainer {{colorscheme}}">
+                                                <b>Set new start point</b>
+                                                <input type="checkbox"
+                                                    name="set_new_start_point"
+                                                    {% if set_new_start_point == 'on' %}
+                                                        checked="checked" 
+                                                    {% endif %}
+                                                        onchange=processFiles("startpointform")
+                                                    id="id_set_new_start_point">
+                                                <span class="checkmark {{colorscheme}}"></span> 
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </form>
+                                {% if set_new_start_point == 'on' %}
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="tracks" value="{{ tracks }}">
+                                        <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                        <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
+                                        <tr>
+                                            <td>
+                                                <b>New start point</b><input type="number" name="new_start_point" value="{{ new_start_point }}">
+                                            </td>
+                                            <td>
+                                                <br><input type="submit" id="selection" value="Select" onclick="processFiles()">
+                                            </td>
+                                        </tr>
+                                    </form>
+                                {% endif %}
+                            </table>
+                        {% endif %}
+                        <table class="scalefont">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="tracks" value="{{ tracks }}">
+                                <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
+                                <input type="hidden" name="split_track" value="{{ split_track }}">
+                                <input type="hidden" name="start_selection" value="{{ start_selection }}">
+                                <input type="hidden" name="end_selection" value="{{ end_selection }}">
+                                <input type="hidden" name="gpxdownload" value="True">
+                                <tr>
+                                    <td>
+                                        {% if split_track == 'on' %}
+                                            <br><input type="submit" id="gpxdownload" value="Download selection">
+                                        {% else %}
+                                            <br><input type="submit" id="gpxdownload" value="Download file">
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </form>
+                        </table>
+                    {% endif %}
+                {% endif %}
+                <hr>
+                {% if tracks.1.filename %}
+                    <table class="scalefont">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="tracks" value="{{ tracks }}">
+                            <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                            <input type="hidden" name="intelligent_stitch" value="{{ intelligent_stitch }}">
+                            <input type="hidden" name="gpxdownload" value="True">
+                            <tr>
+                                <td>
+                                    <b>Track name </b>
+                                    <input type="text" name="trackname" 
+                                    {% if trackname %} 
+                                        value="{{ trackname }}"
+                                    {% else %}
+                                        placeholder="{{ tracks.0.trackname }}">
+                                    {% endif %}
+                                    </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <br><input type="submit" id="gpxdownload" value="Download .gpx file">
+                                </td>
+                            </tr>
+                        </form>
+                    </table>
+                {% endif %}
+            </div>
+            <div class="col-8">
+                {% if tracks.0.filename %}
+                    <iframe class="responsive-iframe" id="map_frame" src={{ map_filename }} title="Track map"></iframe>
+                {% else %}
+                    <iframe class="responsive-iframe" src={{ basemap_filename }} title="Track map"></iframe>
+                {% endif %}
+            </div>
+        </div>
+{% endblock %}

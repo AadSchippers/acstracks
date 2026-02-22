@@ -131,6 +131,7 @@ MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/media/maps')
 
 COLORSCHEMES = ["giro", "nostalgia", "ocean", "summer"]
 DEFAULT_COLORSCHEME = "giro"
+DEFAULT_GPX_COLORSCHEME = "nostalgia"
 
 # Folium map colours
 PRIMARY_COLOR = {
@@ -189,5 +190,19 @@ WEIGHT_ZONE5 = 2
 # privacy zone
 PRIVACYZONES = [0, 1000, 2000, 3000, 5000]
 DEFAULT_PRIVACYZONE = 2000
+
+GPX_MAPS_URL = '/acstracks_app/static/maps/'
+GPX_MAPS_ROOT = os.path.join(BASE_DIR, 'acstracks_app/static/maps')
+
+# Folium maps
+GPX_TRACK_MAP = "acsgpxstitch.html"
+GPX_BASE_MAP = "acsgpxstitch_base.html"
+
+# Folium map colours
+GPX_PRIMARY_COLOR = "maroon"
+GPX_LINE_COLOR = "maroon"
+GPX_MARKER_COLOR = 'maroon'
+GPX_START_COLOR = "orange"
+GPX_END_COLOR = "orangered"
 
 from .config import *   # noqa

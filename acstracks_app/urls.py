@@ -1,5 +1,5 @@
 from django.urls import path, re_path, reverse_lazy
-from . import classviews, views
+from . import classviews, views, gpx_views
 
 urlpatterns = [
     path('', views.track_list, name='track_list'),
@@ -25,6 +25,7 @@ urlpatterns = [
         ),
     path('public/<str:username>', views.public_tracks, name='public_tracks'),
     path('public', views.public_tracks, name='public_tracks'),
+    path('gpxstitch', gpx_views.track_list, name='gpxstitch'),
     re_path(r'^login/$', classviews.MyLoginView.as_view(), name='login'),
     re_path(r'^password/$', classviews.MyPasswordChangeView.as_view(
         success_url=reverse_lazy('track_list'),
