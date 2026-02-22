@@ -9,5 +9,6 @@ db.sqlite3-journal
 .DS_Store
 /media
 /acstracks_app/static/media/
+/acsgpxstitch_app/static/maps/acsgpxstitch_[0-9][0-9].html
 *.txt
 *.csv
