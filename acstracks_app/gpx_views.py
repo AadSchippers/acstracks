@@ -70,7 +70,7 @@ def track_list(request):
                         file.name +
                         ", file skipped.")
             except Exception:
-                pass
+                return redirect('gpxstitch')
 
         gpxdownload = request.POST.get('gpxdownload')
         if not original_tracks:
@@ -79,10 +79,10 @@ def track_list(request):
                     request.POST.get('original_tracks')
                     )
             except Exception:
-                return redirect('track_list')
+                return redirect('gpxstitch')
 
         if len(original_tracks) == 0:
-            return redirect('track_list')
+            return redirect('gpxstitch')
 
         original_tracks = sorted(original_tracks, key=lambda d: d['filename']) 
         tracks = original_tracks.copy()
