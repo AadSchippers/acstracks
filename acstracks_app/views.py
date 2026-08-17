@@ -867,9 +867,12 @@ def heatmap(request, profile=None, year=None):
     )
 
     all_tracks = []
+    start_pointindex = 0
+    end_pointindex = 0
     for atrack in tracks:
         all_tracks.append(gather_heatmap_data(
-            request, atrack.storagefilename, atrack.name, map_filename
+            request, atrack.storagefilename, atrack.name, map_filename, 
+            start_pointindex, end_pointindex
             ))
 
     make_heatmap(request, all_tracks, map_filename, preference.colorscheme)
@@ -1246,7 +1249,8 @@ def publish(request):
             all_tracks = []
             for atrack in tracks:
                 all_tracks.append(gather_heatmap_data(
-                    request, atrack.storagefilename, atrack.name, map_filename
+                    request, atrack.storagefilename, atrack.name, map_filename,
+                    atrack.publictrack_start_pointindex, atrack.publictrack_end_pointindex
                     ))
 
             try:
@@ -1344,7 +1348,6 @@ def unpublish(request, profile=None):
 def public_tracks(request, username=None, profile=None):
     tracks = []
     statistics = {}
-    link_to_detail_page = False
 
     public_url = (
         request.scheme + "://" +
@@ -1380,10 +1383,14 @@ def public_tracks(request, username=None, profile=None):
                 tracks = []
 
             try:
-                preference = Preference.objects.get(user=user)
-                link_to_detail_page = preference.link_to_detail_page
+                preference = Preference.objects.get(user=request.user)
+                colorscheme = preference.colorscheme
+                primary_color =  settings.PRIMARY_COLOR[preference.colorscheme]
+                backgroundimage = set_backgroundimage(preference)
             except Exception:
-                link_to_detail_page = False
+                colorscheme = settings.DEFAULT_GPX_COLORSCHEME
+                primary_color =  settings.PRIMARY_COLOR[colorscheme]
+                backgroundimage = '/static/img/acsgpxstitchbg-blurred.png'
 
             try:
                 statistics = compute_statistics(tracks)
@@ -1398,20 +1405,17 @@ def public_tracks(request, username=None, profile=None):
         else:
             full_map_filename = basemap_filename
             tracks = []
-            link_to_detail_page = False
             statistics = {}
 
     return render(request, 'acstracks_app/publictracks.html', {
-        'colorscheme': preference.colorscheme,
-        'primary_color': settings.PRIMARY_COLOR[preference.colorscheme],
-        'backgroundimage': set_backgroundimage(preference),
+        'colorscheme': colorscheme,
+        'primary_color': primary_color,
+        'backgroundimage': backgroundimage,
         'tracks': tracks,
         'username': username,
         'profile': profile,
         'statistics': statistics,
         'public_url': public_url,
-        'link_to_detail_page': link_to_detail_page,
-        'preference': preference,
         'map_filename': full_map_filename,
         'basemap_filename': basemap_filename,
         }

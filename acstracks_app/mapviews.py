@@ -294,29 +294,43 @@ def process_gpx_file(
         if atrack.length == 0:
             raise AcsTrackNoLength
         
-    if ispublictrack:
+    if atrack.public_track:
+        dbchanged = False
         if atrack.hide_first_part:
-            publictrack_pointindex = 0
+            publictrack_start_pointindex = 0
             track_too_long = True
             while track_too_long:
-                if float(allpoints[0]["distance"]) <= float(privacy_zone):
-                    allpoints.pop(0)
-                    publictrack_pointindex += 1
+                if float(allpoints[publictrack_start_pointindex]["distance"]) <= float(privacy_zone):
+                    publictrack_start_pointindex += 1
                 else:
                     track_too_long = False
-                    atrack.publictrack_pointindex = publictrack_pointindex
-                    atrack.save()
-                    atrack.refresh_from_db()
+                    dbchanged = True
+        else:
+            publictrack_start_pointindex = 0
+            dbchanged = True
+   
         if atrack.hide_last_part:
             track_too_long = True
-            last = len(allpoints) - 1
-            trkLength = float(allpoints[last]["distance"])
+            publictrack_end_pointindex = len(allpoints) - 1
+            trkLength = float(allpoints[publictrack_end_pointindex]["distance"])
             while track_too_long:
-                last = len(allpoints) - 1
-                if float(allpoints[last]["distance"]) >= trkLength - float(privacy_zone):
-                    allpoints.pop()
+                if float(allpoints[publictrack_end_pointindex]["distance"]) >= trkLength - float(privacy_zone):
+                    publictrack_end_pointindex += -1
                 else:
                     track_too_long = False
+                    dbchanged = True
+        else:
+            publictrack_end_pointindex = len(allpoints) - 1
+            dbchanged = True
+
+        if ispublictrack:
+            allpoints = allpoints[publictrack_start_pointindex: publictrack_end_pointindex]            
+
+        if dbchanged:
+            atrack.publictrack_start_pointindex = publictrack_start_pointindex
+            atrack.publictrack_end_pointindex = publictrack_end_pointindex
+            atrack.save()
+            atrack.refresh_from_db()
 
     if map_filename:
         make_map(
@@ -608,7 +622,7 @@ def make_map(
     previous_marker_moving_duration = 0
 
     if ispublictrack:
-        publictrack_pointindex = int(atrack.publictrack_pointindex)
+        publictrack_pointindex = int(atrack.publictrack_start_pointindex)
     else:
         publictrack_pointindex = 0
     ip = int(intermediate_points_selected)
@@ -1101,7 +1115,7 @@ def make_html_popup(
     return html_popup
 
 
-def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
+def gather_heatmap_data(request, filename, trackname=None, map_filename=None, start_pointindex=0, end_pointindex=0):
     fullfilename = os.path.join(
         settings.MEDIA_ROOT + "/gpx",
         filename
@@ -1121,26 +1135,34 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None):
             if not trackname:
                 trackname = track.name
             for segment in track.segments:
+                pointindex = 0
                 for point in segment.points:
 
-                    apoint = {
-                        "latitude": point.latitude,
-                        "longitude": point.longitude,
-                    }
+                    if (pointindex >= float(start_pointindex)) and (float(end_pointindex) == 0 or pointindex < float(end_pointindex)):
 
-                    try:
-                        apoint["elevation"] = round(point.elevation, 2),
-                    except Exception:
-                        pass
+                        pointindex += 1
 
-                    allpoints.append(apoint)
+                        apoint = {
+                            "latitude": point.latitude,
+                            "longitude": point.longitude,
+                        }
 
-                    point_distance = calculate_using_haversine(
-                        point, previous_point
-                        )
-                    distance += point_distance
+                        try:
+                            apoint["elevation"] = round(point.elevation, 2),
+                        except Exception:
+                            pass
 
-                    previous_point = point
+                        allpoints.append(apoint)
+
+                        point_distance = calculate_using_haversine(
+                            point, previous_point
+                            )
+                        distance += point_distance
+
+                        previous_point = point
+                    else:
+                        pointindex += 1
+
 
             atrack["trackname"] = trackname
             atrack["distance"] = round(distance/1000, 2)
