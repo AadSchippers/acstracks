@@ -1131,14 +1131,14 @@ def gather_heatmap_data(request, filename, trackname=None, map_filename=None, st
         timezone_info = timezone(settings.TIME_ZONE)
         previous_point = None
         distance = 0
+        pointindex = 0
         for track in gpx.tracks:
             if not trackname:
                 trackname = track.name
             for segment in track.segments:
-                pointindex = 0
                 for point in segment.points:
 
-                    if (pointindex >= float(start_pointindex)) and (float(end_pointindex) == 0 or pointindex < float(end_pointindex)):
+                    if (pointindex >= int(start_pointindex)) and (int(end_pointindex) == 0 or pointindex < int(end_pointindex)):
 
                         pointindex += 1
 

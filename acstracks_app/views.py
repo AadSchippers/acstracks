@@ -1247,7 +1247,25 @@ def publish(request):
                     )
 
             all_tracks = []
+            intermediate_points_selected = 0
+            updatetrack = False
+            savecsv = False
+            downloadgpx = False
+            ispublictrack = True
+            
             for atrack in tracks:
+                process_gpx_file(
+                    request,
+                    atrack.storagefilename,
+                    intermediate_points_selected,
+                    atrack,
+                    map_filename,
+                    updatetrack,
+                    savecsv,
+                    downloadgpx,
+                    ispublictrack
+                    )
+
                 all_tracks.append(gather_heatmap_data(
                     request, atrack.storagefilename, atrack.name, map_filename,
                     atrack.publictrack_start_pointindex, atrack.publictrack_end_pointindex
